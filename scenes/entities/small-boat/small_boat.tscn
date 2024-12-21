@@ -1,0 +1,74 @@
+[gd_scene load_steps=9 format=3 uid="uid://bltffp755yv3d"]
+
+[ext_resource type="Shader" path="res://shaders/outline.gdshader" id="1_qc021"]
+[ext_resource type="Shader" path="res://shaders/water_body.gdshader" id="1_xih3c"]
+[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="2_kkpx1"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_166nt"]
+shader = ExtResource("1_xih3c")
+shader_parameter/water_color = Color(1, 1, 1, 0.972549)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0ocxf"]
+particle_flag_disable_z = true
+emission_shape = 1
+emission_sphere_radius = 3.36
+direction = Vector3(0, 0, 0)
+angular_velocity_min = -6.88002
+angular_velocity_max = 701.91
+gravity = Vector3(-90, -10, 0)
+turbulence_enabled = true
+turbulence_noise_strength = 0.55
+turbulence_noise_scale = 12.82
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_23qcf"]
+shader = ExtResource("1_qc021")
+shader_parameter/enable = false
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_odcok"]
+size = Vector2(32, 16)
+
+[sub_resource type="GDScript" id="GDScript_nhjsf"]
+script/source = "extends Node
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[node name="small_boat" type="RigidBody2D"]
+position = Vector2(1, 0)
+gravity_scale = 0.1
+inertia = 96.02
+linear_damp = 3.23
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+material = SubResource("ShaderMaterial_166nt")
+position = Vector2(-12, 0)
+amount = 10
+process_material = SubResource("ParticleProcessMaterial_0ocxf")
+trail_enabled = true
+trail_lifetime = 0.1
+
+[node name="SmallBoat" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_23qcf")
+position = Vector2(1, -6)
+texture = ExtResource("2_kkpx1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+top_level = true
+z_as_relative = false
+position = Vector2(2, -10)
+shape = SubResource("RectangleShape2D_odcok")
+debug_color = Color(0.974004, 0, 0.429927, 0.42)
+
+[node name="StateMachine" type="Node" parent="."]
+script = SubResource("GDScript_nhjsf")
+
+[node name="Idle" type="Node" parent="StateMachine"]
