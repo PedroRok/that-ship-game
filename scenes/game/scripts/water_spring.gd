@@ -1,6 +1,5 @@
 extends Node2D
 
-
 var velocity = 0;
 
 var force = 0;

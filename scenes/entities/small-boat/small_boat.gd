@@ -12,17 +12,23 @@ var state_machine: Node = $StateMachine
 @onready
 var component_machine: Node = $ComponentMachine
 
+@onready
+var gun: Gun = $Gun
 
 func _ready() -> void:
 	if (direction > 0):
 		sprite.flip_h = false
-		particle.transform.x.x = -13
+		particle.position.x = -particle.position.x
 		particle.amount_ratio = 1
 		var material = particle.process_material as ParticleProcessMaterial
 		material.gravity.x = -direction * 90
 	else:
 		sprite.flip_h = true
-		particle.transform.x.x = 13
+		gun.position.x = -gun.position.x
+		prints("flip-dir")
+		particle.position.x = particle.position.x
+	
+	gun.team = team
 		
 	state_machine.init(self, component_machine)
 	prints("started", team)
@@ -36,6 +42,11 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 	state_machine.process_frame(delta)
 
+func get_gun() -> Gun:
+	return gun
+	
+func handle_hit():
+	component_machine.get_health().handle_hit()
 
 ## Velocidade de movimento do personagem
 #@export var speed: float = 200.0

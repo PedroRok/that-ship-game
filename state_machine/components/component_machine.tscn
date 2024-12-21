@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://bv1orvo4dw608"]
+[gd_scene load_steps=5 format=3 uid="uid://bv1orvo4dw608"]
 
 [ext_resource type="Script" path="res://state_machine/components/component_machine.gd" id="1_0xy31"]
 [ext_resource type="Script" path="res://state_machine/components/movable.gd" id="2_x18bk"]
 [ext_resource type="Script" path="res://state_machine/components/radar.gd" id="3_yxj0b"]
+[ext_resource type="Script" path="res://state_machine/components/health.gd" id="4_mevwq"]
 
 [node name="ComponentMachine" type="Node2D"]
 script = ExtResource("1_0xy31")
@@ -13,3 +14,9 @@ script = ExtResource("2_x18bk")
 [node name="Radar" type="RayCast2D" parent="."]
 target_position = Vector2(0, -10)
 script = ExtResource("3_yxj0b")
+
+[node name="Health" type="RichTextLabel" parent="."]
+offset_left = -8.0
+offset_right = 32.0
+offset_bottom = 40.0
+script = ExtResource("4_mevwq")

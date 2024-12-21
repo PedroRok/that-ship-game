@@ -9,7 +9,6 @@ func init(parent: Ship, component_machine : ComponentMachine) -> void:
 	for child in get_children():
 		child.parent = parent
 		child.component_machine = component_machine
-	
 	change_state(starting_state)
 	
 
