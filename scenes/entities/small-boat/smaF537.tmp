@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bltffp755yv3d"]
+[gd_scene load_steps=14 format=3 uid="uid://bltffp755yv3d"]
 
 [ext_resource type="Shader" path="res://shaders/outline.gdshader" id="1_qc021"]
 [ext_resource type="Shader" path="res://shaders/water_body.gdshader" id="1_xih3c"]
@@ -6,7 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://state_machine/state_machine.tscn" id="4_xb18j"]
 [ext_resource type="Script" path="res://state_machine/states/move.gd" id="5_ghkyi"]
 [ext_resource type="Script" path="res://state_machine/states/attack.gd" id="6_gx2nh"]
-[ext_resource type="PackedScene" uid="uid://bv1orvo4dw608" path="res://state_machine/components/component_machine.tscn" id="7_n3gir"]
+[ext_resource type="Script" path="res://state_machine/components/movable.gd" id="7_4uis5"]
+[ext_resource type="Script" path="res://state_machine/components/radar.gd" id="8_d1dwb"]
+[ext_resource type="Script" path="res://state_machine/components/team.gd" id="9_wagwo"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_166nt"]
 shader = ExtResource("1_xih3c")
@@ -70,4 +72,13 @@ attack_state = NodePath("../Attack")
 script = ExtResource("6_gx2nh")
 move_state = NodePath(".")
 
-[node name="ComponentMachine" parent="." instance=ExtResource("7_n3gir")]
+[node name="MoveComponent" type="Node" parent="."]
+script = ExtResource("7_4uis5")
+
+[node name="RadarComponent" type="RayCast2D" parent="."]
+position = Vector2(0, -6)
+target_position = Vector2(60, 0)
+script = ExtResource("8_d1dwb")
+
+[node name="TeamComponent" type="Node" parent="."]
+script = ExtResource("9_wagwo")

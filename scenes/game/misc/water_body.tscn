@@ -6,7 +6,7 @@
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_vssnq"]
 shader = ExtResource("2_72om8")
-shader_parameter/water_color = Color(0, 0, 1, 1)
+shader_parameter/water_color = Color(0, 0, 1, 0.886275)
 
 [sub_resource type="Curve2D" id="Curve2D_efxux"]
 
