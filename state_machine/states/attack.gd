@@ -2,6 +2,8 @@ extends State
 
 @export
 var move_state: State
+@export
+var death_state: State
 
 var time_to_shot: int = 100
 
@@ -14,6 +16,10 @@ func process_input(event: InputEvent) -> State:
 
 func process_physics(delta: float) -> State:
 	super(delta)
+	
+	if (component_machine.get_health().actual_health <= 0):
+		return death_state
+	
 	if (!component_machine.get_radar().check_radar(parent.team, get_movement_dir())):
 		return move_state
 	

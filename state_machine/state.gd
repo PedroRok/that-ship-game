@@ -27,7 +27,7 @@ func process_frame(delta: float) -> State:
 	return null
 	
 func process_physics(delta: float) -> State:
-	parent.rotation = -parent.linear_velocity.x / move_speed * max_tilt_angle
+	parent.rotation = lerp(parent.rotation, -parent.linear_velocity.x / move_speed * max_tilt_angle, deceleration * delta)
 	if (parent.linear_velocity.x == 0.):
 		parent.rotation = lerp(parent.rotation, 0., deceleration * delta)
 	parent.linear_velocity.x = lerp(parent.linear_velocity.x, 0., deceleration * delta)

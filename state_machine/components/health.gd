@@ -2,9 +2,9 @@ class_name Health
 extends RichTextLabel
 
 @export
-var default_health : int = 10
+var default_health : float = 10
 
-var actual_health : int
+var actual_health : float
 
 func _ready() -> void:
 	actual_health = default_health

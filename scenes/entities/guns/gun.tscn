@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://hwtj0e2rrjy8"]
+[gd_scene load_steps=3 format=3 uid="uid://hwtj0e2rrjy8"]
 
 [ext_resource type="Texture2D" uid="uid://dtbow7ublvxey" path="res://assets/game/ships/guns/gun.png" id="1_6c4ji"]
 [ext_resource type="Script" path="res://scenes/entities/guns/scripts/gun.gd" id="1_osudt"]
-[ext_resource type="PackedScene" uid="uid://cgpceuu5uri5f" path="res://scenes/entities/guns/bullet.tscn" id="3_h7ebj"]
 
 [node name="Gun" type="Node2D"]
 script = ExtResource("1_osudt")
@@ -15,5 +14,3 @@ texture = ExtResource("1_6c4ji")
 
 [node name="EndBarrel" type="Marker2D" parent="."]
 position = Vector2(2, 0)
-
-[node name="Bullet" parent="." instance=ExtResource("3_h7ebj")]
