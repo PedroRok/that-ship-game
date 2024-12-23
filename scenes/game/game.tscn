@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=17 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="PackedScene" uid="uid://bltffp755yv3d" path="res://scenes/entities/small-boat/small_boat.tscn" id="1_1epgp"]
 [ext_resource type="Texture2D" uid="uid://dvi26csiylnjn" path="res://assets/game/misc/water.png" id="2_pyqar"]
@@ -6,7 +6,6 @@
 [ext_resource type="Texture2D" uid="uid://bqwaas7p3to0f" path="res://icon.svg" id="2_x27pu"]
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
 [ext_resource type="Shader" path="res://shaders/outline.gdshader" id="5_j8uw8"]
-[ext_resource type="Script" path="res://scenes/entities/small-boat/small_boat.gd" id="6_4u45a"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
 [ext_resource type="Shader" path="res://shaders/water_body.gdshader" id="10_r28h0"]
@@ -72,7 +71,7 @@ script = SubResource("GDScript_77jxu")
 [node name="SmallBoat" parent="." instance=ExtResource("1_1epgp")]
 material = SubResource("ShaderMaterial_kgxk3")
 position = Vector2(93, 199)
-script = ExtResource("6_4u45a")
+life = 3
 
 [node name="Sprite2D2" type="Sprite2D" parent="."]
 z_index = -1800
@@ -85,16 +84,19 @@ texture = ExtResource("2_x27pu")
 z_index = 780
 position = Vector2(-133, 198)
 k = 0.01
+d = 0.03
 spread = 0.05
 distance_between_springs = 15
 spring_number = 100
 depth = 100
+border_thickness = 1
+random_waves = true
 
 [node name="SmallBoat2" parent="." instance=ExtResource("1_1epgp")]
 position = Vector2(540, 193)
-script = ExtResource("6_4u45a")
 direction = -1
-team = 2
+team = 1
+life = 3
 
 [node name="BulletManager" type="Node2D" parent="."]
 z_index = 240

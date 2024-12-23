@@ -27,14 +27,6 @@ size = Vector2(910, 163.5)
 
 [node name="Water_Body" type="Node2D"]
 script = ExtResource("1_65c85")
-k = null
-d = null
-spread = null
-distance_between_springs = null
-spring_number = null
-depth = null
-border_thickness = null
-random_waves = null
 
 [node name="Water_Polygon" type="Polygon2D" parent="."]
 material = SubResource("ShaderMaterial_vssnq")

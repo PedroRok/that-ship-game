@@ -1,8 +1,8 @@
 extends Node2D
 
 @export_category("Constants")
-@export var k = 0.015
-@export var d = 0.03
+@export var k : float = 0.015
+@export var d : float = 0.03 
 
 var springs = []
 var passes = 100
@@ -110,12 +110,11 @@ func new_border():
 
 
 func _on_timer_timeout() -> void:
-	if (!random_waves): 
-		break
- 	var rand_val = randi_range(15, springs.size() -15)
-	splash(rand_val-2, -0.1)
-	splash(rand_val-1, -0.3)
-	splash(rand_val, -0.5)
-	splash(rand_val+1, -0.3)
-	splash(rand_val+2, -0.1)
-	pass # Replace with function body.
+	if (random_waves):
+		var rand_val = randi_range(15, springs.size() -15)
+		splash(rand_val-2, -0.1)
+		splash(rand_val-1, -0.3)
+		splash(rand_val, -0.5)
+		splash(rand_val+1, -0.3)
+		splash(rand_val+2, -0.1)
+		pass # Replace with function body.

@@ -5,12 +5,12 @@ func enter() -> void:
 	#parent.gravity_scale = parent.gravity_scale *4
 	pass
 	
-func process_input(event: InputEvent) -> State:
-	return null
+func process_input(event: InputEvent) -> void:
+	return
 
-func process_physics(delta: float) -> State:
+func process_physics(delta: float) -> void:
 	#super(delta)
 	parent.rotation = lerp(parent.rotation, parent.rotation * 1.3, deceleration * delta)
 	
 	#prints(parent.gravity_scale)
-	return null
+	return
