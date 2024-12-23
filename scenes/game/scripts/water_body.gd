@@ -1,13 +1,14 @@
 extends Node2D
 
-
+@export_category("Constants")
 @export var k = 0.015
 @export var d = 0.03
-@export var spread = 0.5
 
 var springs = []
-var passes = 80
+var passes = 100
 
+@export_category("Wave Spring")
+@export var spread = 1.5
 @export var distance_between_springs =  20
 @export var spring_number = 40
 
@@ -15,13 +16,17 @@ var water_lenght = distance_between_springs * spring_number
 
 @onready var water_spring = preload("res://scenes/game/misc/water_spring.tscn")
 
+@export_category("Ocean")
 @export var depth = 1000
+@export var border_thickness = 1
+@export var random_waves = true
+
+
 var target_height = global_position.y
 var bottom = target_height + depth
 
 @onready var water_polygon = $Water_Polygon
 @onready var water_border = $Water_Border
-@export var border_thickness = 1
 
 func _ready():
 	
@@ -37,6 +42,7 @@ func _ready():
 		w.set_collision_width(distance_between_springs)
 		w.connect("splash", Callable(self, "splash"))
 	pass
+
 
 
 func _physics_process(delta: float) -> void:
@@ -101,3 +107,15 @@ func new_border():
 	water_border.curve = curve
 	water_border.smooth(true)
 	water_border.queue_redraw()
+
+
+func _on_timer_timeout() -> void:
+	if (!random_waves): 
+		break
+ 	var rand_val = randi_range(15, springs.size() -15)
+	splash(rand_val-2, -0.1)
+	splash(rand_val-1, -0.3)
+	splash(rand_val, -0.5)
+	splash(rand_val+1, -0.3)
+	splash(rand_val+2, -0.1)
+	pass # Replace with function body.

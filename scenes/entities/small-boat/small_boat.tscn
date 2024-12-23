@@ -1,6 +1,5 @@
 [gd_scene load_steps=26 format=3 uid="uid://bltffp755yv3d"]
 
-[ext_resource type="Shader" path="res://shaders/water_body.gdshader" id="1_xih3c"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_8y037"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="2_kkpx1"]
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://state_machine/state_machine.tscn" id="4_xb18j"]
@@ -10,8 +9,29 @@
 [ext_resource type="Script" path="res://state_machine/states/death.gd" id="7_wge8k"]
 [ext_resource type="PackedScene" uid="uid://hwtj0e2rrjy8" path="res://scenes/entities/guns/gun.tscn" id="8_50in8"]
 
+[sub_resource type="Shader" id="Shader_misho"]
+code = "shader_type canvas_item;
+
+uniform sampler2D screen_texture : hint_screen_texture;
+uniform vec4 water_color : source_color;
+uniform sampler2D wave_noise : repeat_enable;
+
+void fragment() {
+	// Called for every pixel the material is visible on.
+	vec2 uv = vec2(SCREEN_UV.x , SCREEN_UV.y - UV.y);
+	vec4 color = texture(screen_texture, uv);
+	float mix_value = 1.0 - UV.y;
+	COLOR = mix(water_color, color, mix_value);
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the CanvasItem.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_166nt"]
-shader = ExtResource("1_xih3c")
+shader = SubResource("Shader_misho")
 shader_parameter/water_color = Color(0.639216, 1, 1, 0.972549)
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0ocxf"]

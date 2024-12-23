@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=18 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="PackedScene" uid="uid://bltffp755yv3d" path="res://scenes/entities/small-boat/small_boat.tscn" id="1_1epgp"]
 [ext_resource type="Texture2D" uid="uid://dvi26csiylnjn" path="res://assets/game/misc/water.png" id="2_pyqar"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scenes/entities/small-boat/small_boat.gd" id="6_4u45a"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
+[ext_resource type="Shader" path="res://shaders/water_body.gdshader" id="10_r28h0"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e2xa0"]
 shader = ExtResource("2_wa3mk")
@@ -41,6 +42,21 @@ shader = ExtResource("5_a1aak")
 shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
 shader_parameter/CloudColor = Color(0.611765, 0.854902, 1, 1)
 shader_parameter/speed = 0.5
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_okrxa"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_606bj"]
+noise = SubResource("FastNoiseLite_okrxa")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_koshn"]
+shader = ExtResource("10_r28h0")
+shader_parameter/refraction_stretch = Vector2(1, 1)
+shader_parameter/refraction_strength = 0.018
+shader_parameter/speed = 0.1
+shader_parameter/texture_strength = 0.5
+shader_parameter/water_tint = Color(0, 0.433333, 1, 0.796078)
+shader_parameter/refraction_map = SubResource("NoiseTexture2D_606bj")
+shader_parameter/ocean_texture = ExtResource("2_pyqar")
 
 [node name="Game" type="Node2D"]
 
@@ -83,5 +99,11 @@ team = 2
 [node name="BulletManager" type="Node2D" parent="."]
 z_index = 240
 script = ExtResource("9_ucfpf")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_koshn")
+position = Vector2(-133, 198)
+polygon = PackedVector2Array(133, -5, 773, -5, 773, 162, 132, 161)
 
 [connection signal="item_rect_changed" from="Sprite2D" to="Sprite2D" method="_on_item_rect_changed"]

@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://d0sn8sb5ccbob"]
+[gd_scene load_steps=10 format=3 uid="uid://d0sn8sb5ccbob"]
 
 [ext_resource type="Script" path="res://scenes/game/scripts/water_body.gd" id="1_65c85"]
-[ext_resource type="Shader" path="res://scenes/game/misc/water_body.gdshader" id="2_72om8"]
+[ext_resource type="Shader" path="res://shaders/water_body.gdshader" id="2_72om8"]
 [ext_resource type="Script" path="res://scenes/game/scripts/smooth_path_modified.gd" id="2_mlcjd"]
+[ext_resource type="Texture2D" uid="uid://dvi26csiylnjn" path="res://assets/game/misc/water.png" id="3_f1gcy"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_okrxa"]
 
@@ -13,9 +14,11 @@ noise = SubResource("FastNoiseLite_okrxa")
 shader = ExtResource("2_72om8")
 shader_parameter/refraction_stretch = Vector2(1, 1)
 shader_parameter/refraction_strength = 0.018
-shader_parameter/water_tint = Color(0, 0.433333, 1, 0.796078)
 shader_parameter/speed = 0.1
+shader_parameter/texture_strength = 0.583
+shader_parameter/water_tint = Color(0, 0.433333, 1, 0.796078)
 shader_parameter/refraction_map = SubResource("NoiseTexture2D_606bj")
+shader_parameter/ocean_texture = ExtResource("3_f1gcy")
 
 [sub_resource type="Curve2D" id="Curve2D_efxux"]
 
@@ -24,6 +27,14 @@ size = Vector2(910, 163.5)
 
 [node name="Water_Body" type="Node2D"]
 script = ExtResource("1_65c85")
+k = null
+d = null
+spread = null
+distance_between_springs = null
+spring_number = null
+depth = null
+border_thickness = null
+random_waves = null
 
 [node name="Water_Polygon" type="Polygon2D" parent="."]
 material = SubResource("ShaderMaterial_vssnq")
@@ -45,3 +56,9 @@ gravity_direction = Vector2(0, -0.12)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
 position = Vector2(455, 77)
 shape = SubResource("RectangleShape2D_k0xq6")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
