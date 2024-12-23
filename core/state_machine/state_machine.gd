@@ -7,12 +7,11 @@ var current_state: State
 
 var states : Dictionary = {}
 
-func init(parent: Ship, component_machine : ComponentMachine) -> void:
+func init(parent: Ship) -> void:
 	for child in get_children():
 		if child is State:
 			states[child.name.to_lower()] = child
 			child.parent = parent
-			child.component_machine = component_machine
 			child.Transitioned.connect(change_state)
 	
 	if starting_state:

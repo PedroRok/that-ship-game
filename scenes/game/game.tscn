@@ -1,35 +1,11 @@
-[gd_scene load_steps=17 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=9 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="PackedScene" uid="uid://bltffp755yv3d" path="res://scenes/entities/small-boat/small_boat.tscn" id="1_1epgp"]
-[ext_resource type="Texture2D" uid="uid://dvi26csiylnjn" path="res://assets/game/misc/water.png" id="2_pyqar"]
-[ext_resource type="Shader" path="res://shaders/water.gdshader" id="2_wa3mk"]
 [ext_resource type="Texture2D" uid="uid://bqwaas7p3to0f" path="res://icon.svg" id="2_x27pu"]
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
 [ext_resource type="Shader" path="res://shaders/outline.gdshader" id="5_j8uw8"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
-[ext_resource type="Shader" path="res://shaders/water_body.gdshader" id="10_r28h0"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_e2xa0"]
-shader = ExtResource("2_wa3mk")
-shader_parameter/wave_color = Color(0, 0.449667, 0.71, 1)
-shader_parameter/edge_color = Color(0.305882, 0.513726, 1, 1)
-shader_parameter/wave_opacity = 0.8
-shader_parameter/edge_width = 0.01
-shader_parameter/texture_blend = 0.5
-shader_parameter/speed = 0.177
-
-[sub_resource type="GDScript" id="GDScript_77jxu"]
-script/source = "extends Sprite2D
-
-func _process(delta):
-	#get_material().set_shader_param(\"zoom\", get_viewport_transform().y.y)
-	pass;
-
-func _on_item_rect_changed() -> void:
-	#get_material().set_shader_param(\"scale\", scale)
-	pass
-"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kgxk3"]
 shader = ExtResource("5_j8uw8")
@@ -42,70 +18,44 @@ shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
 shader_parameter/CloudColor = Color(0.611765, 0.854902, 1, 1)
 shader_parameter/speed = 0.5
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_okrxa"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_606bj"]
-noise = SubResource("FastNoiseLite_okrxa")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_koshn"]
-shader = ExtResource("10_r28h0")
-shader_parameter/refraction_stretch = Vector2(1, 1)
-shader_parameter/refraction_strength = 0.018
-shader_parameter/speed = 0.1
-shader_parameter/texture_strength = 0.5
-shader_parameter/water_tint = Color(0, 0.433333, 1, 0.796078)
-shader_parameter/refraction_map = SubResource("NoiseTexture2D_606bj")
-shader_parameter/ocean_texture = ExtResource("2_pyqar")
-
 [node name="Game" type="Node2D"]
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-visible = false
-z_index = 5
-material = SubResource("ShaderMaterial_e2xa0")
-position = Vector2(319.938, 179.941)
-scale = Vector2(1.04596, 0.588044)
-texture = ExtResource("2_pyqar")
-script = SubResource("GDScript_77jxu")
 
 [node name="SmallBoat" parent="." instance=ExtResource("1_1epgp")]
 material = SubResource("ShaderMaterial_kgxk3")
 position = Vector2(93, 199)
-life = 3
 
-[node name="Sprite2D2" type="Sprite2D" parent="."]
+[node name="SmallBoat3" parent="." instance=ExtResource("1_1epgp")]
+material = SubResource("ShaderMaterial_kgxk3")
+position = Vector2(37, 148)
+
+[node name="SmallBoat2" parent="." instance=ExtResource("1_1epgp")]
+position = Vector2(540, 193)
+direction = -1
+team = 1
+
+[node name="SmallBoat4" parent="." instance=ExtResource("1_1epgp")]
+position = Vector2(572, 131)
+direction = -1
+team = 1
+
+[node name="Environment" type="Node" parent="."]
+
+[node name="Background" type="Sprite2D" parent="Environment"]
 z_index = -1800
 material = SubResource("ShaderMaterial_o45il")
 position = Vector2(320, 180)
 scale = Vector2(5, 2.8125)
 texture = ExtResource("2_x27pu")
 
-[node name="Water_Body" parent="." instance=ExtResource("8_fy1hl")]
+[node name="Water_Body" parent="Environment" instance=ExtResource("8_fy1hl")]
 z_index = 780
 position = Vector2(-133, 198)
 k = 0.01
-d = 0.03
 spread = 0.05
 distance_between_springs = 15
 spring_number = 100
 depth = 100
-border_thickness = 1
-random_waves = true
 
-[node name="SmallBoat2" parent="." instance=ExtResource("1_1epgp")]
-position = Vector2(540, 193)
-direction = -1
-team = 1
-life = 3
-
-[node name="BulletManager" type="Node2D" parent="."]
+[node name="BulletManager" type="Node2D" parent="Environment"]
 z_index = 240
 script = ExtResource("9_ucfpf")
-
-[node name="Polygon2D" type="Polygon2D" parent="."]
-visible = false
-material = SubResource("ShaderMaterial_koshn")
-position = Vector2(-133, 198)
-polygon = PackedVector2Array(133, -5, 773, -5, 773, 162, 132, 161)
-
-[connection signal="item_rect_changed" from="Sprite2D" to="Sprite2D" method="_on_item_rect_changed"]

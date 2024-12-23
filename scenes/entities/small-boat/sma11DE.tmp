@@ -153,7 +153,6 @@ size = Vector2(30, 16)
 
 [node name="SmallBoat" type="RigidBody2D"]
 position = Vector2(1, 0)
-collision_mask = 0
 gravity_scale = 0.1
 inertia = 96.02
 linear_damp = 3.23
@@ -194,12 +193,12 @@ script = ExtResource("6_gx2nh")
 movable_component = NodePath("../../MovableComponent")
 health_component = NodePath("../../HealthComponent")
 radar_component = NodePath("../../RadarComponent")
-time_to_shot = 50
 
 [node name="Death" type="Node" parent="StateMachine"]
 script = ExtResource("7_wge8k")
 
 [node name="Gun" parent="." instance=ExtResource("8_50in8")]
+z_index = 4096
 position = Vector2(10, -6)
 
 [node name="FireParticle" type="GPUParticles2D" parent="."]
@@ -220,7 +219,7 @@ visibility_rect = Rect2(-15, -15, 30, 20)
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "ship") instance=ExtResource("10_4psbx")]
 collision_layer = 2
-collision_mask = 0
+collision_mask = 2
 health_component = NodePath("../HealthComponent")
 ship = NodePath("..")
 
@@ -229,9 +228,7 @@ position = Vector2(1, -6)
 shape = SubResource("RectangleShape2D_eh53h")
 debug_color = Color(0.976049, 0, 0.414808, 0.42)
 
-[node name="HealthComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("11_wha31")]
-default_health = 10.0
-ship = NodePath("..")
+[node name="HealthComponent" parent="." instance=ExtResource("11_wha31")]
 
 [node name="RadarComponent" parent="." instance=ExtResource("12_162fy")]
 target_position = Vector2(0, -10)

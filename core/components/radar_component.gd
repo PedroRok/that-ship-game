@@ -1,6 +1,5 @@
-class_name Radar
+class_name RadarComponent
 extends RayCast2D
-
 
 func check_radar(team_id: int, direction: int) -> bool:
 	if (direction > 0):
@@ -9,8 +8,8 @@ func check_radar(team_id: int, direction: int) -> bool:
 		target_position.x = -100
 	
 	var collider = get_collider()
-	if (collider and collider is Ship):
-		var boat = collider as Ship
+	if (collider and collider is HitboxComponent):
+		var boat = collider.ship as Ship
 		if (boat.team != team_id):
 			return true
 	return false

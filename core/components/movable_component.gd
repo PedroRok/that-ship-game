@@ -1,4 +1,4 @@
-class_name Movable
+class_name MovableComponent
 extends Node
 
 @export

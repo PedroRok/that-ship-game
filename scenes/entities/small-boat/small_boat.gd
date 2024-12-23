@@ -16,9 +16,6 @@ var hit_particle = $HitParticle as GPUParticles2D
 var state_machine: Node = $StateMachine
 
 @onready
-var component_machine: Node = $ComponentMachine as ComponentMachine
-
-@onready
 var gun: Gun = $Gun
 
 func _ready() -> void:
@@ -36,7 +33,7 @@ func _ready() -> void:
 	
 	gun.team = team
 		
-	state_machine.init(self, component_machine)
+	state_machine.init(self)
 	prints("started", team)
 	
 func _unhandled_input(event: InputEvent) -> void:
@@ -50,27 +47,6 @@ func _process(delta: float) -> void:
 
 func get_gun() -> Gun:
 	return gun
-	
-func handle_hit():
-	var health = component_machine.get_health() as Health
-	health.handle_hit()
-	handle_hit_visual(health)
-	linear_velocity.x += -direction * 20
-	rotation = rotation-(direction/10.)
-	
-func handle_hit_visual(health : Health):
-	var health_val = health.actual_health / health.default_health
-	var shader_val = lerp(0.7, 1.0, health_val)
-	sprite.material.set_shader_parameter("dissolve", shader_val )
-	
-	var amout_ratio_val = lerp(1,0, health_val)
-	fire_particle.amount_ratio = amout_ratio_val
-	
-	var tween = get_tree().create_tween()
-	tween.tween_method(handle_particles_hit, 1.0, 0.0, .2)
-
-func handle_particles_hit(newVal : float):
-	hit_particle.amount_ratio = newVal;
 
 ## Velocidade de movimento do personagem
 #@export var speed: float = 200.0

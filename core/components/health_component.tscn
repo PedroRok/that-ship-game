@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://bw5d2h55ply2w"]
+
+[ext_resource type="Script" path="res://core/components/health_component.gd" id="1_it3i7"]
+
+[node name="HealthComponent" type="RichTextLabel"]
+z_index = 1655
+offset_left = -8.0
+offset_right = 32.0
+offset_bottom = 40.0
+script = ExtResource("1_it3i7")
+default_health = 3.0
