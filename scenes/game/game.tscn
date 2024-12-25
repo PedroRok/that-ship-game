@@ -53,8 +53,8 @@ team = 1
 [node name="Background" type="Sprite2D" parent="Environment"]
 z_index = -1800
 material = SubResource("ShaderMaterial_o45il")
-position = Vector2(326, 357)
-scale = Vector2(5.09375, 2.86523)
+position = Vector2(641, 360)
+scale = Vector2(10.0156, 5.63378)
 texture = ExtResource("2_x27pu")
 
 [node name="Water_Body" parent="Environment" instance=ExtResource("8_fy1hl")]

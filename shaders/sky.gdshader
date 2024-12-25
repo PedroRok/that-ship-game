@@ -56,7 +56,7 @@ vec2 tile(vec2 _st, float _zoom){
 
 void fragment() {
 	//vec2 uv = 8.0 * (SCREEN_UV - UV * 2.0);
-	vec2 uv = 3.0 * (SCREEN_UV - UV * 2.0);
+	vec2 uv = 8.0 * (0.2-UV);
 	
 	uv = vec2(
         float(int(uv.x * 80.0)) / 80.0,
