@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=12 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="PackedScene" uid="uid://bltffp755yv3d" path="res://scenes/entities/small-boat/small_boat.tscn" id="1_1epgp"]
 [ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
 [ext_resource type="Texture2D" uid="uid://bqwaas7p3to0f" path="res://icon.svg" id="2_x27pu"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="4_e32jj"]
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
 [ext_resource type="Shader" path="res://shaders/outline.gdshader" id="5_j8uw8"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
@@ -13,6 +14,12 @@ shader = ExtResource("5_j8uw8")
 shader_parameter/enable = true
 shader_parameter/outline_color = Color(1, 1, 1, 1)
 
+[sub_resource type="Resource" id="Resource_50h06"]
+resource_local_to_scene = true
+script = ExtResource("4_e32jj")
+health = 10.0
+speed = 400.0
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o45il"]
 shader = ExtResource("5_a1aak")
 shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
@@ -22,8 +29,9 @@ shader_parameter/speed = 0.5
 [node name="Game" type="Node2D"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(641, 360)
+position = Vector2(433, 360)
 ignore_rotation = false
+zoom = Vector2(1.5, 1.5)
 limit_left = 0
 limit_top = 0
 position_smoothing_enabled = true
@@ -33,6 +41,7 @@ script = ExtResource("1_kwyac")
 [node name="SmallBoat" parent="." instance=ExtResource("1_1epgp")]
 material = SubResource("ShaderMaterial_kgxk3")
 position = Vector2(148, 362)
+boat_stats = SubResource("Resource_50h06")
 
 [node name="SmallBoat3" parent="." instance=ExtResource("1_1epgp")]
 material = SubResource("ShaderMaterial_kgxk3")
@@ -52,6 +61,7 @@ team = 1
 
 [node name="Background" type="Sprite2D" parent="Environment"]
 z_index = -1800
+texture_filter = 1
 material = SubResource("ShaderMaterial_o45il")
 position = Vector2(641, 360)
 scale = Vector2(10.0156, 5.63378)

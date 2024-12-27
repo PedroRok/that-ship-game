@@ -151,7 +151,7 @@ alpha_curve = SubResource("CurveTexture_bdt0b")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eh53h"]
 size = Vector2(30, 16)
 
-[node name="SmallBoat" type="RigidBody2D"]
+[node name="SmallBoat" type="RigidBody2D" groups=["scene_manager_entity_nodes"]]
 position = Vector2(1, 0)
 collision_mask = 0
 gravity_scale = 0.1
@@ -170,6 +170,7 @@ trail_lifetime = 0.15
 trail_section_subdivisions = 1
 
 [node name="SmallBoat" type="Sprite2D" parent="."]
+texture_filter = 1
 material = SubResource("ShaderMaterial_gboy0")
 position = Vector2(1, -6)
 texture = ExtResource("2_kkpx1")
@@ -224,7 +225,7 @@ collision_mask = 0
 health_component = NodePath("../HealthComponent")
 ship = NodePath("..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HitboxComponent"]
+[node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
 position = Vector2(1, -6)
 shape = SubResource("RectangleShape2D_eh53h")
 debug_color = Color(0.976049, 0, 0.414808, 0.42)

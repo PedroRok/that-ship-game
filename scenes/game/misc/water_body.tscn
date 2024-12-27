@@ -35,6 +35,7 @@ color = Color(0.301961, 0.972549, 1, 0.913725)
 [node name="Water_Border" type="Path2D" parent="."]
 modulate = Color(1, 1, 1, 0.752941)
 self_modulate = Color(1, 1, 1, 0.788235)
+texture_filter = 1
 curve = SubResource("Curve2D_efxux")
 script = ExtResource("2_mlcjd")
 

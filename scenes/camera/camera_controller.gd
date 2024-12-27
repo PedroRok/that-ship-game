@@ -11,12 +11,15 @@ var max_zoom : float = 2.0
 
 var actual_h_pos : float = 0
 
+func _ready() -> void:
+	actual_zoom = zoom.x
+
 func _process(delta: float):
 	if (actual_zoom != zoom.x):
 		actual_zoom = clamp(actual_zoom, min_zoom, max_zoom)
 		zoom = lerp(zoom, Vector2(actual_zoom, actual_zoom), .2)
 	if (actual_h_pos != offset.x):
-		actual_h_pos = clamp(actual_h_pos, -(320 * (actual_zoom - 1)), 9999999999)
+		actual_h_pos = clamp(actual_h_pos, 0, 9999999999)
 		offset.x = lerp(offset.x, actual_h_pos, .2)
 
 
