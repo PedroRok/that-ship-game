@@ -12,8 +12,8 @@ signal death_event
 
 func _ready() -> void:
 	if ship:
-		default_health = ship.life
-		actual_health = ship.life
+		default_health = ship.boat_stats.health
+		actual_health = ship.boat_stats.health
 	else:
 		actual_health = default_health
 	

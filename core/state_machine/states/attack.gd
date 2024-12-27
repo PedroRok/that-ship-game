@@ -1,9 +1,6 @@
 extends State
 
 @export
-var movable_component : MovableComponent
-
-@export
 var health_component : HealthComponent
 
 @export
@@ -28,7 +25,7 @@ func process_physics(delta: float) -> void:
 		Transitioned.emit(self, 'death')
 		return
 	
-	if (!radar_component.check_radar(parent.team, movable_component.get_movement_direction())):
+	if (!radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)):
 		Transitioned.emit(self, 'move')
 		return
 	
@@ -37,6 +34,6 @@ func process_physics(delta: float) -> void:
 	
 	if (actual_time_to_shoot == 0):
 		actual_time_to_shoot = time_to_shot
-		parent.get_gun().shoot_gun(Vector2(movable_component.get_movement_direction(), 0))
+		parent.get_gun().shoot_gun(Vector2(parent.team_stats.direction, 0))
 	
 	return

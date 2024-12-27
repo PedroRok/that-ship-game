@@ -10,7 +10,7 @@ func check_radar(team_id: int, direction: int) -> bool:
 	var collider = get_collider()
 	if (collider and collider is HitboxComponent):
 		var boat = collider.ship as Ship
-		if (boat.team != team_id):
+		if (boat.team_stats.team_id != team_id):
 			return true
 	return false
 	

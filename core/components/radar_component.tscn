@@ -3,4 +3,5 @@
 [ext_resource type="Script" path="res://core/components/radar_component.gd" id="1_pr4jj"]
 
 [node name="RadarComponent" type="RayCast2D"]
+target_position = Vector2(0, -10)
 script = ExtResource("1_pr4jj")

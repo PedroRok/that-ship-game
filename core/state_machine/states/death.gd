@@ -15,6 +15,6 @@ func process_input(event: InputEvent) -> void:
 func process_physics(delta: float) -> void:
 	#super(delta)
 	
-	parent.rotation = lerp(parent.rotation, parent.rotation * death_rotation_speed, deceleration * delta)
+	parent.rotation = lerp(parent.rotation, parent.rotation * death_rotation_speed, parent.boat_stats.deceleration * delta)
 	#prints(parent.gravity_scale)
 	return

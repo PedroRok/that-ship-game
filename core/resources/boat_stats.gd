@@ -2,8 +2,10 @@ class_name BoatStats
 extends Resource
 
 @export
-var health: float
+var health: float = 10
 @export
-var speed: float
+var speed: float = 400
 @export
-var texture: Texture2D
+var deceleration: float = 0.5
+@export
+var max_tilt_angle: float = 0.2

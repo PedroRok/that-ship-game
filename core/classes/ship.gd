@@ -2,13 +2,10 @@ class_name Ship
 extends RigidBody2D
 
 @export
-var direction : int = 1
+var team_stats : TeamStats
 
 @export
-var team : int = 0
-
-@export
-var life : int = 10
+var boat_stats : BoatStats
 
 func get_gun() -> Gun:
 	return null

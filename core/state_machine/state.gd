@@ -1,14 +1,6 @@
 class_name State
 extends Node
 
-@export
-var move_speed: float = 400
-@export 
-var deceleration: float = 1.0
-# Ângulo máximo de inclinação em radianos (ex.: 0.2 rad = ~11.5 graus)
-@export 
-var max_tilt_angle: float = 0.2
-
 var parent : Ship
 
 signal Transitioned
@@ -25,9 +17,11 @@ func process_input(event: InputEvent) -> void:
 func process_frame(delta: float) -> void:
 	return
 	
+var current_speed = 0.0
+	
 func process_physics(delta: float) -> void:
-	parent.rotation = lerp(parent.rotation, -parent.linear_velocity.x / move_speed * max_tilt_angle, deceleration * delta)
+	parent.rotation = lerp(parent.rotation, -parent.linear_velocity.x / parent.boat_stats.speed * parent.boat_stats.max_tilt_angle, parent.boat_stats.deceleration * delta)
 	if (parent.linear_velocity.x == 0.):
-		parent.rotation = lerp(parent.rotation, 0., deceleration * delta)
-	parent.linear_velocity.x = lerp(parent.linear_velocity.x, 0., deceleration * delta)
+		parent.rotation = lerp(parent.rotation, 0., parent.boat_stats.deceleration * delta)
+	parent.linear_velocity.x = lerp(parent.linear_velocity.x, 0., parent.boat_stats.deceleration * delta)
 	return

@@ -27,7 +27,7 @@ func set_direction(direction: Vector2):
 func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
 	if (area is HitboxComponent):
 		var ship = area.ship as Ship
-		if (ship.team != team):
+		if (ship.team_stats.team_id != team):
 			area.handle_hit()
 			queue_free()
 	pass # Replace with function body.

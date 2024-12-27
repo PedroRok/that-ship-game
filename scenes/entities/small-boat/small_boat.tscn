@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bltffp755yv3d"]
+[gd_scene load_steps=19 format=3 uid="uid://bltffp755yv3d"]
 
 [ext_resource type="Script" path="res://scenes/entities/small-boat/small_boat.gd" id="1_jwort"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_8y037"]
@@ -10,46 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://hwtj0e2rrjy8" path="res://scenes/entities/guns/gun.tscn" id="8_50in8"]
 [ext_resource type="PackedScene" uid="uid://dkruatpb84415" path="res://core/components/hitbox_component.tscn" id="10_4psbx"]
 [ext_resource type="PackedScene" uid="uid://bw5d2h55ply2w" path="res://core/components/health_component.tscn" id="11_wha31"]
-[ext_resource type="PackedScene" uid="uid://c77fc6iva7kq0" path="res://core/components/movable_component.tscn" id="12_8ua70"]
 [ext_resource type="PackedScene" uid="uid://chtsijarpkyuk" path="res://core/components/radar_component.tscn" id="12_162fy"]
-
-[sub_resource type="Shader" id="Shader_misho"]
-code = "shader_type canvas_item;
-
-uniform sampler2D screen_texture : hint_screen_texture;
-uniform vec4 water_color : source_color;
-uniform sampler2D wave_noise : repeat_enable;
-
-void fragment() {
-	// Called for every pixel the material is visible on.
-	vec2 uv = vec2(SCREEN_UV.x , SCREEN_UV.y - UV.y);
-	vec4 color = texture(screen_texture, uv);
-	float mix_value = 1.0 - UV.y;
-	COLOR = mix(water_color, color, mix_value);
-}
-
-//void light() {
-	// Called for every pixel for every light affecting the CanvasItem.
-	// Uncomment to replace the default light processing function with this one.
-//}
-"
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_166nt"]
-shader = SubResource("Shader_misho")
-shader_parameter/water_color = Color(0.639216, 1, 1, 0.972549)
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_0ocxf"]
-resource_local_to_scene = true
-particle_flag_disable_z = true
-emission_shape = 1
-emission_sphere_radius = 3.36
-direction = Vector3(0, 0, 0)
-angular_velocity_min = -6.88002
-angular_velocity_max = 701.91
-gravity = Vector3(-90, -10, 0)
-turbulence_enabled = true
-turbulence_noise_strength = 0.55
-turbulence_noise_scale = 12.82
+[ext_resource type="PackedScene" uid="uid://hcvj4c35uk0o" path="res://core/components/particles_component.tscn" id="12_j7a3f"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_gx1ce"]
 noise_type = 5
@@ -83,91 +45,19 @@ shader_parameter/Noise = SubResource("NoiseTexture2D_1el6o")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1ve70"]
 size = Vector2(30, 9)
 
-[sub_resource type="Curve" id="Curve_if4wj"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_n86hr"]
-curve = SubResource("Curve_if4wj")
-
-[sub_resource type="Gradient" id="Gradient_wga8f"]
-offsets = PackedFloat32Array(0.0735294, 0.382353, 0.764706, 1)
-colors = PackedColorArray(0.8, 0.574533, 0.088, 1, 0.382353, 0.382353, 0.382353, 1, 0.75, 0.3825, 0.3825, 1, 0.84, 0.224, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_jocxk"]
-gradient = SubResource("Gradient_wga8f")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_pupe4"]
-resource_local_to_scene = true
-lifetime_randomness = 0.34
-particle_flag_disable_z = true
-emission_shape = 3
-emission_box_extents = Vector3(15, 1, 1)
-direction = Vector3(0, -1, 0)
-initial_velocity_min = 1.0
-initial_velocity_max = 30.0
-angular_velocity_min = -1.60933e-05
-angular_velocity_max = 720.0
-gravity = Vector3(0, 10, 0)
-scale_min = 0.1
-scale_max = 2.0
-scale_over_velocity_min = 204.55
-scale_over_velocity_max = 750.0
-color_initial_ramp = SubResource("GradientTexture1D_jocxk")
-alpha_curve = SubResource("CurveTexture_n86hr")
-
-[sub_resource type="Curve" id="Curve_0dift"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="CurveTexture" id="CurveTexture_bdt0b"]
-curve = SubResource("Curve_0dift")
-
-[sub_resource type="Gradient" id="Gradient_8uqtq"]
-offsets = PackedFloat32Array(0, 0.323529)
-colors = PackedColorArray(0.57, 0.22724, 0.1026, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_jxd3t"]
-gradient = SubResource("Gradient_8uqtq")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_yd1a0"]
-resource_local_to_scene = true
-lifetime_randomness = 1.0
-particle_flag_disable_z = true
-particle_flag_damping_as_friction = true
-emission_shape_scale = Vector3(11.02, 1, 1)
-emission_shape = 3
-emission_box_extents = Vector3(0.82, 1, 1)
-inherit_velocity_ratio = -2.235
-velocity_pivot = Vector3(0, 15.75, 0)
-direction = Vector3(0, -103.515, 0)
-spread = 55.162
-initial_velocity_max = 80.35
-gravity = Vector3(0, 90, 0)
-scale_max = 2.0
-color_ramp = SubResource("GradientTexture1D_jxd3t")
-alpha_curve = SubResource("CurveTexture_bdt0b")
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eh53h"]
 size = Vector2(30, 16)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngcti"]
+size = Vector2(27, 10.5)
+
 [node name="SmallBoat" type="RigidBody2D" groups=["scene_manager_entity_nodes"]]
 position = Vector2(1, 0)
-collision_mask = 0
+collision_mask = 128
 gravity_scale = 0.1
 inertia = 96.02
 linear_damp = 3.23
 script = ExtResource("1_jwort")
-
-[node name="GPUParticles" type="GPUParticles2D" parent="."]
-visible = false
-material = SubResource("ShaderMaterial_166nt")
-position = Vector2(-12, 0)
-amount = 10
-process_material = SubResource("ParticleProcessMaterial_0ocxf")
-trail_enabled = true
-trail_lifetime = 0.15
-trail_section_subdivisions = 1
 
 [node name="SmallBoat" type="Sprite2D" parent="."]
 texture_filter = 1
@@ -181,18 +71,17 @@ position = Vector2(2, -6.5)
 shape = SubResource("RectangleShape2D_1ve70")
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("starting_state") instance=ExtResource("4_xb18j")]
+visible = false
 starting_state = NodePath("Move")
 
-[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("movable_component", "health_component", "radar_component")]
+[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component", "particle_component")]
 script = ExtResource("5_ghkyi")
-movable_component = NodePath("../../MovableComponent")
 health_component = NodePath("../../HealthComponent")
 radar_component = NodePath("../../RadarComponent")
-deceleration = 0.5
+particle_component = NodePath("../../ParticlesComponent")
 
-[node name="Attack" type="Node" parent="StateMachine" node_paths=PackedStringArray("movable_component", "health_component", "radar_component")]
+[node name="Attack" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component")]
 script = ExtResource("6_gx2nh")
-movable_component = NodePath("../../MovableComponent")
 health_component = NodePath("../../HealthComponent")
 radar_component = NodePath("../../RadarComponent")
 time_to_shot = 50
@@ -203,26 +92,11 @@ script = ExtResource("7_wge8k")
 [node name="Gun" parent="." instance=ExtResource("8_50in8")]
 position = Vector2(10, -6)
 
-[node name="FireParticle" type="GPUParticles2D" parent="."]
-z_index = -630
-position = Vector2(0, -2)
-amount = 100
-amount_ratio = 0.0
-process_material = SubResource("ParticleProcessMaterial_pupe4")
-visibility_rect = Rect2(-15, -18, 30, 20)
-
-[node name="HitParticle" type="GPUParticles2D" parent="."]
-z_index = -500
-position = Vector2(0, -5)
-amount = 30
-amount_ratio = 0.0
-process_material = SubResource("ParticleProcessMaterial_yd1a0")
-visibility_rect = Rect2(-15, -15, 30, 20)
-
-[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "ship") instance=ExtResource("10_4psbx")]
+[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "ship") instance=ExtResource("10_4psbx")]
 collision_layer = 2
 collision_mask = 0
 health_component = NodePath("../HealthComponent")
+particle_component = NodePath("../ParticlesComponent")
 ship = NodePath("..")
 
 [node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
@@ -235,11 +109,13 @@ default_health = 10.0
 ship = NodePath("..")
 
 [node name="RadarComponent" parent="." instance=ExtResource("12_162fy")]
-target_position = Vector2(0, -10)
 collision_mask = 2
 collide_with_areas = true
 collide_with_bodies = false
 
-[node name="MovableComponent" parent="." instance=ExtResource("12_8ua70")]
+[node name="ParticlesComponent" parent="." instance=ExtResource("12_j7a3f")]
+position = Vector2(0.5, -5.75)
+shape = SubResource("RectangleShape2D_ngcti")
+debug_color = Color(0, 0.643738, 0.294445, 0.42)
 
 [connection signal="death_event" from="HealthComponent" to="HitboxComponent" method="_on_health_component_death_event"]

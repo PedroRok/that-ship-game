@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="TeamStats" load_steps=2 format=3 uid="uid://dd6pt4gviahlu"]
+
+[ext_resource type="Script" path="res://core/resources/team_stats.gd" id="1_2jh2m"]
+
+[resource]
+script = ExtResource("1_2jh2m")
+team_id = 2
+direction = -1
