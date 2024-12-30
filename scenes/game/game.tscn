@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=19 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="PackedScene" uid="uid://bltffp755yv3d" path="res://scenes/entities/small-boat/small_boat.tscn" id="1_1epgp"]
 [ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="1_ju5sh"]
@@ -14,6 +14,7 @@
 [ext_resource type="Resource" uid="uid://dd6pt4gviahlu" path="res://core/resources/teams/team_right.tres" id="6_oujkg"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
+[ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game_ui.tscn" id="15_hn43x"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]
 friction = 0.0
@@ -70,17 +71,6 @@ physics_material_override = SubResource("PhysicsMaterial_kqiig")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Base/StaticBody2D"]
 polygon = PackedVector2Array(-3, 160, 132, 229, 136, 329, 55, 329, 55, 390, 134, 390, 134, 460, 270, 529, 270, 727, -5, 720)
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(433, 360)
-ignore_rotation = false
-zoom = Vector2(1.5, 1.5)
-limit_left = 0
-limit_top = 0
-position_smoothing_enabled = true
-drag_horizontal_enabled = true
-script = ExtResource("1_kwyac")
-max_zoom = 3.0
-
 [node name="SmallBoat" parent="." instance=ExtResource("1_1epgp")]
 position = Vector2(148, 362)
 team_stats = ExtResource("3_1hdv3")
@@ -124,3 +114,18 @@ depth = 100
 [node name="BulletManager" type="Node2D" parent="Environment"]
 z_index = 240
 script = ExtResource("9_ucfpf")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(433, 360)
+ignore_rotation = false
+zoom = Vector2(1.5, 1.5)
+limit_left = 0
+limit_top = 0
+position_smoothing_enabled = true
+drag_horizontal_enabled = true
+script = ExtResource("1_kwyac")
+max_zoom = 3.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GameUI" parent="CanvasLayer" instance=ExtResource("15_hn43x")]
