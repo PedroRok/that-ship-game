@@ -3,6 +3,7 @@ extends RichTextLabel
 
 @export
 var default_health : float = 10
+
 @export
 var ship : Ship
 

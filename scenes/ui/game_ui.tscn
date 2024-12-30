@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=15 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="2_uwfpj"]
+[ext_resource type="Script" path="res://scenes/ui/ship_button.gd" id="4_iqj8x"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fquhi"]
 
@@ -11,47 +12,35 @@ atlas = ExtResource("1_vmi2c")
 region = Rect2(149, 4, 33, 20)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jlbv7"]
-content_margin_top = 0.0
-content_margin_bottom = 10.0
+content_margin_top = 3.0
+content_margin_bottom = 7.0
 texture = SubResource("AtlasTexture_vws41")
 texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 6.0
-expand_margin_left = 3.0
-expand_margin_top = 10.0
-expand_margin_right = 3.0
-expand_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t0qnc"]
-content_margin_top = 0.0
-content_margin_bottom = 10.0
+content_margin_top = 3.0
+content_margin_bottom = 7.0
 texture = SubResource("AtlasTexture_vws41")
 texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 6.0
-expand_margin_left = 3.0
-expand_margin_top = 10.0
-expand_margin_right = 3.0
-expand_margin_bottom = 2.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8qppg"]
 atlas = ExtResource("1_vmi2c")
-region = Rect2(192, 6, 33, 18)
+region = Rect2(192, 4, 33, 20)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rhewh"]
-content_margin_top = 3.0
-content_margin_bottom = 7.0
+content_margin_top = 5.0
+content_margin_bottom = 5.0
 texture = SubResource("AtlasTexture_8qppg")
 texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 6.0
-expand_margin_left = 3.0
-expand_margin_top = 6.0
-expand_margin_right = 3.0
-expand_margin_bottom = 2.0
 
 [sub_resource type="Theme" id="Theme_froqm"]
 Button/styles/focus = SubResource("StyleBoxEmpty_fquhi")
@@ -61,12 +50,15 @@ Button/styles/pressed = SubResource("StyleBoxTexture_rhewh")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p7nb3"]
 atlas = ExtResource("1_vmi2c")
-region = Rect2(50, 9, 37, 22)
+region = Rect2(50, 6, 37, 25)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2cn2u"]
+content_margin_left = 2.0
+content_margin_top = 0.0
+content_margin_right = 2.0
+content_margin_bottom = 7.0
 texture = SubResource("AtlasTexture_p7nb3")
 texture_margin_left = 5.0
-texture_margin_top = 2.0
 texture_margin_right = 5.0
 texture_margin_bottom = 9.0
 
@@ -87,14 +79,21 @@ grow_vertical = 2
 theme = SubResource("Theme_froqm")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 2
-offset_top = 658.0
-offset_right = 1280.0
-offset_bottom = 720.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -96.0
+offset_top = -81.0
+offset_right = -32.0
+offset_bottom = -54.0
 grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/margin_left = 300
-theme_override_constants/margin_right = 300
+grow_vertical = 0
+scale = Vector2(3, 3)
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
@@ -107,15 +106,18 @@ theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
 
 [node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/PanelContainer2"]
 layout_mode = 2
-theme_override_constants/margin_left = 50
-theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 50
-theme_override_constants/margin_bottom = 25
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
 
 [node name="Button" type="Button" parent="MarginContainer/HBoxContainer/PanelContainer2"]
 material = SubResource("ShaderMaterial_a8d44")
 layout_mode = 2
 action_mode = 0
-icon = ExtResource("1_y3jf6")
 icon_alignment = 1
 expand_icon = true
+script = ExtResource("4_iqj8x")
+ship_sprite = ExtResource("1_y3jf6")
+
+[connection signal="button_down" from="MarginContainer/HBoxContainer/PanelContainer2/Button" to="MarginContainer/HBoxContainer/PanelContainer2/Button" method="_on_button_down"]

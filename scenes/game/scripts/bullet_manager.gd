@@ -1,7 +1,7 @@
 extends Node
 
 func _ready() -> void:
-	Global.connect("fired_bullet", Callable(self, "handle_bullet_spawned"))
+	EventBus.connect("fired_bullet", Callable(self, "handle_bullet_spawned"))
 	pass
 	
 func handle_bullet_spawned(bullet : Bullet , position : Vector2, direction : Vector2):

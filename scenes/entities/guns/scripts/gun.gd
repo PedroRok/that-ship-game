@@ -13,4 +13,4 @@ var end_barrel = $EndBarrel
 func shoot_gun(direction: Vector2):
 	var bullet_instance = bullet.instantiate()
 	bullet_instance.team = team
-	Global.bullet_fired(bullet_instance, end_barrel.global_position, direction)
+	EventBus.bullet_fired(bullet_instance, end_barrel.global_position, direction)

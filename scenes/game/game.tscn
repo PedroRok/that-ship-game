@@ -1,28 +1,22 @@
-[gd_scene load_steps=19 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=17 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="PackedScene" uid="uid://bltffp755yv3d" path="res://scenes/entities/small-boat/small_boat.tscn" id="1_1epgp"]
 [ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="1_ju5sh"]
 [ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
 [ext_resource type="Texture2D" uid="uid://mevg2g8xtg8a" path="res://assets/game/base/dock-1.png" id="2_arq5v"]
 [ext_resource type="Texture2D" uid="uid://bqwaas7p3to0f" path="res://icon.svg" id="2_x27pu"]
-[ext_resource type="Resource" uid="uid://wf037tnljxu2" path="res://core/resources/teams/team_left.tres" id="3_1hdv3"]
 [ext_resource type="Texture2D" uid="uid://cp5ce3dvryyd6" path="res://assets/game/base/dock-overlay-1.png" id="3_x58f3"]
 [ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="4_agpk8"]
 [ext_resource type="Texture2D" uid="uid://bbm0w030f1nf2" path="res://assets/game/base/dock_shadow.png" id="4_xxt83"]
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
-[ext_resource type="Shader" path="res://shaders/outline.gdshader" id="5_j8uw8"]
 [ext_resource type="Resource" uid="uid://dd6pt4gviahlu" path="res://core/resources/teams/team_right.tres" id="6_oujkg"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
+[ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
 [ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game_ui.tscn" id="15_hn43x"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]
 friction = 0.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_kgxk3"]
-shader = ExtResource("5_j8uw8")
-shader_parameter/enable = true
-shader_parameter/outline_color = Color(1, 1, 1, 1)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o45il"]
 shader = ExtResource("5_a1aak")
@@ -71,27 +65,6 @@ physics_material_override = SubResource("PhysicsMaterial_kqiig")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Base/StaticBody2D"]
 polygon = PackedVector2Array(-3, 160, 132, 229, 136, 329, 55, 329, 55, 390, 134, 390, 134, 460, 270, 529, 270, 727, -5, 720)
 
-[node name="SmallBoat" parent="." instance=ExtResource("1_1epgp")]
-position = Vector2(148, 362)
-team_stats = ExtResource("3_1hdv3")
-boat_stats = ExtResource("4_agpk8")
-
-[node name="SmallBoat3" parent="." instance=ExtResource("1_1epgp")]
-material = SubResource("ShaderMaterial_kgxk3")
-position = Vector2(91, 359)
-team_stats = ExtResource("3_1hdv3")
-boat_stats = ExtResource("4_agpk8")
-
-[node name="SmallBoat2" parent="." instance=ExtResource("1_1epgp")]
-position = Vector2(293, 356)
-team_stats = ExtResource("6_oujkg")
-boat_stats = ExtResource("4_agpk8")
-
-[node name="SmallBoat4" parent="." instance=ExtResource("1_1epgp")]
-position = Vector2(333, 355)
-team_stats = ExtResource("6_oujkg")
-boat_stats = ExtResource("4_agpk8")
-
 [node name="Environment" type="Node" parent="."]
 
 [node name="Background" type="Sprite2D" parent="Environment"]
@@ -111,8 +84,7 @@ distance_between_springs = 15
 spring_number = 100
 depth = 100
 
-[node name="BulletManager" type="Node2D" parent="Environment"]
-z_index = 240
+[node name="BulletManager" type="Node" parent="Environment"]
 script = ExtResource("9_ucfpf")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -129,3 +101,27 @@ max_zoom = 3.0
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="GameUI" parent="CanvasLayer" instance=ExtResource("15_hn43x")]
+
+[node name="ShipsManager" type="Node2D" parent="."]
+position = Vector2(102, 364)
+script = ExtResource("11_wfful")
+
+[node name="SmallBoat5" parent="ShipsManager" instance=ExtResource("1_1epgp")]
+position = Vector2(1037, -26)
+team_stats = ExtResource("6_oujkg")
+boat_stats = ExtResource("4_agpk8")
+
+[node name="SmallBoat3" parent="ShipsManager" instance=ExtResource("1_1epgp")]
+position = Vector2(997, -25)
+team_stats = ExtResource("6_oujkg")
+boat_stats = ExtResource("4_agpk8")
+
+[node name="SmallBoat4" parent="ShipsManager" instance=ExtResource("1_1epgp")]
+position = Vector2(1136, -19)
+team_stats = ExtResource("6_oujkg")
+boat_stats = ExtResource("4_agpk8")
+
+[node name="SmallBoat2" parent="ShipsManager" instance=ExtResource("1_1epgp")]
+position = Vector2(1096, -18)
+team_stats = ExtResource("6_oujkg")
+boat_stats = ExtResource("4_agpk8")
