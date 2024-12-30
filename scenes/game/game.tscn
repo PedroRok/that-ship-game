@@ -1,19 +1,17 @@
-[gd_scene load_steps=17 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=15 format=3 uid="uid://cld2wbv3iqt05"]
 
-[ext_resource type="PackedScene" uid="uid://bltffp755yv3d" path="res://scenes/entities/small-boat/small_boat.tscn" id="1_1epgp"]
 [ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="1_ju5sh"]
 [ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
 [ext_resource type="Texture2D" uid="uid://mevg2g8xtg8a" path="res://assets/game/base/dock-1.png" id="2_arq5v"]
 [ext_resource type="Texture2D" uid="uid://bqwaas7p3to0f" path="res://icon.svg" id="2_x27pu"]
 [ext_resource type="Texture2D" uid="uid://cp5ce3dvryyd6" path="res://assets/game/base/dock-overlay-1.png" id="3_x58f3"]
-[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="4_agpk8"]
 [ext_resource type="Texture2D" uid="uid://bbm0w030f1nf2" path="res://assets/game/base/dock_shadow.png" id="4_xxt83"]
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
-[ext_resource type="Resource" uid="uid://dd6pt4gviahlu" path="res://core/resources/teams/team_right.tres" id="6_oujkg"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
 [ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
 [ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game_ui.tscn" id="15_hn43x"]
+[ext_resource type="Script" path="res://scenes/game/temp_spawner.gd" id="15_rgq2s"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]
 friction = 0.0
@@ -106,22 +104,12 @@ max_zoom = 3.0
 position = Vector2(102, 364)
 script = ExtResource("11_wfful")
 
-[node name="SmallBoat5" parent="ShipsManager" instance=ExtResource("1_1epgp")]
-position = Vector2(1037, -26)
-team_stats = ExtResource("6_oujkg")
-boat_stats = ExtResource("4_agpk8")
+[node name="TempSpawner" type="Node2D" parent="."]
+position = Vector2(1219, 355)
+script = ExtResource("15_rgq2s")
 
-[node name="SmallBoat3" parent="ShipsManager" instance=ExtResource("1_1epgp")]
-position = Vector2(997, -25)
-team_stats = ExtResource("6_oujkg")
-boat_stats = ExtResource("4_agpk8")
+[node name="Spawner" type="Timer" parent="TempSpawner"]
+wait_time = 5.0
+autostart = true
 
-[node name="SmallBoat4" parent="ShipsManager" instance=ExtResource("1_1epgp")]
-position = Vector2(1136, -19)
-team_stats = ExtResource("6_oujkg")
-boat_stats = ExtResource("4_agpk8")
-
-[node name="SmallBoat2" parent="ShipsManager" instance=ExtResource("1_1epgp")]
-position = Vector2(1096, -18)
-team_stats = ExtResource("6_oujkg")
-boat_stats = ExtResource("4_agpk8")
+[connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]
