@@ -1,0 +1,45 @@
+[gd_scene load_steps=7 format=3 uid="uid://bnaod6sgb8n5x"]
+
+[ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_2d8q0"]
+[ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="2_yswwm"]
+[ext_resource type="Script" path="res://scenes/ui/ship_button.gd" id="5_s7vka"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p7nb3"]
+atlas = ExtResource("1_2d8q0")
+region = Rect2(50, 6, 37, 25)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2cn2u"]
+content_margin_left = 2.0
+content_margin_top = 0.0
+content_margin_right = 2.0
+content_margin_bottom = 7.0
+texture = SubResource("AtlasTexture_p7nb3")
+texture_margin_left = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 9.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a8d44"]
+resource_local_to_scene = true
+shader = ExtResource("2_yswwm")
+shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
+shader_parameter/shadow_gray = Color(0.18, 0.18, 0.18, 1)
+
+[node name="GameUiButton" type="PanelContainer"]
+theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
+script = ExtResource("5_s7vka")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
+
+[node name="Button" type="Button" parent="."]
+material = SubResource("ShaderMaterial_a8d44")
+layout_mode = 2
+action_mode = 0
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="button_down" from="Button" to="." method="_on_button_down"]

@@ -18,13 +18,15 @@ func _ready() -> void:
 	else:
 		actual_health = default_health
 	
-func handle_hit(damage: float = 1):
-	actual_health -= damage
+func handle_hit(damage: Damage) -> bool:
+	actual_health -= damage.damage
 	if actual_health <= 0:
 		death_event.emit()
 		clear() # Removes the health text
+		return false
 	else:
 		text = str(actual_health)
+		return true
 
 func get_health() -> float:
 	return actual_health

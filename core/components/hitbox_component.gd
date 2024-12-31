@@ -13,12 +13,16 @@ var ship : Ship
 @onready
 var sprite : Sprite2D = $"../SmallBoat"
 
-func handle_hit(damage : float = 1):
+var enabled : bool = true
+
+func handle_hit(damage : Damage, direction : float):
 	if (health_component):
-		health_component.handle_hit()
+		enabled = health_component.handle_hit(damage)
 		handle_hit_visual(health_component)
-	ship.linear_velocity.x += -ship.team_stats.direction * 20
-	ship.rotation = rotation-(ship.team_stats.direction/10.)
+		
+	var final_knockback = damage.knockback * (1 - ship.boat_stats.knockback_resistance)
+	ship.linear_velocity.x += direction * 20 * final_knockback
+	ship.rotation = clamp(rotation+(direction/10.) * final_knockback, 0, 10)
 	
 func handle_hit_visual(health : HealthComponent):
 	var health_val = health.actual_health / health.default_health

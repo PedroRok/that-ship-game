@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BoatStats" load_steps=2 format=3 uid="uid://37315asgr84l"]
+
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="1_pe3gt"]
+
+[resource]
+script = ExtResource("1_pe3gt")
+health = 15.0
+speed = 300.0
+deceleration = 0.6
+max_tilt_angle = 0.2
+knockback_resistance = 0.85

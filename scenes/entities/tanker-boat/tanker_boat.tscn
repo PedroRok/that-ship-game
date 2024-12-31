@@ -1,0 +1,124 @@
+[gd_scene load_steps=19 format=3 uid="uid://dl8rht1bnw7i6"]
+
+[ext_resource type="Script" path="res://scenes/entities/small-boat/small_boat.gd" id="1_8qsqd"]
+[ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_cyp82"]
+[ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="3_fjdry"]
+[ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://core/state_machine/state_machine.tscn" id="4_f0h70"]
+[ext_resource type="Script" path="res://core/state_machine/states/move.gd" id="5_atabd"]
+[ext_resource type="Script" path="res://core/state_machine/states/attack.gd" id="6_r4lgl"]
+[ext_resource type="Script" path="res://core/state_machine/states/death.gd" id="7_arnbe"]
+[ext_resource type="PackedScene" uid="uid://hwtj0e2rrjy8" path="res://scenes/entities/guns/gun.tscn" id="8_hn8vj"]
+[ext_resource type="PackedScene" uid="uid://dkruatpb84415" path="res://core/components/hitbox_component.tscn" id="9_omxsr"]
+[ext_resource type="PackedScene" uid="uid://bw5d2h55ply2w" path="res://core/components/health_component.tscn" id="10_y11kd"]
+[ext_resource type="PackedScene" uid="uid://chtsijarpkyuk" path="res://core/components/radar_component.tscn" id="11_2xrwv"]
+[ext_resource type="PackedScene" uid="uid://hcvj4c35uk0o" path="res://core/components/particles_component.tscn" id="12_u8nom"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_mx0mw"]
+resource_local_to_scene = true
+noise_type = 5
+seed = 10
+frequency = 1.0
+fractal_type = 0
+fractal_octaves = 10
+fractal_lacunarity = 0.0
+fractal_gain = 0.0
+fractal_weighted_strength = 1.0
+domain_warp_type = 1
+domain_warp_amplitude = 48.855
+domain_warp_frequency = 5.0
+domain_warp_fractal_type = 0
+metadata/_preview_in_3d_space_ = true
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1el6o"]
+resource_local_to_scene = true
+width = 16
+height = 16
+seamless_blend_skirt = 0.0
+as_normal_map = true
+bump_strength = 32.0
+noise = SubResource("FastNoiseLite_mx0mw")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_25ajo"]
+resource_local_to_scene = true
+shader = ExtResource("2_cyp82")
+shader_parameter/dissolve = 1.0
+shader_parameter/Noise = SubResource("NoiseTexture2D_1el6o")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mrs6b"]
+size = Vector2(57, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y48gv"]
+size = Vector2(56, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dskwi"]
+size = Vector2(51, 10.5)
+
+[node name="TankerBoat" type="RigidBody2D"]
+collision_mask = 128
+gravity_scale = 0.1
+inertia = 96.02
+linear_damp = 3.23
+script = ExtResource("1_8qsqd")
+
+[node name="SmallBoat" type="Sprite2D" parent="."]
+texture_filter = 1
+material = SubResource("ShaderMaterial_25ajo")
+position = Vector2(1, -6)
+texture = ExtResource("3_fjdry")
+
+[node name="ColisionBody" type="CollisionShape2D" parent="."]
+top_level = true
+position = Vector2(0.5, -7)
+shape = SubResource("RectangleShape2D_mrs6b")
+
+[node name="StateMachine" parent="." node_paths=PackedStringArray("starting_state") instance=ExtResource("4_f0h70")]
+starting_state = NodePath("Move")
+
+[node name="Move" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component", "particle_component")]
+script = ExtResource("5_atabd")
+health_component = NodePath("../../HealthComponent")
+radar_component = NodePath("../../RadarComponent")
+particle_component = NodePath("../../ParticlesComponent")
+
+[node name="Attack" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component")]
+script = ExtResource("6_r4lgl")
+health_component = NodePath("../../HealthComponent")
+radar_component = NodePath("../../RadarComponent")
+time_to_shot = 50
+
+[node name="Death" type="Node" parent="StateMachine"]
+script = ExtResource("7_arnbe")
+
+[node name="Gun" parent="." instance=ExtResource("8_hn8vj")]
+position = Vector2(15, -7)
+
+[node name="Gun2" parent="." instance=ExtResource("8_hn8vj")]
+position = Vector2(7, -7)
+
+[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "ship") instance=ExtResource("9_omxsr")]
+collision_layer = 2
+collision_mask = 0
+health_component = NodePath("../HealthComponent")
+particle_component = NodePath("../ParticlesComponent")
+ship = NodePath("..")
+
+[node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
+position = Vector2(1, -5.5)
+shape = SubResource("RectangleShape2D_y48gv")
+debug_color = Color(0.976049, 0, 0.414808, 0.42)
+
+[node name="HealthComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("10_y11kd")]
+default_health = 10.0
+ship = NodePath("..")
+
+[node name="RadarComponent" parent="." instance=ExtResource("11_2xrwv")]
+target_position = Vector2(0, -5)
+collision_mask = 2
+collide_with_areas = true
+collide_with_bodies = false
+radar_distance = 150
+
+[node name="ParticlesComponent" parent="." instance=ExtResource("12_u8nom")]
+position = Vector2(-1.5, -5.75)
+shape = SubResource("RectangleShape2D_dskwi")
+debug_color = Color(0, 0.643738, 0.294445, 0.42)

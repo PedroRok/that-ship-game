@@ -9,10 +9,9 @@ var radar_component : RadarComponent
 @export
 var time_to_shot: int = 100
 
-var actual_time_to_shoot: int
+var actual_time_to_shoot: int = 0
 
 func enter() -> void:
-	actual_time_to_shoot = time_to_shot
 	pass
 
 func process_input(event: InputEvent) -> void:
@@ -34,6 +33,7 @@ func process_physics(delta: float) -> void:
 	
 	if (actual_time_to_shoot == 0):
 		actual_time_to_shoot = time_to_shot
-		parent.get_gun().shoot_gun(Vector2(parent.team_stats.direction, 0))
+		for gun in parent.get_guns():
+			gun.shoot_gun(Vector2(parent.team_stats.direction, 0))
 	
 	return

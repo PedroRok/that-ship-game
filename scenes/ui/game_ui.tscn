@@ -1,9 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=12 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
-[ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="2_uwfpj"]
-[ext_resource type="Script" path="res://scenes/ui/ship_button.gd" id="4_iqj8x"]
+[ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="5_73k7f"]
+[ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_byohh"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fquhi"]
 
@@ -48,25 +48,6 @@ Button/styles/hover = SubResource("StyleBoxTexture_jlbv7")
 Button/styles/normal = SubResource("StyleBoxTexture_t0qnc")
 Button/styles/pressed = SubResource("StyleBoxTexture_rhewh")
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_p7nb3"]
-atlas = ExtResource("1_vmi2c")
-region = Rect2(50, 6, 37, 25)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2cn2u"]
-content_margin_left = 2.0
-content_margin_top = 0.0
-content_margin_right = 2.0
-content_margin_bottom = 7.0
-texture = SubResource("AtlasTexture_p7nb3")
-texture_margin_left = 5.0
-texture_margin_right = 5.0
-texture_margin_bottom = 9.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_a8d44"]
-shader = ExtResource("2_uwfpj")
-shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
-shader_parameter/shadow_gray = Color(0.18, 0.18, 0.18, 1)
-
 [node name="GameUI" type="Control"]
 z_index = 4096
 z_as_relative = false
@@ -100,24 +81,12 @@ layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/HBoxContainer"]
+[node name="GameUiButton" parent="MarginContainer/HBoxContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/HBoxContainer/PanelContainer2"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 10
-
-[node name="Button" type="Button" parent="MarginContainer/HBoxContainer/PanelContainer2"]
-material = SubResource("ShaderMaterial_a8d44")
-layout_mode = 2
-action_mode = 0
-icon_alignment = 1
-expand_icon = true
-script = ExtResource("4_iqj8x")
 ship_sprite = ExtResource("1_y3jf6")
+ship_name = "small"
 
-[connection signal="button_down" from="MarginContainer/HBoxContainer/PanelContainer2/Button" to="MarginContainer/HBoxContainer/PanelContainer2/Button" method="_on_button_down"]
+[node name="GameUiButton2" parent="MarginContainer/HBoxContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+ship_sprite = ExtResource("5_byohh")
+ship_name = "tank"

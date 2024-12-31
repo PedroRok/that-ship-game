@@ -9,3 +9,5 @@ var speed: float = 400
 var deceleration: float = 0.5
 @export
 var max_tilt_angle: float = 0.2
+@export_range(0, 1)
+var knockback_resistance: float = 0

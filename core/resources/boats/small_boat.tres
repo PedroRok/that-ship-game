@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_d0lg6")
 health = 3.0
-speed = 400.0
+speed = 600.0
 deceleration = 0.5
 max_tilt_angle = 0.2
+knockback_resistance = 1.0

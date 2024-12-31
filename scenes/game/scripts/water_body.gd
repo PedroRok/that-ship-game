@@ -59,11 +59,11 @@ func _physics_process(delta: float) -> void:
 		
 	for j in range(passes):
 		for i in range(springs.size()):
-			if i > 0:
+			if i > 5:
 				left_deltas[i] = spread * (springs[i].height - springs[i-1].height)
 				springs[i-1].velocity += left_deltas[i]
 				
-			if i < springs.size()-1:
+			if i < springs.size()-5:
 				right_deltas[i] = spread * (springs[i].height - springs[i+1].height)
 				springs[i+1].velocity += right_deltas[i]
 		pass

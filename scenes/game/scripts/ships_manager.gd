@@ -4,17 +4,30 @@ extends Node2D
 var small_boat = preload("res://scenes/entities/small-boat/small_boat.tscn")
 @onready
 var small_boat_resource = preload("res://core/resources/boats/small_boat.tres")
+
+@onready
+var tanker_boat = preload("res://scenes/entities/tanker-boat/tanker_boat.tscn")
+@onready
+var tanker_boat_resource = preload("res://core/resources/boats/tank_boat.tres")
+
 @onready
 var team_resource = preload("res://core/resources/teams/team_left.tres")
 func _ready() -> void:
-	EventBus.connect("spawn_ship", Callable(self, "handle_ship_spawn"))
+	EventBus.connect("spawn_ship", Callable(self, "select_ship"))
 	pass
+
+func select_ship(ship_name : String):
+	if (ship_name == "small"):
+		handle_ship_spawn(small_boat.instantiate(), small_boat_resource)
+	else:
+		handle_ship_spawn(tanker_boat.instantiate(), tanker_boat_resource)
 	
-func handle_ship_spawn():
-	var boat  = small_boat.instantiate() as SmallBoat
+	
+func handle_ship_spawn(boat_var : Ship, ship_resource : Resource):
+	var boat  = boat_var
 	if boat:
 		boat.set_team(team_resource)
-		boat.set_stats(small_boat_resource)
+		boat.set_stats(ship_resource)
 		add_child(boat)
 		boat.global_position = position
 	pass
