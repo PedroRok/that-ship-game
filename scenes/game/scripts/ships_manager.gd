@@ -12,6 +12,10 @@ var tanker_boat_resource = preload("res://core/resources/boats/tank_boat.tres")
 
 @onready
 var team_resource = preload("res://core/resources/teams/team_left.tres")
+
+@onready
+var gun = preload("res://scenes/entities/guns/gun.tscn")
+
 func _ready() -> void:
 	EventBus.connect("spawn_ship", Callable(self, "select_ship"))
 	pass
@@ -24,10 +28,13 @@ func select_ship(ship_name : String):
 	
 	
 func handle_ship_spawn(boat_var : Ship, ship_resource : Resource):
-	var boat  = boat_var
+	var boat = boat_var
 	if boat:
-		boat.set_team(team_resource)
-		boat.set_stats(ship_resource)
+		boat.team_stats = team_resource
+		boat.boat_stats = ship_resource
 		add_child(boat)
+		for slots in boat.boat_stats.gun_slots:
+			boat.add_new_gun(gun.instantiate())
+			pass
 		boat.global_position = position
 	pass

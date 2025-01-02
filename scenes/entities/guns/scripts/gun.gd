@@ -1,6 +1,9 @@
 class_name Gun
 extends Node2D
 
+@export
+var time_to_shoot : int = 50
+
 var team : int = -1
 
 signal fired_bullet(bullet : Bullet, position : Vector2, direction : Vector2)

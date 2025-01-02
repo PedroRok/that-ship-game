@@ -3,11 +3,11 @@
 [ext_resource type="Script" path="res://scenes/entities/small-boat/small_boat.gd" id="1_jwort"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_8y037"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="2_kkpx1"]
+[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="2_mpgw5"]
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://core/state_machine/state_machine.tscn" id="4_xb18j"]
 [ext_resource type="Script" path="res://core/state_machine/states/move.gd" id="5_ghkyi"]
 [ext_resource type="Script" path="res://core/state_machine/states/attack.gd" id="6_gx2nh"]
 [ext_resource type="Script" path="res://core/state_machine/states/death.gd" id="7_wge8k"]
-[ext_resource type="PackedScene" uid="uid://hwtj0e2rrjy8" path="res://scenes/entities/guns/gun.tscn" id="8_50in8"]
 [ext_resource type="PackedScene" uid="uid://dkruatpb84415" path="res://core/components/hitbox_component.tscn" id="10_4psbx"]
 [ext_resource type="PackedScene" uid="uid://bw5d2h55ply2w" path="res://core/components/health_component.tscn" id="11_wha31"]
 [ext_resource type="PackedScene" uid="uid://chtsijarpkyuk" path="res://core/components/radar_component.tscn" id="12_162fy"]
@@ -59,6 +59,7 @@ gravity_scale = 0.1
 inertia = 96.02
 linear_damp = 3.23
 script = ExtResource("1_jwort")
+boat_stats = ExtResource("2_mpgw5")
 
 [node name="SmallBoat" type="Sprite2D" parent="."]
 texture_filter = 1
@@ -88,9 +89,6 @@ time_to_shot = 50
 
 [node name="Death" type="Node" parent="StateMachine"]
 script = ExtResource("7_wge8k")
-
-[node name="Gun" parent="." instance=ExtResource("8_50in8")]
-position = Vector2(10, -6)
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "ship") instance=ExtResource("10_4psbx")]
 collision_layer = 2

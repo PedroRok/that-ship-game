@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://dl8rht1bnw7i6"]
+[gd_scene load_steps=18 format=3 uid="uid://dl8rht1bnw7i6"]
 
 [ext_resource type="Script" path="res://scenes/entities/small-boat/small_boat.gd" id="1_8qsqd"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_cyp82"]
@@ -7,7 +7,6 @@
 [ext_resource type="Script" path="res://core/state_machine/states/move.gd" id="5_atabd"]
 [ext_resource type="Script" path="res://core/state_machine/states/attack.gd" id="6_r4lgl"]
 [ext_resource type="Script" path="res://core/state_machine/states/death.gd" id="7_arnbe"]
-[ext_resource type="PackedScene" uid="uid://hwtj0e2rrjy8" path="res://scenes/entities/guns/gun.tscn" id="8_hn8vj"]
 [ext_resource type="PackedScene" uid="uid://dkruatpb84415" path="res://core/components/hitbox_component.tscn" id="9_omxsr"]
 [ext_resource type="PackedScene" uid="uid://bw5d2h55ply2w" path="res://core/components/health_component.tscn" id="10_y11kd"]
 [ext_resource type="PackedScene" uid="uid://chtsijarpkyuk" path="res://core/components/radar_component.tscn" id="11_2xrwv"]
@@ -88,12 +87,6 @@ time_to_shot = 50
 
 [node name="Death" type="Node" parent="StateMachine"]
 script = ExtResource("7_arnbe")
-
-[node name="Gun" parent="." instance=ExtResource("8_hn8vj")]
-position = Vector2(14, -7)
-
-[node name="Gun2" parent="." instance=ExtResource("8_hn8vj")]
-position = Vector2(6, -7)
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "ship") instance=ExtResource("9_omxsr")]
 collision_layer = 2
