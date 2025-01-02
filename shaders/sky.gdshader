@@ -56,7 +56,7 @@ vec2 tile(vec2 _st, float _zoom){
 
 void fragment() {
 	//vec2 uv = 8.0 * (SCREEN_UV - UV * 2.0);
-	vec2 uv = 8.0 * (0.2-UV);
+	vec2 uv = 8.0 * (0.2-UV - SCREEN_UV /2.);
 	
 	uv = vec2(
         float(int(uv.x * 80.0)) / 80.0,
@@ -65,17 +65,19 @@ void fragment() {
 
 	// Render:
 	vec3 Color= BackColor.rgb;
+	float iteration = 0.;
 	for(float J = 0.0; J <= 1.0; J += 0.2)
 	{
 		// Cloud Layer:
 		float Lt =  TIME * -speed * (0.5  + 2.0 * J) * (1.0 + 0.1 * sin(226.0 * J)) + 17.0 * J;
 		vec2 Lp = vec2(0.0, 0.3 + 2.5 * ( J - 0.3));
-		float L = Layer(uv + Lp, Lt);
+		float L = Layer(uv + Lp - (UV - SCREEN_UV * iteration), Lt);
 		// Blur and color:
 		float Blur = 0.0 * (0.5 * abs(2.0 - 5.0 * J)) / (11.0 - 5.0 * J);
 		float V = mix( 0.0, 1.0, 1.0 - smoothstep( 0.0, 0.01 +0.2 * Blur, L ) );
 		vec3 Lc=  mix(CloudColor.rgb, vec3(1.0), J -1.2);
 		Color =mix(Color, Lc,  V);
+		iteration += 1.0;
 	}
 	
 	
