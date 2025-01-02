@@ -28,6 +28,7 @@ func _physics_process(delta: float) -> void:
 	
 func set_direction(direction: Vector2):
 	self.direction = direction
+	direction = self.direction.rotated(rotation)
 
 func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
 	if (already_hit):

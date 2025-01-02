@@ -45,7 +45,7 @@ shader_parameter/dissolve = 1.0
 shader_parameter/Noise = SubResource("NoiseTexture2D_1el6o")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mrs6b"]
-size = Vector2(57, 10)
+size = Vector2(57, 9)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y48gv"]
 size = Vector2(56, 15)
@@ -63,12 +63,12 @@ script = ExtResource("1_8qsqd")
 [node name="SmallBoat" type="Sprite2D" parent="."]
 texture_filter = 1
 material = SubResource("ShaderMaterial_25ajo")
-position = Vector2(1, -6)
+position = Vector2(0, -6)
 texture = ExtResource("3_fjdry")
 
 [node name="ColisionBody" type="CollisionShape2D" parent="."]
 top_level = true
-position = Vector2(0.5, -7)
+position = Vector2(0, -7.5)
 shape = SubResource("RectangleShape2D_mrs6b")
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("starting_state") instance=ExtResource("4_f0h70")]
@@ -90,10 +90,10 @@ time_to_shot = 50
 script = ExtResource("7_arnbe")
 
 [node name="Gun" parent="." instance=ExtResource("8_hn8vj")]
-position = Vector2(15, -7)
+position = Vector2(14, -7)
 
 [node name="Gun2" parent="." instance=ExtResource("8_hn8vj")]
-position = Vector2(7, -7)
+position = Vector2(6, -7)
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "ship") instance=ExtResource("9_omxsr")]
 collision_layer = 2
@@ -103,7 +103,7 @@ particle_component = NodePath("../ParticlesComponent")
 ship = NodePath("..")
 
 [node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
-position = Vector2(1, -5.5)
+position = Vector2(0, -5.5)
 shape = SubResource("RectangleShape2D_y48gv")
 debug_color = Color(0.976049, 0, 0.414808, 0.42)
 
@@ -119,6 +119,6 @@ collide_with_bodies = false
 radar_distance = 150
 
 [node name="ParticlesComponent" parent="." instance=ExtResource("12_u8nom")]
-position = Vector2(-1.5, -5.75)
+position = Vector2(-3, -5.75)
 shape = SubResource("RectangleShape2D_dskwi")
 debug_color = Color(0, 0.643738, 0.294445, 0.42)

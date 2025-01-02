@@ -15,7 +15,8 @@ func _ready() -> void:
 	else:
 		sprite.flip_h = true
 		for gun in guns:
-			gun.position.x = -gun.position.x
+			gun.position.x = -gun.position.x 
+			gun.rotate(PI);
 	
 	for gun in guns:
 		gun.team = team_stats.team_id
