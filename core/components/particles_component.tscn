@@ -46,8 +46,8 @@ point_count = 2
 curve = SubResource("Curve_nip4p")
 
 [sub_resource type="Gradient" id="Gradient_ix5wk"]
-offsets = PackedFloat32Array(0, 0.323529)
-colors = PackedColorArray(0.57, 0.22724, 0.1026, 1, 0, 0, 0, 1)
+offsets = PackedFloat32Array(0, 0.323529, 1)
+colors = PackedColorArray(0.57, 0.22724, 0.1026, 1, 0, 0, 0, 1, 0, 0, 0, 0)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_jxd3t"]
 gradient = SubResource("Gradient_ix5wk")
@@ -61,7 +61,7 @@ emission_shape = 3
 emission_box_extents = Vector3(1, 1, 1)
 velocity_pivot = Vector3(0, 15, 0)
 direction = Vector3(0, -103.515, 0)
-spread = 55.162
+spread = 55.0
 initial_velocity_min = 80.0
 initial_velocity_max = 80.0
 gravity = Vector3(0, 90, 0)

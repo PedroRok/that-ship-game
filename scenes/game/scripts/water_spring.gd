@@ -50,5 +50,5 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		var bd = body as RigidBody2D
 		if (bd.linear_velocity.x > 0.2 || bd.linear_velocity.x < -0.2 ): 
 			var speed = 10 * motion_factor
-			emit_signal("splash", index, speed)
+			emit_signal("splash", index, -speed)
 		pass # Replace with function body.

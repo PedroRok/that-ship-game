@@ -84,8 +84,9 @@ script = ExtResource("5_h6of4")
 health_component = NodePath("../../HealthComponent")
 radar_component = NodePath("../../RadarComponent")
 
-[node name="Death" type="Node" parent="StateMachine"]
+[node name="Death" type="Node" parent="StateMachine" node_paths=PackedStringArray("particle_component")]
 script = ExtResource("6_d05p6")
+particle_component = NodePath("../../ParticlesComponent")
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "ship") instance=ExtResource("7_rw84j")]
 collision_layer = 2
