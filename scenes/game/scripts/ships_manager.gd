@@ -3,11 +3,15 @@ extends Node2D
 @onready
 var ship_entity = preload("res://scenes/entities/ship/ship_entity.tscn")
 
+enum ShipsTypes {
+	SMALL,
+	TANKER
+}
 
-@onready
-var small_boat_resource = preload("res://core/resources/boats/small_boat.tres")
-@onready
-var tanker_boat_resource = preload("res://core/resources/boats/tank_boat.tres")
+var ships : Dictionary = {
+	ShipsTypes.SMALL: preload("res://core/resources/boats/small_boat.tres"),
+	ShipsTypes.TANKER: preload("res://core/resources/boats/tank_boat.tres")
+}
 
 @onready
 var team_resource = preload("res://core/resources/teams/team_left.tres")
@@ -20,19 +24,21 @@ func _ready() -> void:
 
 func select_ship(ship_name : String):
 	if (ship_name == "small"):
-		handle_ship_spawn(ship_entity.instantiate(), small_boat_resource)
+		handle_ship_spawn(position, ships.get(ShipsTypes.SMALL))
 	else:
-		handle_ship_spawn(ship_entity.instantiate(), tanker_boat_resource)
+		handle_ship_spawn(position, ships.get(ShipsTypes.TANKER))
 	
-	
-func handle_ship_spawn(boat_var : Ship, ship_resource : Resource):
-	var boat = boat_var
+func handle_ship_spawn_by_type(pos : Vector2, ship_type : ShipsTypes, team_res : TeamStats = team_resource):
+	handle_ship_spawn(pos, ships.get(ship_type), team_res)
+
+func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamStats = team_resource):
+	var boat = ship_entity.instantiate()
 	if boat:
-		boat.team_stats = team_resource
+		boat.team_stats = team_res
 		boat.boat_stats = ship_resource
 		add_child(boat)
 		for slots in boat.boat_stats.gun_slots:
 			boat.add_new_gun(gun.instantiate())
 			pass
-		boat.global_position = position
+		boat.global_position = pos
 	pass
