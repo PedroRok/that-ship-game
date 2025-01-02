@@ -8,6 +8,11 @@
 
 config_version=5
 
+[ai_assistant_hub]
+
+base_url="http://127.0.0.1:11434"
+llm_api="ollama_api"
+
 [application]
 
 config/name="Shiping"
@@ -47,7 +52,7 @@ version_control/autoload_on_startup=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/SignalVisualizer/plugin.cfg", "res://addons/net.yarvis.pixel_pen/plugin.cfg", "res://addons/wakatime/plugin.cfg")
+enabled=PackedStringArray("res://addons/SignalVisualizer/plugin.cfg", "res://addons/copilot/plugin.cfg", "res://addons/function_type_autocomplete/plugin.cfg", "res://addons/wakatime/plugin.cfg")
 
 [input]
 

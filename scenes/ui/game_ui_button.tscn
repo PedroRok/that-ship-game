@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bnaod6sgb8n5x"]
+[gd_scene load_steps=8 format=3 uid="uid://bnaod6sgb8n5x"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_2d8q0"]
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="2_yswwm"]
+[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="4_1gf51"]
 [ext_resource type="Script" path="res://scenes/ui/ship_button.gd" id="5_s7vka"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_p7nb3"]
@@ -23,6 +24,8 @@ resource_local_to_scene = true
 shader = ExtResource("2_yswwm")
 shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
 shader_parameter/shadow_gray = Color(0.18, 0.18, 0.18, 1)
+shader_parameter/shadow_size = 0.07
+shader_parameter/reference_texture = ExtResource("4_1gf51")
 
 [node name="GameUiButton" type="PanelContainer"]
 theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
@@ -36,9 +39,12 @@ theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 10
 
 [node name="Button" type="Button" parent="."]
+texture_filter = 1
+texture_repeat = 1
 material = SubResource("ShaderMaterial_a8d44")
 layout_mode = 2
 action_mode = 0
+icon = ExtResource("4_1gf51")
 icon_alignment = 1
 expand_icon = true
 

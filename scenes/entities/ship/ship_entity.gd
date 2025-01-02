@@ -1,21 +1,19 @@
-class_name SmallBoat
+class_name ShipEntity
 extends Ship
 
-@onready 
-var sprite = $SmallBoat as Sprite2D
+@export 
+var sprite: Sprite2D
 
-@onready
-var state_machine: Node = $StateMachine
-
+@export
+var state_machine: StateMachine
 
 func _ready() -> void:
+	sprite.texture = boat_stats.sprite
 	if (team_stats.direction > 0):
 		sprite.flip_h = false
 	else:
 		sprite.flip_h = true
-		
 	state_machine.init(self)
-	prints("started", team_stats.team_id)
 	
 func _unhandled_input(event: InputEvent) -> void:
 	state_machine.process_input(event)

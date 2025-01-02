@@ -1,0 +1,115 @@
+[gd_scene load_steps=15 format=3 uid="uid://cld2wbv3iqt05"]
+
+[ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="1_ju5sh"]
+[ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
+[ext_resource type="Texture2D" uid="uid://mevg2g8xtg8a" path="res://assets/game/base/dock-1.png" id="2_arq5v"]
+[ext_resource type="Texture2D" uid="uid://bqwaas7p3to0f" path="res://icon.svg" id="2_x27pu"]
+[ext_resource type="Texture2D" uid="uid://cp5ce3dvryyd6" path="res://assets/game/base/dock-overlay-1.png" id="3_x58f3"]
+[ext_resource type="Texture2D" uid="uid://bbm0w030f1nf2" path="res://assets/game/base/dock_shadow.png" id="4_xxt83"]
+[ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
+[ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
+[ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
+[ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
+[ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game_ui.tscn" id="15_hn43x"]
+[ext_resource type="Script" path="res://scenes/game/temp_spawner.gd" id="15_rgq2s"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]
+friction = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o45il"]
+shader = ExtResource("5_a1aak")
+shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
+shader_parameter/CloudColor = Color(0.611765, 0.854902, 1, 1)
+shader_parameter/speed = 0.5
+
+[node name="Game" type="Node2D"]
+
+[node name="Base" type="Node" parent="."]
+
+[node name="base3" type="Sprite2D" parent="Base"]
+z_index = 2470
+position = Vector2(511, 585)
+scale = Vector2(4, 4)
+texture = ExtResource("1_ju5sh")
+
+[node name="base" type="Sprite2D" parent="Base"]
+z_index = 2470
+position = Vector2(256, 258)
+scale = Vector2(2, 2)
+texture = ExtResource("1_ju5sh")
+
+[node name="dock" type="Sprite2D" parent="Base"]
+z_index = -715
+position = Vector2(256, 258)
+scale = Vector2(2, 2)
+texture = ExtResource("2_arq5v")
+
+[node name="dock-overlay" type="Sprite2D" parent="Base"]
+z_index = 970
+position = Vector2(256, 258)
+scale = Vector2(2, 2)
+texture = ExtResource("3_x58f3")
+
+[node name="dock-shadow" type="Sprite2D" parent="Base"]
+position = Vector2(255, 259)
+scale = Vector2(2, 2)
+texture = ExtResource("4_xxt83")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="Base"]
+collision_layer = 128
+collision_mask = 3
+physics_material_override = SubResource("PhysicsMaterial_kqiig")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Base/StaticBody2D"]
+polygon = PackedVector2Array(-3, 160, 132, 229, 136, 329, 55, 329, 55, 390, 134, 390, 134, 460, 270, 529, 270, 727, -5, 720)
+
+[node name="Environment" type="Node" parent="."]
+
+[node name="Background" type="Sprite2D" parent="Environment"]
+z_index = -1800
+texture_filter = 1
+material = SubResource("ShaderMaterial_o45il")
+position = Vector2(641, 360)
+scale = Vector2(10.0156, 5.63378)
+texture = ExtResource("2_x27pu")
+
+[node name="Water_Body" parent="Environment" instance=ExtResource("8_fy1hl")]
+z_index = 780
+position = Vector2(0, 368)
+k = 0.01
+d = 0.08
+distance_between_springs = 15
+spring_number = 100
+depth = 100
+
+[node name="BulletManager" type="Node" parent="Environment"]
+script = ExtResource("9_ucfpf")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(433, 360)
+ignore_rotation = false
+zoom = Vector2(1.5, 1.5)
+limit_left = 0
+limit_top = 0
+position_smoothing_enabled = true
+drag_horizontal_enabled = true
+script = ExtResource("1_kwyac")
+max_zoom = 3.0
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="GameUI" parent="CanvasLayer" instance=ExtResource("15_hn43x")]
+
+[node name="ShipsManager" type="Node2D" parent="."]
+position = Vector2(102, 364)
+script = ExtResource("11_wfful")
+
+[node name="TempSpawner" type="Node2D" parent="."]
+position = Vector2(1219, 355)
+script = ExtResource("15_rgq2s")
+
+[node name="Spawner" type="Timer" parent="TempSpawner"]
+wait_time = 5.0
+autostart = true
+
+[connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]

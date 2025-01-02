@@ -1,16 +1,17 @@
-[gd_resource type="Resource" script_class="BoatStats" load_steps=5 format=3 uid="uid://37315asgr84l"]
+[gd_resource type="Resource" script_class="BoatStats" load_steps=6 format=3 uid="uid://37315asgr84l"]
 
 [ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="1_lqch0"]
 [ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="1_pe3gt"]
-
-[sub_resource type="Resource" id="Resource_3i3oi"]
-script = ExtResource("1_lqch0")
-position = Vector2(6, -7)
-allowed_types = Array[int]([0])
+[ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="3_4ivnm"]
 
 [sub_resource type="Resource" id="Resource_v5hh7"]
 script = ExtResource("1_lqch0")
 position = Vector2(14, -7)
+allowed_types = Array[int]([0])
+
+[sub_resource type="Resource" id="Resource_3i3oi"]
+script = ExtResource("1_lqch0")
+position = Vector2(6, -7)
 allowed_types = Array[int]([0])
 
 [resource]
@@ -20,4 +21,5 @@ speed = 300.0
 deceleration = 0.6
 max_tilt_angle = 0.2
 knockback_resistance = 0.85
-gun_slots = Array[ExtResource("1_lqch0")]([SubResource("Resource_3i3oi"), SubResource("Resource_v5hh7")])
+sprite = ExtResource("3_4ivnm")
+gun_slots = Array[ExtResource("1_lqch0")]([SubResource("Resource_v5hh7"), SubResource("Resource_3i3oi")])

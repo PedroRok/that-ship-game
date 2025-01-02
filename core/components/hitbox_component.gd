@@ -10,9 +10,6 @@ var particle_component : ParticlesComponent
 @export
 var ship : Ship
 
-@onready
-var sprite : Sprite2D = $"../SmallBoat"
-
 var enabled : bool = true
 
 func handle_hit(damage : Damage, direction : float):
@@ -27,7 +24,7 @@ func handle_hit(damage : Damage, direction : float):
 func handle_hit_visual(health : HealthComponent):
 	var health_val = health.actual_health / health.default_health
 	var shader_val = lerp(0.7, 1.0, health_val)
-	sprite.material.set_shader_parameter("dissolve", shader_val)
+	ship.sprite.material.set_shader_parameter("dissolve", shader_val)
 	
 	var amout_ratio_val = lerp(1,0, health_val)
 	particle_component.fire.amount_ratio = amout_ratio_val

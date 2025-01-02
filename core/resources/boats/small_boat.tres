@@ -1,7 +1,8 @@
-[gd_resource type="Resource" script_class="BoatStats" load_steps=4 format=3 uid="uid://erbspqhlwv8t"]
+[gd_resource type="Resource" script_class="BoatStats" load_steps=5 format=3 uid="uid://erbspqhlwv8t"]
 
 [ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="1_7jw4l"]
 [ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="1_d0lg6"]
+[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="3_mgh42"]
 
 [sub_resource type="Resource" id="Resource_i04h8"]
 script = ExtResource("1_7jw4l")
@@ -15,4 +16,5 @@ speed = 600.0
 deceleration = 0.5
 max_tilt_angle = 0.2
 knockback_resistance = 1.0
+sprite = ExtResource("3_mgh42")
 gun_slots = Array[ExtResource("1_7jw4l")]([SubResource("Resource_i04h8")])

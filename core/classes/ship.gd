@@ -25,6 +25,6 @@ func add_new_gun(new_gun : Gun):
 	if team_stats.direction < 0:
 		new_gun.position.x = -gun_slot.position.x 
 		new_gun.rotate(PI);
-		
+	new_gun.current_time_to_shoot = guns.size() * 5
 	new_gun.team = team_stats.team_id
 	guns.append(new_gun)

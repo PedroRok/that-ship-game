@@ -1,18 +1,16 @@
 extends Node2D
 
 @onready
-var small_boat = preload("res://scenes/entities/small-boat/small_boat.tscn")
-@onready
-var small_boat_resource = preload("res://core/resources/boats/small_boat.tres")
+var ship_entity = preload("res://scenes/entities/ship/ship_entity.tscn")
+
 
 @onready
-var tanker_boat = preload("res://scenes/entities/tanker-boat/tanker_boat.tscn")
+var small_boat_resource = preload("res://core/resources/boats/small_boat.tres")
 @onready
 var tanker_boat_resource = preload("res://core/resources/boats/tank_boat.tres")
 
 @onready
 var team_resource = preload("res://core/resources/teams/team_left.tres")
-
 @onready
 var gun = preload("res://scenes/entities/guns/gun.tscn")
 
@@ -22,9 +20,9 @@ func _ready() -> void:
 
 func select_ship(ship_name : String):
 	if (ship_name == "small"):
-		handle_ship_spawn(small_boat.instantiate(), small_boat_resource)
+		handle_ship_spawn(ship_entity.instantiate(), small_boat_resource)
 	else:
-		handle_ship_spawn(tanker_boat.instantiate(), tanker_boat_resource)
+		handle_ship_spawn(ship_entity.instantiate(), tanker_boat_resource)
 	
 	
 func handle_ship_spawn(boat_var : Ship, ship_resource : Resource):

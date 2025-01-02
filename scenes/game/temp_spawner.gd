@@ -1,7 +1,7 @@
 extends Node2D
 
 @onready
-var small_boat = preload("res://scenes/entities/small-boat/small_boat.tscn")
+var ship_entity = preload("res://scenes/entities/ship/ship_entity.tscn")
 @onready
 var small_boat_resource = preload("res://core/resources/boats/small_boat.tres")
 @onready
@@ -13,7 +13,7 @@ func _ready() -> void:
 	_on_spawner_timeout()
 
 func _on_spawner_timeout() -> void:
-	var boat  = small_boat.instantiate() as SmallBoat
+	var boat = ship_entity.instantiate() as Ship
 	if boat:
 		boat.team_stats = team_resource
 		boat.boat_stats = small_boat_resource
