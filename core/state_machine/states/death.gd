@@ -3,7 +3,7 @@ extends State
 var death_rotation_speed : float
 
 @export
-var death_deespawn_delay : int = 600;
+var death_deespawn_delay : int = 800;
 
 @export
 var particle_component : ParticlesComponent
