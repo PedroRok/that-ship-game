@@ -66,6 +66,11 @@ func _physics_process(delta: float) -> void:
 			if i < springs.size()-5:
 				right_deltas[i] = spread * (springs[i].height - springs[i+1].height)
 				springs[i+1].velocity += right_deltas[i]
+				
+			if i <= 5:
+				left_deltas[i] = 0
+				springs[i].velocity = -0.01
+				springs[i-1].velocity = -0.01
 		pass
 	new_border()
 	draw_water_body()

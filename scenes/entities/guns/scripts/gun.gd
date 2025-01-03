@@ -19,7 +19,7 @@ var audio = $AudioStreamPlayer2D
 @onready
 var end_barrel = $EndBarrel
 
-var enemy : Ship
+var enemy : Node
 
 func _physics_process(delta: float) -> void:
 	if enemy:

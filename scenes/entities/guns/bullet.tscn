@@ -13,8 +13,8 @@ knockback = 1
 size = Vector2(2.25, 0.75)
 
 [node name="Bullet" type="Area2D"]
-collision_layer = 2
-collision_mask = 2
+collision_layer = 514
+collision_mask = 514
 script = ExtResource("1_igb4n")
 damage = SubResource("Resource_high3")
 

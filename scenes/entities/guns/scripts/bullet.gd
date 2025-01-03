@@ -40,4 +40,10 @@ func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, 
 				already_hit = true
 				area.handle_hit(damage, direction.x)
 				queue_free()
+	if (area is BaseHitbox):
+		var base = area.base as Base
+		if (base.team_stats.team_id != team):
+			already_hit = true
+			area.handle_hit(damage, direction.x)
+			queue_free()
 	pass # Replace with function body.

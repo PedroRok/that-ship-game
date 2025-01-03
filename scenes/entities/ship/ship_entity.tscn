@@ -93,7 +93,7 @@ ship = NodePath("..")
 
 [node name="RadarComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("9_wiqbi")]
 target_position = Vector2(0, -5)
-collision_mask = 2
+collision_mask = 514
 collide_with_areas = true
 collide_with_bodies = false
 ship = NodePath("..")

@@ -1,0 +1,66 @@
+[gd_scene load_steps=9 format=3 uid="uid://jnwo22vy1jsj"]
+
+[ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="1_ttlhy"]
+[ext_resource type="Script" path="res://scenes/game/base/scripts/base.gd" id="1_xvdiq"]
+[ext_resource type="Texture2D" uid="uid://mevg2g8xtg8a" path="res://assets/game/base/dock-1.png" id="2_l7uj8"]
+[ext_resource type="Texture2D" uid="uid://cp5ce3dvryyd6" path="res://assets/game/base/dock-overlay-1.png" id="3_y2foq"]
+[ext_resource type="Texture2D" uid="uid://bbm0w030f1nf2" path="res://assets/game/base/dock_shadow.png" id="4_3kja1"]
+[ext_resource type="Script" path="res://scenes/game/base/scripts/base_hitbox.gd" id="5_iw32w"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]
+friction = 0.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_auemn"]
+size = Vector2(137, 230)
+
+[node name="Base" type="Node"]
+script = ExtResource("1_xvdiq")
+
+[node name="BaseSprite" type="Node2D" parent="."]
+
+[node name="BaseBackground" type="Sprite2D" parent="BaseSprite"]
+position = Vector2(256, 418)
+texture = ExtResource("1_ttlhy")
+
+[node name="base" type="Sprite2D" parent="BaseSprite"]
+z_index = 2470
+position = Vector2(256, 418)
+texture = ExtResource("1_ttlhy")
+
+[node name="dock" type="Sprite2D" parent="BaseSprite"]
+z_index = -715
+position = Vector2(120, 394)
+scale = Vector2(2, 2)
+texture = ExtResource("2_l7uj8")
+
+[node name="dock-overlay" type="Sprite2D" parent="BaseSprite"]
+z_index = 970
+position = Vector2(120, 394)
+scale = Vector2(2, 2)
+texture = ExtResource("3_y2foq")
+
+[node name="dock-shadow" type="Sprite2D" parent="BaseSprite"]
+position = Vector2(115, 394)
+scale = Vector2(2, 2)
+texture = ExtResource("4_3kja1")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 128
+collision_mask = 3
+physics_material_override = SubResource("PhysicsMaterial_kqiig")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+polygon = PackedVector2Array(0, 161, 138, 230, 138, 330, 56, 330, 56, 390, 138, 390, 138, 460, 80, 518, 80, 593, 0, 673)
+
+[node name="BaseHitbox" type="Area2D" parent="." node_paths=PackedStringArray("base")]
+collision_layer = 512
+collision_mask = 512
+script = ExtResource("5_iw32w")
+base = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BaseHitbox"]
+position = Vector2(69.5, 345)
+shape = SubResource("RectangleShape2D_auemn")
+
+[node name="BaseCenter" type="Node2D" parent="."]
+position = Vector2(99, 337)
