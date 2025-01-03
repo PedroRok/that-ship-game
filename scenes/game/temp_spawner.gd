@@ -2,7 +2,6 @@ extends Node2D
 
 @onready
 var manager = $"../ShipsManager"
-
 @onready
 var team_right = preload("res://core/resources/teams/team_right.tres")
 
