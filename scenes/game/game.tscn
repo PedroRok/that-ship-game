@@ -78,8 +78,8 @@ z_index = 780
 position = Vector2(0, 368)
 k = 0.01
 d = 0.08
-distance_between_springs = 15
-spring_number = 100
+distance_between_springs = 30
+spring_number = 60
 depth = 100
 
 [node name="BulletManager" type="Node" parent="Environment"]
@@ -99,6 +99,8 @@ max_zoom = 3.0
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="GameUI" parent="CanvasLayer" instance=ExtResource("15_hn43x")]
+offset_top = 3.0
+offset_bottom = 3.0
 
 [node name="ShipsManager" type="Node2D" parent="."]
 position = Vector2(102, 364)

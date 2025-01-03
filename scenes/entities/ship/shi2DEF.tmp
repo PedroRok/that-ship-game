@@ -1,11 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://bltffp755yv3d"]
+[gd_scene load_steps=18 format=3 uid="uid://bltffp755yv3d"]
 
 [ext_resource type="Script" path="res://scenes/entities/ship/ship_entity.gd" id="1_ohlg0"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_yq7l4"]
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://core/state_machine/state_machine.tscn" id="3_ogx4m"]
+[ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="3_yma78"]
 [ext_resource type="Script" path="res://core/state_machine/states/move.gd" id="4_8etds"]
 [ext_resource type="Script" path="res://core/state_machine/states/attack.gd" id="5_h6of4"]
-[ext_resource type="PackedScene" uid="uid://io37rp0r6wl6" path="res://core/components/water_collision_component.tscn" id="5_pvrbk"]
 [ext_resource type="Script" path="res://core/state_machine/states/death.gd" id="6_d05p6"]
 [ext_resource type="PackedScene" uid="uid://dkruatpb84415" path="res://core/components/hitbox_component.tscn" id="7_rw84j"]
 [ext_resource type="PackedScene" uid="uid://bw5d2h55ply2w" path="res://core/components/health_component.tscn" id="8_qehx0"]
@@ -42,22 +42,35 @@ shader = ExtResource("2_yq7l4")
 shader_parameter/dissolve = 1.0
 shader_parameter/Noise = SubResource("NoiseTexture2D_ao4n2")
 
-[node name="ShipEntity" type="RigidBody2D" groups=["scene_manager_entity_nodes"]]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1ve70"]
+size = Vector2(30, 9)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eh53h"]
+size = Vector2(30, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngcti"]
+size = Vector2(27, 10.5)
+
+[node name="ShipEntity" type="RigidBody2D" node_paths=PackedStringArray("sprite", "state_machine") groups=["scene_manager_entity_nodes"]]
 position = Vector2(1, 0)
 collision_mask = 128
 gravity_scale = 0.1
 inertia = 96.02
-linear_damp = 3.0
-angular_damp = 15.453
+linear_damp = 3.23
 script = ExtResource("1_ohlg0")
+sprite = NodePath("BoatSprite")
+state_machine = NodePath("StateMachine")
 
 [node name="BoatSprite" type="Sprite2D" parent="."]
 texture_filter = 1
 material = SubResource("ShaderMaterial_gboy0")
 position = Vector2(0, -6)
+texture = ExtResource("3_yma78")
 
-[node name="WaterCollisionComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("5_pvrbk")]
-ship = NodePath("..")
+[node name="ColisionBody" type="CollisionShape2D" parent="."]
+top_level = true
+position = Vector2(1, -6.5)
+shape = SubResource("RectangleShape2D_1ve70")
 
 [node name="StateMachine" parent="." node_paths=PackedStringArray("starting_state") instance=ExtResource("3_ogx4m")]
 starting_state = NodePath("Move")
@@ -85,21 +98,23 @@ particle_component = NodePath("../ParticlesComponent")
 ship = NodePath("..")
 
 [node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
+position = Vector2(0, -6)
+shape = SubResource("RectangleShape2D_eh53h")
 debug_color = Color(0.976049, 0, 0.414808, 0.42)
 
 [node name="HealthComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("8_qehx0")]
 default_health = 10.0
 ship = NodePath("..")
 
-[node name="RadarComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("9_wiqbi")]
+[node name="RadarComponent" parent="." instance=ExtResource("9_wiqbi")]
 target_position = Vector2(0, -5)
 collision_mask = 2
 collide_with_areas = true
 collide_with_bodies = false
-ship = NodePath("..")
 
-[node name="ParticlesComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("10_4k1mg")]
+[node name="ParticlesComponent" parent="." instance=ExtResource("10_4k1mg")]
+position = Vector2(-1, -5.75)
+shape = SubResource("RectangleShape2D_ngcti")
 debug_color = Color(0, 0.643738, 0.294445, 0.42)
-ship = NodePath("..")
 
 [connection signal="death_event" from="HealthComponent" to="HitboxComponent" method="_on_health_component_death_event"]

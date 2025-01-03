@@ -12,13 +12,19 @@ var ship : Ship
 
 var enabled : bool = true
 
+func _ready() -> void:
+	var collision_shape = get_child(0) as CollisionShape2D
+	collision_shape.shape = ship.boat_stats.hitbox_colision_shape
+	collision_shape.position = ship.boat_stats.hitbox_colision_pos
+	pass
+
 func handle_hit(damage : Damage, direction : float):
 	if (health_component):
 		enabled = health_component.handle_hit(damage)
 		handle_hit_visual(health_component)
 		
 	var final_knockback = damage.knockback * (1 - ship.boat_stats.knockback_resistance)
-	ship.linear_velocity.x += direction * 20 * final_knockback
+	ship.linear_velocity.x = direction * 20 * final_knockback
 	ship.rotation = clamp(rotation+(direction/10.) * final_knockback, 0, 10)
 	
 func handle_hit_visual(health : HealthComponent):

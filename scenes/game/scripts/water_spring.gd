@@ -41,7 +41,7 @@ func initialize(x_position, id):
 	
 func set_collision_width(value):
 	var extents = collision.shape.size
-	var new_extents = Vector2(value / 1.8, extents.y)
+	var new_extents = Vector2(value, extents.y)
 	collision.shape.size = new_extents
 
 

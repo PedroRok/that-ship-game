@@ -24,15 +24,19 @@ void fragment() {
             length(current_color.rgb - reference_color.rgb) < threshold;
         
         if (matches_reference) {
+			bool current_above = false;
+			bool current_above_2 = false;
             if (color_above.a < 0.1) {
                 COLOR = vec4(shadow_gray.rgb, current_color.a);
+				current_above = true;
             } else if (color_above_2.a < 0.1) {
                 COLOR = vec4(shadow_gray.rgb / 1.2, current_color.a);
+				current_above_2 = true;
             } else {
                 COLOR = vec4(base_gray.rgb, current_color.a);
             }
             
-            if (color_below.a < 0.1) {
+            if (color_below.a < 0.1 && !current_above) {
                 COLOR = vec4(shadow_gray.rgb / 0.4, current_color.a);
             }
         }

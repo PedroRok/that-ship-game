@@ -28,3 +28,6 @@ func add_new_gun(new_gun : Gun):
 	new_gun.current_time_to_shoot = guns.size() * 5
 	new_gun.team = team_stats.team_id
 	guns.append(new_gun)
+
+func get_center_pos() -> Vector2:
+	return global_position + boat_stats.center

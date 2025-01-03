@@ -19,11 +19,11 @@ var audio = $AudioStreamPlayer2D
 @onready
 var end_barrel = $EndBarrel
 
-var enemy : Node2D
+var enemy : Ship
 
 func _physics_process(delta: float) -> void:
 	if enemy:
-		look_at(enemy.global_position)
+		look_at(enemy.get_center_pos())
 
 func shoot_gun(direction: Vector2):
 	if current_time_to_shoot > 0:

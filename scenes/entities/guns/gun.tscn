@@ -6,6 +6,7 @@
 
 [node name="Gun" type="Node2D"]
 script = ExtResource("1_osudt")
+time_to_shoot = 30
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 show_behind_parent = true

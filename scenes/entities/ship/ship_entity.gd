@@ -1,11 +1,11 @@
 class_name ShipEntity
 extends Ship
 
-@export 
-var sprite: Sprite2D
+@onready 
+var sprite: Sprite2D = $BoatSprite
 
-@export
-var state_machine: StateMachine
+@onready
+var state_machine : StateMachine = $StateMachine
 
 func _ready() -> void:
 	sprite.texture = boat_stats.sprite
@@ -13,6 +13,7 @@ func _ready() -> void:
 		sprite.flip_h = false
 	else:
 		sprite.flip_h = true
+	
 	state_machine.init(self)
 	
 func _unhandled_input(event: InputEvent) -> void:

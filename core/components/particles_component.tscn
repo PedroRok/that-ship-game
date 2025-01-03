@@ -121,6 +121,7 @@ fill = 1
 fill_from = Vector2(0, 1)
 
 [node name="ParticlesComponent" type="CollisionShape2D"]
+disabled = true
 script = ExtResource("1_hd7pq")
 
 [node name="FireParticle" type="GPUParticles2D" parent="."]

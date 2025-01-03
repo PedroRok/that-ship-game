@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BoatStats" load_steps=6 format=3 uid="uid://37315asgr84l"]
+[gd_resource type="Resource" script_class="BoatStats" load_steps=9 format=3 uid="uid://37315asgr84l"]
 
 [ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="1_lqch0"]
 [ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="1_pe3gt"]
@@ -14,12 +14,29 @@ script = ExtResource("1_lqch0")
 position = Vector2(6, -7)
 allowed_types = Array[int]([0])
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eh53h"]
+size = Vector2(53, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngcti"]
+size = Vector2(52.5, 10.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1ve70"]
+size = Vector2(51, 9)
+
 [resource]
 script = ExtResource("1_pe3gt")
-health = 15.0
+health = 40.0
+radar_distance = 200
+knockback_resistance = 0.85
 speed = 300.0
 deceleration = 0.6
 max_tilt_angle = 0.2
-knockback_resistance = 0.85
 sprite = ExtResource("3_4ivnm")
+center = Vector2(0, -5)
 gun_slots = Array[ExtResource("1_lqch0")]([SubResource("Resource_v5hh7"), SubResource("Resource_3i3oi")])
+water_colision_shape = SubResource("RectangleShape2D_1ve70")
+water_colision_pos = Vector2(-2.5, -6)
+hitbox_colision_shape = SubResource("RectangleShape2D_eh53h")
+hitbox_colision_pos = Vector2(-2.5, -6)
+particles_shape = SubResource("RectangleShape2D_ngcti")
+particles_pos = Vector2(-2.25, -4)

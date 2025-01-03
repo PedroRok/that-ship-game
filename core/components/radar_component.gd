@@ -2,15 +2,15 @@ class_name RadarComponent
 extends RayCast2D
 
 @export
-var radar_distance : int = 100
+var ship : Ship
 
 
 
 func check_radar(team_id: int, direction: int) -> Ship:
 	if (direction > 0):
-		target_position.x = radar_distance
+		target_position.x = ship.boat_stats.radar_distance
 	else:
-		target_position.x = -radar_distance
+		target_position.x = -ship.boat_stats.radar_distance
 	
 	var collider = get_collider()
 	if (collider and collider is HitboxComponent):

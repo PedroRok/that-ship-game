@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://io37rp0r6wl6"]
+
+[ext_resource type="Script" path="res://core/components/water_collision_component.gd" id="1_03nov"]
+
+[node name="WaterCollisionComponent" type="CollisionShape2D"]
+top_level = true
+script = ExtResource("1_03nov")
