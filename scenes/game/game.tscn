@@ -1,9 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=11 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
 [ext_resource type="PackedScene" uid="uid://jnwo22vy1jsj" path="res://scenes/game/base/base.tscn" id="1_q0hc1"]
 [ext_resource type="Resource" uid="uid://wf037tnljxu2" path="res://core/resources/teams/team_left.tres" id="2_r27un"]
-[ext_resource type="Texture2D" uid="uid://bqwaas7p3to0f" path="res://icon.svg" id="2_x27pu"]
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
@@ -24,14 +23,6 @@ team_stats = ExtResource("2_r27un")
 
 [node name="Environment" type="Node" parent="."]
 
-[node name="Background" type="Sprite2D" parent="Environment"]
-z_index = -1800
-texture_filter = 1
-material = SubResource("ShaderMaterial_o45il")
-position = Vector2(641, 360)
-scale = Vector2(10.0156, 5.63378)
-texture = ExtResource("2_x27pu")
-
 [node name="Water_Body" parent="Environment" instance=ExtResource("8_fy1hl")]
 z_index = 780
 position = Vector2(-26, 368)
@@ -43,6 +34,12 @@ depth = 100
 
 [node name="BulletManager" type="Node" parent="Environment"]
 script = ExtResource("9_ucfpf")
+
+[node name="Background" type="ColorRect" parent="Environment"]
+z_index = -1800
+material = SubResource("ShaderMaterial_o45il")
+offset_right = 1281.0
+offset_bottom = 716.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(433, 360)

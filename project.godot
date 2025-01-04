@@ -18,7 +18,10 @@ llm_api="ollama_api"
 config/name="Shiping"
 run/main_scene="res://scenes/game/game.tscn"
 config/features=PackedStringArray("4.3", "Mobile")
-config/icon="res://icon.svg"
+
+[audio]
+
+buses/default_bus_layout="res://core/utils/default_bus_layout.tres"
 
 [autoload]
 
