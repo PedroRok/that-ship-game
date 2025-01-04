@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://jnwo22vy1jsj"]
+[gd_scene load_steps=10 format=3 uid="uid://jnwo22vy1jsj"]
 
 [ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="1_ttlhy"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base.gd" id="1_xvdiq"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://cp5ce3dvryyd6" path="res://assets/game/base/dock-overlay-1.png" id="3_y2foq"]
 [ext_resource type="Texture2D" uid="uid://bbm0w030f1nf2" path="res://assets/game/base/dock_shadow.png" id="4_3kja1"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base_hitbox.gd" id="5_iw32w"]
+[ext_resource type="Script" path="res://scenes/game/base/scripts/base_health_component.gd" id="7_ralhy"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]
 friction = 0.0
@@ -23,7 +24,7 @@ position = Vector2(256, 418)
 texture = ExtResource("1_ttlhy")
 
 [node name="base" type="Sprite2D" parent="BaseSprite"]
-z_index = 2470
+z_index = 300
 position = Vector2(256, 418)
 texture = ExtResource("1_ttlhy")
 
@@ -52,15 +53,30 @@ physics_material_override = SubResource("PhysicsMaterial_kqiig")
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
 polygon = PackedVector2Array(0, 161, 138, 230, 138, 330, 56, 330, 56, 390, 138, 390, 138, 460, 80, 518, 80, 593, 0, 673)
 
-[node name="BaseHitbox" type="Area2D" parent="." node_paths=PackedStringArray("base")]
+[node name="BaseHitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("base", "health_component")]
 collision_layer = 512
 collision_mask = 512
 script = ExtResource("5_iw32w")
 base = NodePath("..")
+health_component = NodePath("../BaseHealthComponent")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BaseHitbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BaseHitboxComponent"]
 position = Vector2(69.5, 345)
 shape = SubResource("RectangleShape2D_auemn")
 
 [node name="BaseCenter" type="Node2D" parent="."]
 position = Vector2(99, 337)
+
+[node name="HealthText" type="Label" parent="."]
+z_index = 1000
+offset_left = 61.0
+offset_top = 304.0
+offset_right = 135.0
+offset_bottom = 327.0
+text = "100"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BaseHealthComponent" type="Node" parent="." node_paths=PackedStringArray("label")]
+script = ExtResource("7_ralhy")
+label = NodePath("../HealthText")

@@ -24,7 +24,7 @@ team_stats = ExtResource("2_r27un")
 [node name="Environment" type="Node" parent="."]
 
 [node name="Water_Body" parent="Environment" instance=ExtResource("8_fy1hl")]
-z_index = 780
+z_index = 200
 position = Vector2(-26, 368)
 k = 0.01
 d = 0.08
