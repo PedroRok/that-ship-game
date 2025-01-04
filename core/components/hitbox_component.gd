@@ -1,3 +1,4 @@
+@tool
 class_name HitboxComponent
 extends Area2D
 
@@ -13,6 +14,8 @@ var ship : Ship
 var enabled : bool = true
 
 func _ready() -> void:
+	if (!ship.boat_stats):
+		return
 	var collision_shape = get_child(0) as CollisionShape2D
 	collision_shape.shape = ship.boat_stats.hitbox_colision_shape
 	collision_shape.position = ship.boat_stats.hitbox_colision_pos
