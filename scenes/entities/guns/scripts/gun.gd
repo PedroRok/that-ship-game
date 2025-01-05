@@ -41,4 +41,6 @@ func shoot_gun(direction: Vector2):
 		audio.pitch_scale = randf_range(0.8, 1.2)
 	else:
 		push_error("Trying to shoot without enemy defined")
-	audio.play(0)
+		
+	var distance_based_on_zoom = (end_barrel.global_position.distance_to(Global.center_camera_pos)/ 1000)
+	audio.play(distance_based_on_zoom/ (Global.camera_zoom))

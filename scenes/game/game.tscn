@@ -24,6 +24,10 @@ shader_parameter/speed = 0.5
 [node name="Base" parent="." instance=ExtResource("1_q0hc1")]
 team_stats = ExtResource("2_r27un")
 
+[node name="EnemyBase" parent="." instance=ExtResource("10_tihlc")]
+position = Vector2(1283, 0)
+team_stats = ExtResource("11_ek8oh")
+
 [node name="Environment" type="Node" parent="."]
 
 [node name="Water_Body" parent="Environment" instance=ExtResource("8_fy1hl")]
@@ -53,6 +57,8 @@ editor_draw_drag_margin = true
 script = ExtResource("1_kwyac")
 max_zoom = 3.0
 
+[node name="AudioListener2D" type="AudioListener2D" parent="Camera2D"]
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="GameUI" parent="CanvasLayer" instance=ExtResource("15_hn43x")]
@@ -78,6 +84,9 @@ offset_bottom = 40.0
 position = Vector2(102, 364)
 script = ExtResource("11_wfful")
 
+[node name="BulletManager" type="Node" parent="."]
+script = ExtResource("9_ucfpf")
+
 [node name="TempSpawner" type="Node2D" parent="."]
 position = Vector2(1184, 363)
 script = ExtResource("15_rgq2s")
@@ -85,12 +94,5 @@ script = ExtResource("15_rgq2s")
 [node name="Spawner" type="Timer" parent="TempSpawner"]
 wait_time = 5.0
 autostart = true
-
-[node name="EnemyBase" parent="." instance=ExtResource("10_tihlc")]
-position = Vector2(1283, 0)
-team_stats = ExtResource("11_ek8oh")
-
-[node name="BulletManager" type="Node" parent="."]
-script = ExtResource("9_ucfpf")
 
 [connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]

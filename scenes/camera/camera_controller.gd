@@ -21,12 +21,14 @@ func _process(_delta: float):
 	if (actual_zoom != zoom.x):
 		actual_zoom = clamp(actual_zoom, min_zoom, max_zoom)
 		zoom = lerp(zoom, Vector2(actual_zoom, actual_zoom), .2)
+		Global.camera_zoom = actual_zoom
 
 
 	if (actual_h_pos != global_position.x):
 		var viewport = get_viewport()
 		actual_h_pos = clamp(actual_h_pos, (viewport.size.x / 2) / actual_zoom, limit_right - (viewport.size.x / 2) / actual_zoom)
 		global_position.x = lerp(global_position.x, actual_h_pos, .2)
+		Global.center_camera_pos = global_position
 
 
 func _input(event: InputEvent) -> void:

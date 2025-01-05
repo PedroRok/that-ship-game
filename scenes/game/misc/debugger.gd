@@ -20,9 +20,9 @@ func _ready() -> void:
 		add_debug_entry("Camera Pos", "0, 0")
 		add_debug_entry("Camera Global Pos", "0, 0")
 	if ship_spawner:
-		add_debug_entry("Ships Spawned", "0")
+		add_debug_entry("Ships", "0")
 	if bullet_manager:
-		add_debug_entry("Bullets Spawned", "0")
+		add_debug_entry("Bullets", "0")
 
 func _process(_delta: float) -> void:
 	if camera:
@@ -30,9 +30,9 @@ func _process(_delta: float) -> void:
 		update_debug("Camera Pos", str(camera.actual_h_pos))
 		update_debug("Camera Global Pos", str(camera.global_position))
 	if ship_spawner:
-		update_debug("Ships Spawned", str(ship_spawner.get_children().size()))
+		update_debug("Ships", str(ship_spawner.get_children().size()))
 	if bullet_manager:
-		update_debug("Bullets Spawned", str(bullet_manager.get_children().size()))
+		update_debug("Bullets", str(bullet_manager.get_children().size()))
 
 func add_debug_entry(key: String, initial_value: String) -> void:
 	if debug_info.has(key):
