@@ -18,6 +18,5 @@ func _ready() -> void:
 
 
 func _on_button_down() -> void:
-	print("spawning")
 	EventBus.ship_spawned(ship_name)
 	pass # Replace with function body.

@@ -1,3 +1,4 @@
+class_name BulletManager
 extends Node
 
 func _ready() -> void:

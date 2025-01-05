@@ -35,9 +35,6 @@ distance_between_springs = 30
 spring_number = 60
 depth = 100
 
-[node name="BulletManager" type="Node" parent="Environment"]
-script = ExtResource("9_ucfpf")
-
 [node name="Background" type="ColorRect" parent="Environment"]
 z_index = -1800
 material = SubResource("ShaderMaterial_o45il")
@@ -62,7 +59,7 @@ max_zoom = 3.0
 offset_top = 3.0
 offset_bottom = 3.0
 
-[node name="Debugger" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("camera", "ship_spawner")]
+[node name="Debugger" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("camera", "ship_spawner", "bullet_manager")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -70,6 +67,7 @@ offset_bottom = 40.0
 script = ExtResource("8_u3rrj")
 camera = NodePath("../../Camera2D")
 ship_spawner = NodePath("../../ShipsManager")
+bullet_manager = NodePath("../../BulletManager")
 
 [node name="LabelsContainer" type="VBoxContainer" parent="CanvasLayer/Debugger"]
 layout_mode = 0
@@ -91,5 +89,8 @@ autostart = true
 [node name="EnemyBase" parent="." instance=ExtResource("10_tihlc")]
 position = Vector2(1283, 0)
 team_stats = ExtResource("11_ek8oh")
+
+[node name="BulletManager" type="Node" parent="."]
+script = ExtResource("9_ucfpf")
 
 [connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]
