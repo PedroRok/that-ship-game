@@ -7,5 +7,8 @@ var team_stats : TeamStats
 @onready
 var base_center : Node2D = $BaseCenter
 
+@onready
+var art : Node2D
+
 func get_center_pos() -> Vector2:
 	return base_center.global_position

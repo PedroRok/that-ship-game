@@ -1,0 +1,87 @@
+[gd_scene load_steps=10 format=3 uid="uid://cvidy1earqqq0"]
+
+[ext_resource type="Script" path="res://scenes/game/base/scripts/base.gd" id="1_oee04"]
+[ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="2_0pxwk"]
+[ext_resource type="Texture2D" uid="uid://mevg2g8xtg8a" path="res://assets/game/base/dock-1.png" id="3_5x8k8"]
+[ext_resource type="Texture2D" uid="uid://cp5ce3dvryyd6" path="res://assets/game/base/dock-overlay-1.png" id="4_m3idw"]
+[ext_resource type="Texture2D" uid="uid://bbm0w030f1nf2" path="res://assets/game/base/dock_shadow.png" id="5_hemv0"]
+[ext_resource type="Script" path="res://scenes/game/base/scripts/base_hitbox.gd" id="6_gpemj"]
+[ext_resource type="Script" path="res://scenes/game/base/scripts/base_health_component.gd" id="7_0cgtq"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qceai"]
+friction = 0.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_otcg8"]
+size = Vector2(137, 230)
+
+[node name="EnemyBase" type="Node2D"]
+script = ExtResource("1_oee04")
+
+[node name="BaseSprite" type="Node2D" parent="."]
+
+[node name="BaseBackground" type="Sprite2D" parent="BaseSprite"]
+position = Vector2(-256, 418)
+texture = ExtResource("2_0pxwk")
+flip_h = true
+
+[node name="base" type="Sprite2D" parent="BaseSprite"]
+z_index = 300
+position = Vector2(-256, 418)
+texture = ExtResource("2_0pxwk")
+flip_h = true
+
+[node name="dock" type="Sprite2D" parent="BaseSprite"]
+z_index = -715
+position = Vector2(-120, 394)
+scale = Vector2(2, 2)
+texture = ExtResource("3_5x8k8")
+flip_h = true
+
+[node name="dock-overlay" type="Sprite2D" parent="BaseSprite"]
+z_index = 970
+position = Vector2(-120, 394)
+scale = Vector2(2, 2)
+texture = ExtResource("4_m3idw")
+flip_h = true
+
+[node name="dock-shadow" type="Sprite2D" parent="BaseSprite"]
+position = Vector2(-109, 394)
+scale = Vector2(2, 2)
+texture = ExtResource("5_hemv0")
+flip_h = true
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 128
+collision_mask = 3
+physics_material_override = SubResource("PhysicsMaterial_qceai")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="StaticBody2D"]
+scale = Vector2(-1, 1)
+polygon = PackedVector2Array(0, 161, 138, 230, 138, 330, 56, 330, 56, 390, 138, 390, 138, 460, 80, 518, 80, 593, 0, 673)
+
+[node name="BaseHitboxComponent" type="Area2D" parent="." node_paths=PackedStringArray("base", "health_component")]
+collision_layer = 512
+collision_mask = 512
+script = ExtResource("6_gpemj")
+base = NodePath("..")
+health_component = NodePath("../BaseHealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BaseHitboxComponent"]
+position = Vector2(-69, 347)
+shape = SubResource("RectangleShape2D_otcg8")
+
+[node name="BaseCenter" type="Node2D" parent="."]
+position = Vector2(-91, 337)
+
+[node name="HealthText" type="Label" parent="."]
+z_index = 1000
+offset_left = -136.0
+offset_top = 304.0
+offset_right = -62.0
+offset_bottom = 327.0
+text = "100"
+vertical_alignment = 1
+
+[node name="BaseHealthComponent" type="Node" parent="." node_paths=PackedStringArray("label")]
+script = ExtResource("7_0cgtq")
+label = NodePath("../HealthText")

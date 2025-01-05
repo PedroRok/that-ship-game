@@ -6,7 +6,7 @@ var base : Base
 @export
 var health_component : BaseHealthComponent
 
-func handle_hit(damage : Damage, direction : float):
+func handle_hit(damage : Damage, _direction : float):
 	health_component.handle_hit(damage)
 	pass
 	

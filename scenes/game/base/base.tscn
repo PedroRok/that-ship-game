@@ -14,7 +14,7 @@ friction = 0.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_auemn"]
 size = Vector2(137, 230)
 
-[node name="Base" type="Node"]
+[node name="Base" type="Node2D"]
 script = ExtResource("1_xvdiq")
 
 [node name="BaseSprite" type="Node2D" parent="."]
