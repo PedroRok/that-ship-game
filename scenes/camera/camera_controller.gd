@@ -1,3 +1,4 @@
+class_name GameCam
 extends Camera2D
 
 @export
@@ -16,13 +17,16 @@ var actual_h_pos : float = 0
 func _ready() -> void:
 	actual_zoom = zoom.x
 
-func _process(delta: float):
+func _process(_delta: float):
 	if (actual_zoom != zoom.x):
 		actual_zoom = clamp(actual_zoom, min_zoom, max_zoom)
 		zoom = lerp(zoom, Vector2(actual_zoom, actual_zoom), .2)
-	if (actual_h_pos != offset.x):
-		actual_h_pos = clamp(actual_h_pos, 0 - (actual_zoom-1) *96, 9999999999)
-		offset.x = lerp(offset.x, actual_h_pos, .2)
+
+
+	if (actual_h_pos != global_position.x):
+		var viewport = get_viewport()
+		actual_h_pos = clamp(actual_h_pos, (viewport.size.x / 2) / actual_zoom, limit_right - (viewport.size.x / 2) / actual_zoom)
+		global_position.x = lerp(global_position.x, actual_h_pos, .2)
 
 
 func _input(event: InputEvent) -> void:
@@ -39,6 +43,7 @@ func _input(event: InputEvent) -> void:
 		actual_h_pos -= move_speed
 	if (event.is_action("ui_right")):
 		actual_h_pos += move_speed
+	
 
 func move_camera_to_with_zoom():
 	var viewport = get_viewport()

@@ -45,7 +45,7 @@ func _ready():
 
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	for i in springs:
 		i.water_update(k, d)
 		

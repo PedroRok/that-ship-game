@@ -40,6 +40,6 @@ func process_physics(delta: float) -> void:
 		parent.sprite.free()
 		
 		pass
-	if death_deespawn_delay == -200:
+	if death_deespawn_delay == -180:
 		parent.free()
 	return

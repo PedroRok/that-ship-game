@@ -1,3 +1,4 @@
+class_name ShipManager
 extends Node2D
 
 @onready
@@ -19,7 +20,7 @@ var team_resource = preload("res://core/resources/teams/team_left.tres")
 var gun = preload("res://scenes/entities/guns/gun.tscn")
 
 func _ready() -> void:
-	EventBus.connect("spawn_ship", Callable(self, "select_ship"))
+	EventBus.spawn_ship.connect(Callable(self, "select_ship"))
 	pass
 
 func select_ship(ship_name : String):
