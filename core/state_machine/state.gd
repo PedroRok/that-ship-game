@@ -11,10 +11,10 @@ func enter() -> void:
 func exit() -> void:
 	pass
 	
-func process_input(event: InputEvent) -> void:
+func process_input(_event: InputEvent) -> void:
 	return
 	
-func process_frame(delta: float) -> void:
+func process_frame(_delta: float) -> void:
 	return
 	
 var current_speed = 0.0

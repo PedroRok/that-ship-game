@@ -17,7 +17,7 @@ func enter() -> void:
 func exit() -> void:
 	particle_component.trail.delta_speed(0, 0)
 	
-func process_input(event: InputEvent) -> void:
+func process_input(_event: InputEvent) -> void:
 	return
 
 func process_physics(delta: float) -> void:

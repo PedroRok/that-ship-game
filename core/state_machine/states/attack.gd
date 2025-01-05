@@ -17,7 +17,7 @@ func exit() -> void:
 		gun.enemy = null
 	pass
 	
-func process_input(event: InputEvent) -> void:
+func process_input(_event: InputEvent) -> void:
 	return
 
 func process_physics(delta: float) -> void:

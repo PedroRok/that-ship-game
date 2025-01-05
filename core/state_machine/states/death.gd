@@ -17,7 +17,7 @@ func enter() -> void:
 	#death_rotation_speed = -death_rotation_speed
 	pass
 	
-func process_input(event: InputEvent) -> void:
+func process_input(_event: InputEvent) -> void:
 	return
 
 func process_physics(delta: float) -> void:

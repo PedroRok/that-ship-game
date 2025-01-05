@@ -21,7 +21,7 @@ var end_barrel = $EndBarrel
 
 var enemy : Node
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if enemy:
 		look_at(enemy.get_center_pos())
 

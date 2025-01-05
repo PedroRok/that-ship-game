@@ -16,7 +16,7 @@ var team : int = -1
 
 var already_hit = false
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if direction != Vector2.ZERO:
 		var velocity = direction * speed
 		global_position += velocity
@@ -26,11 +26,11 @@ func _physics_process(delta: float) -> void:
 	killTime -= 1
 	pass
 	
-func set_direction(direction: Vector2):
-	self.direction = direction
-	direction = self.direction.rotated(rotation)
+func set_direction(new_direction: Vector2):
+	self.direction = new_direction
+	new_direction = self.direction.rotated(rotation)
 
-func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
+func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int, _local_shape_index: int) -> void:
 	if (already_hit):
 		return 
 	if (area is HitboxComponent):
