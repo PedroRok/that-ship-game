@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://hcvj4c35uk0o"]
+[gd_scene load_steps=22 format=3 uid="uid://hcvj4c35uk0o"]
 
 [ext_resource type="Script" path="res://core/components/particles_component.gd" id="1_hd7pq"]
 [ext_resource type="Script" path="res://core/components/particles/trail_particle.gd" id="2_jslqo"]
@@ -69,11 +69,11 @@ scale_max = 2.0
 color_ramp = SubResource("GradientTexture1D_jxd3t")
 alpha_curve = SubResource("CurveTexture_bdt0b")
 
-[sub_resource type="Gradient" id="Gradient_jlvfm"]
-colors = PackedColorArray(0, 0, 1, 1, 1, 1, 1, 1)
+[sub_resource type="Gradient" id="Gradient_c4a3p"]
+colors = PackedColorArray(0, 0.686, 0.98, 1, 1, 1, 1, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_6r2i4"]
-gradient = SubResource("Gradient_jlvfm")
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_qk6bb"]
+gradient = SubResource("Gradient_c4a3p")
 
 [sub_resource type="Curve" id="Curve_xg273"]
 min_value = -1.0
@@ -103,22 +103,11 @@ initial_velocity_min = 35.0
 initial_velocity_max = 85.0
 gravity = Vector3(0, -10, 0)
 scale_curve = SubResource("CurveTexture_1kld8")
-color_initial_ramp = SubResource("GradientTexture1D_6r2i4")
+color_ramp = SubResource("GradientTexture1D_qk6bb")
 hue_variation_curve = SubResource("CurveTexture_ajwey")
 turbulence_enabled = true
 turbulence_noise_strength = 0.55
 turbulence_noise_scale = 12.82
-
-[sub_resource type="Gradient" id="Gradient_a6r54"]
-offsets = PackedFloat32Array(0, 0.357143, 0.946429)
-colors = PackedColorArray(0.713726, 1, 1, 1, 0.156863, 0.890196, 1, 0.32549, 0.341176, 1, 1, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_8vvtb"]
-gradient = SubResource("Gradient_a6r54")
-width = 1
-height = 8
-fill = 1
-fill_from = Vector2(0, 1)
 
 [node name="ParticlesComponent" type="CollisionShape2D"]
 disabled = true
@@ -148,8 +137,6 @@ z_index = -665
 amount = 40
 amount_ratio = 0.0
 process_material = SubResource("ParticleProcessMaterial_p3w04")
-texture = SubResource("GradientTexture2D_8vvtb")
-trail_enabled = true
 trail_lifetime = 0.05
 trail_section_subdivisions = 1
 script = ExtResource("2_jslqo")

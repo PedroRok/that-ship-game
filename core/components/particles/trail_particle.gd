@@ -7,7 +7,7 @@ var current_dir : int = 0
 var origin_pos : Vector2
 var origin_rect : Rect2
 
-func init(pos : Vector2, shape : Shape2D, rect : Rect2):
+func init(pos : Vector2, _shape : Shape2D, rect : Rect2):
 	origin_pos = pos
 	origin_rect = rect
 	position.x = pos.x
