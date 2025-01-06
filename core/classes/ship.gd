@@ -13,7 +13,7 @@ var guns: Array[Gun]
 
 signal bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, rotation : float)
 
-signal ship_destroy(pos : Vector2)
+signal ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : TeamStats)
 
 func get_guns() -> Array[Gun]:
 	return guns

@@ -2,6 +2,9 @@ class_name ShipManager
 extends Node
 
 @export
+var base : Base
+
+@export
 var bullet_manager : BulletManager
 
 @export
@@ -43,10 +46,16 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 		boat.team_stats = team_res
 		boat.boat_stats = ship_resource
 		boat.connect("bullet_fired", Callable(bullet_manager, "handle_bullet_spawned"))
-		boat.connect("ship_destroy", Callable(screw_manager, "handle_ship_destroy"))
+		boat.connect("ship_destroy", Callable(self, "handle_ship_destroy"))
 		add_child(boat)
 		for slots in boat.boat_stats.gun_slots:
 			boat.add_new_gun(gun.instantiate())
 			pass
 		boat.global_position = pos
+	pass
+
+func handle_ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : TeamStats) -> void:
+	if (team_stats.team_id == base.team_stats.team_id):
+		return
+	screw_manager.handle_screw_spawn(pos, true)
 	pass

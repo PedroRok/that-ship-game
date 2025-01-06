@@ -13,7 +13,7 @@ func enter() -> void:
 	#parent.gravity_scale = parent.gravity_scale *4
 	death_rotation_speed = randf_range(-0.2, 0.2)
 	parent.rotation = death_rotation_speed/20
-	parent.ship_destroy.emit(parent.global_position, parent.team_stats.team_id)
+	parent.ship_destroy.emit(parent.global_position, parent.boat_stats, parent.team_stats)
 	#death_rotation_speed = -death_rotation_speed
 	pass
 	
