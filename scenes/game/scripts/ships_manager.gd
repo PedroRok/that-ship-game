@@ -1,11 +1,17 @@
 class_name ShipManager
-extends Node2D
+extends Node
 
 @export
 var bullet_manager : BulletManager
 
+@export
+var screw_manager : ScrewManager
+
 @onready
 var ship_entity : PackedScene = preload("res://scenes/entities/ship/ship_entity.tscn")
+
+@onready
+var spawn_pos : Marker2D = $SpawnPos
 
 enum ShipsTypes {
 	SMALL,
@@ -24,9 +30,9 @@ var gun : PackedScene = preload("res://scenes/entities/guns/gun.tscn")
 
 func select_ship(ship_name : String) -> void:
 	if (ship_name == "small"):
-		handle_ship_spawn(position, ships.get(ShipsTypes.SMALL))
+		handle_ship_spawn(spawn_pos.position, ships.get(ShipsTypes.SMALL))
 	else:
-		handle_ship_spawn(position, ships.get(ShipsTypes.TANKER))
+		handle_ship_spawn(spawn_pos.position, ships.get(ShipsTypes.TANKER))
 	
 func handle_ship_spawn_by_type(pos : Vector2, ship_type : ShipsTypes, team_res : TeamStats = team_resource) -> void:
 	handle_ship_spawn(pos, ships.get(ship_type), team_res)
@@ -37,6 +43,7 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 		boat.team_stats = team_res
 		boat.boat_stats = ship_resource
 		boat.connect("bullet_fired", Callable(bullet_manager, "handle_bullet_spawned"))
+		boat.connect("ship_destroy", Callable(screw_manager, "handle_ship_destroy"))
 		add_child(boat)
 		for slots in boat.boat_stats.gun_slots:
 			boat.add_new_gun(gun.instantiate())

@@ -1,41 +1,42 @@
+class_name WaterBody
 extends Node2D
 
 @export_category("Constants")
 @export var k : float = 0.015
 @export var d : float = 0.03 
 
-var springs = []
-var passes = 100
+var springs : Array = []
+var passes : int = 100
 
 @export_category("Wave Spring")
-@export var spread = 1.5
-@export var distance_between_springs =  20
-@export var spring_number = 40
+@export var spread : float = 1.5
+@export var distance_between_springs : int =  20
+@export var spring_number : int = 40
 
-var water_lenght = distance_between_springs * spring_number
+var water_lenght : int = distance_between_springs * spring_number
 
-@onready var water_spring = preload("res://scenes/game/misc/water_spring.tscn")
+@onready var water_spring : PackedScene = preload("res://scenes/game/misc/water_spring.tscn")
 
 @export_category("Ocean")
-@export var depth = 1000
-@export var border_thickness = 1
-@export var random_waves = true
+@export var depth : int = 1000
+@export var border_thickness : float = 1
+@export var random_waves : bool = true
 
 
-var target_height = global_position.y
-var bottom = target_height + depth
+var target_height : int = global_position.y
+var bottom : int = target_height + depth
 
-@onready var water_polygon = $Water_Polygon
-@onready var water_border = $Water_Border
+@onready var water_polygon : Polygon2D = $Water_Polygon
+@onready var water_border : SmoothPath = $Water_Border
 
-func _ready():
+func _ready() -> void:
 	
 	spread = spread / 10000
 	water_border.width = border_thickness
 	
 	for i in range(spring_number):
-		var x_position = distance_between_springs * i
-		var w = water_spring.instantiate()
+		var x_position : int = distance_between_springs * i
+		var w : Node2D = water_spring.instantiate()
 		add_child(w)
 		springs.append(w)
 		w.initialize(x_position, i)
@@ -46,12 +47,12 @@ func _ready():
 
 
 func _physics_process(_delta: float) -> void:
-	for i in springs:
+	for i : Node2D in springs:
 		i.water_update(k, d)
 		
 		
-	var left_deltas = []
-	var right_deltas = []
+	var left_deltas : Array = []
+	var right_deltas : Array = []
 	for i in range (springs.size()):
 		left_deltas.append(0)
 		right_deltas.append(0)
@@ -75,20 +76,20 @@ func _physics_process(_delta: float) -> void:
 	new_border()
 	draw_water_body()
 		
-func splash(index, speed):
+func splash(index : int, speed : float) -> void:
 	if index>= 0 and index < springs.size():
 		springs[index].velocity += speed
 	pass
 	
-func draw_water_body():
+func draw_water_body() -> void:
 	
-	var curve = water_border.curve
-	var points = Array(curve.get_baked_points())
+	var curve : Curve2D = water_border.curve
+	var points : Array = Array(curve.get_baked_points())
 		
-	var water_polygon_points = points;
+	var water_polygon_points : Array = points;
 		
-	var first_index = 0
-	var last_index = water_polygon_points.size()-1
+	var first_index : int = 0
+	var last_index : int = water_polygon_points.size()-1
 	
 	water_polygon_points.append(Vector2(water_polygon_points[last_index].x, bottom))
 	water_polygon_points.append(Vector2(water_polygon_points[first_index].x, bottom))
@@ -98,10 +99,10 @@ func draw_water_body():
 	water_polygon.set_polygon(water_polygon_points)
 	water_polygon.set_uv(water_polygon_points)
 	
-func new_border():
-	var curve = Curve2D.new().duplicate()
+func new_border() -> void:
+	var curve : Curve2D = Curve2D.new().duplicate()
 	
-	var surface_points = []
+	var surface_points : Array = []
 	
 	for i in range(springs.size()):
 		surface_points.append(springs[i].position)
@@ -116,7 +117,7 @@ func new_border():
 
 func _on_timer_timeout() -> void:
 	if (random_waves):
-		var rand_val = randi_range(15, springs.size() -15)
+		var rand_val : int = randi_range(15, springs.size() -15)
 		splash(rand_val-2, -0.1)
 		splash(rand_val-1, -0.3)
 		splash(rand_val, -0.5)

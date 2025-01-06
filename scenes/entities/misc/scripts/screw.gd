@@ -6,7 +6,7 @@ var sprite : Sprite2D = $Sprite2D
 @export_range(1,20)
 var catch_threshold : float = 10
 
-func _ready() -> void:
+func explode() -> void:
 	linear_velocity.y = randf_range(-200, -400)
 	linear_velocity.x = randf_range(-200, 200)
 	angular_velocity = randf_range(100, -100)
@@ -22,9 +22,7 @@ func _physics_process(delta: float) -> void:
 		glow(!is_glowing)
 		is_glowing = !is_glowing
 	
-	print(get_global_mouse_position().distance_to(global_position))
 	if (get_global_mouse_position().distance_to(global_position) < catch_threshold):
-		print("aaaaa")
 		queue_free()
 		pass
 	

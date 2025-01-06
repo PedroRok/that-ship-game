@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cvidy1earqqq0" path="res://scenes/game/base/enemy_base.tscn" id="10_tihlc"]
 [ext_resource type="Resource" uid="uid://dd6pt4gviahlu" path="res://core/resources/teams/team_right.tres" id="11_ek8oh"]
 [ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
-[ext_resource type="PackedScene" uid="uid://cv0agbbhivib0" path="res://scenes/entities/misc/screw.tscn" id="14_oysn5"]
+[ext_resource type="Script" path="res://scenes/game/scripts/screw_manager.gd" id="13_thedk"]
 [ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game_ui.tscn" id="15_hn43x"]
 [ext_resource type="Script" path="res://scenes/game/temp_spawner.gd" id="15_rgq2s"]
 
@@ -21,8 +21,11 @@ shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
 shader_parameter/CloudColor = Color(0.611765, 0.854902, 1, 1)
 shader_parameter/speed = 0.5
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("camera", "ship_manager", "bullet_manager")]
 script = ExtResource("1_lrdil")
+camera = NodePath("GameCam")
+ship_manager = NodePath("ShipsManager")
+bullet_manager = NodePath("BulletManager")
 
 [node name="Base" parent="." instance=ExtResource("1_q0hc1")]
 team_stats = ExtResource("2_r27un")
@@ -38,12 +41,11 @@ z_index = 200
 position = Vector2(-26, 368)
 k = 0.01
 d = 0.08
-spread = null
+spread = 0.0001
 distance_between_springs = 30
-spring_number = 60
+spring_number = 100
 depth = 100
-border_thickness = null
-random_waves = null
+random_waves = false
 
 [node name="Background" type="ColorRect" parent="Environment"]
 z_index = -1800
@@ -86,13 +88,20 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="ShipsManager" type="Node2D" parent="." node_paths=PackedStringArray("bullet_manager")]
-position = Vector2(102, 364)
+[node name="ShipsManager" type="Node" parent="." node_paths=PackedStringArray("bullet_manager", "screw_manager")]
 script = ExtResource("11_wfful")
 bullet_manager = NodePath("../BulletManager")
+screw_manager = NodePath("../ScrewManager")
+
+[node name="SpawnPos" type="Marker2D" parent="ShipsManager"]
+position = Vector2(101, 363)
 
 [node name="BulletManager" type="Node" parent="."]
 script = ExtResource("9_ucfpf")
+
+[node name="ScrewManager" type="Node" parent="." node_paths=PackedStringArray("base")]
+script = ExtResource("13_thedk")
+base = NodePath("../Base")
 
 [node name="TempSpawner" type="Node2D" parent="."]
 position = Vector2(1184, 363)
@@ -101,8 +110,5 @@ script = ExtResource("15_rgq2s")
 [node name="Spawner" type="Timer" parent="TempSpawner"]
 wait_time = 5.0
 autostart = true
-
-[node name="Screw" parent="." instance=ExtResource("14_oysn5")]
-position = Vector2(397, 296)
 
 [connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]

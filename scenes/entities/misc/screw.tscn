@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="3_preg4"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_64kt7"]
+resource_local_to_scene = true
 shader = ExtResource("2_5yead")
 shader_parameter/enable = false
 shader_parameter/bold = false
@@ -24,5 +25,3 @@ catch_threshold = 7.0
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_64kt7")
 texture = ExtResource("3_preg4")
-
-[connection signal="mouse_shape_entered" from="." to="." method="_on_mouse_shape_entered"]
