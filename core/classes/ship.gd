@@ -16,7 +16,7 @@ signal bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, ro
 func get_guns() -> Array[Gun]:
 	return guns
 
-func add_new_gun(new_gun : Gun):
+func add_new_gun(new_gun : Gun) -> void:
 	if (guns.size() >= boat_stats.gun_slots.size()):
 		push_error("Trying to add new weapong when is already full")
 		return
@@ -24,7 +24,7 @@ func add_new_gun(new_gun : Gun):
 	new_gun.connect("fired_bullet", Callable(self, "handle_bullet_fired"))
 	
 	add_child(new_gun)
-	var gun_slot = boat_stats.gun_slots[guns.size()] as GunSlot
+	var gun_slot : GunSlot = boat_stats.gun_slots[guns.size()]
 	new_gun.position = gun_slot.position
 	
 	if team_stats.direction < 0:
@@ -36,7 +36,7 @@ func add_new_gun(new_gun : Gun):
 func get_center_pos() -> Vector2:
 	return global_position + boat_stats.center
 
-func handle_bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, rotation : float):
+func handle_bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, rotation : float) -> void:
 	bullet.team = team_stats.team_id
 	bullet_fired.emit(bullet, direction, position, rotation)
 	pass

@@ -1,9 +1,9 @@
 extends Node2D
 
 @onready
-var manager = $"../ShipsManager"
+var manager : ShipManager = $"../ShipsManager"
 @onready
-var team_right = preload("res://core/resources/teams/team_right.tres")
+var team_right : TeamStats = preload("res://core/resources/teams/team_right.tres")
 
 func _ready() -> void:
 	_on_spawner_timeout()

@@ -14,12 +14,12 @@ var killTime : int = 50
 
 var team : int = -1
 
-var already_hit = false
+var already_hit : bool = false
 
 
 func _physics_process(_delta: float) -> void:
 	if direction != Vector2.ZERO:
-		var velocity = direction * speed
+		var velocity : Vector2 = direction * speed
 		global_position += velocity
 		
 	if (killTime <= 0):
@@ -27,7 +27,7 @@ func _physics_process(_delta: float) -> void:
 	killTime -= 1
 	pass
 	
-func set_direction(new_direction: Vector2):
+func set_direction(new_direction: Vector2) -> void:
 	self.direction = new_direction
 	new_direction = self.direction.rotated(rotation)
 
@@ -35,14 +35,14 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 	if (already_hit):
 		return 
 	if (area is HitboxComponent):
-		var ship = area.ship as Ship
+		var ship : Ship = area.ship
 		if (ship.team_stats.team_id != team):
 			if (area.enabled):
 				already_hit = true
 				area.handle_hit(damage, direction.x)
 				queue_free()
 	if (area is BaseHitboxComponent):
-		var base = area.base as Base
+		var base : Base = area.base
 		if (base.team_stats.team_id != team):
 			already_hit = true
 			area.handle_hit(damage, direction.x)

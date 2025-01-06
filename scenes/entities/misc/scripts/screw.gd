@@ -30,6 +30,6 @@ func _physics_process(delta: float) -> void:
 	
 	pass
 	
-func glow(active : bool):
-	var shader = sprite.material as ShaderMaterial
+func glow(active : bool) -> void:
+	var shader : ShaderMaterial = sprite.material
 	shader.set_shader_parameter("enable", active)

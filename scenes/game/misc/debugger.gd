@@ -1,7 +1,7 @@
 extends Control
 
 @export
-var camera: GameCam
+var camera : GameCam
 
 @export
 var ship_spawner : ShipManager
@@ -38,11 +38,11 @@ func add_debug_entry(key: String, initial_value: String) -> void:
 	if debug_info.has(key):
 		print("Debug key already exists: ", key)
 		return
-	var hbox = HBoxContainer.new()
-	var key_label = Label.new()
+	var hbox : HBoxContainer = HBoxContainer.new()
+	var key_label : Label = Label.new()
 	key_label.text = key + ": "
 	key_label.add_theme_color_override("font_color", Color(1, 1, 1))
-	var value_label = Label.new()
+	var value_label : Label = Label.new()
 	value_label.text = initial_value
 	value_label.add_theme_color_override("font_color", Color(1, 1, 0))
 	
@@ -57,7 +57,7 @@ func update_debug(key: String, new_value: String) -> void:
 	if not debug_info.has(key):
 		print("Debug key not found: ", key)
 		return
-	var debug_entry = debug_info[key]
+	var debug_entry : Dictionary = debug_info[key]
 	if debug_entry["value"] != new_value:
 		debug_entry["value"] = new_value
 		debug_entry["label"].text = new_value
@@ -66,8 +66,8 @@ func remove_debug_entry(key: String) -> void:
 	if not debug_info.has(key):
 		print("Debug key not found: ", key)
 		return
-	var debug_entry = debug_info[key]
-	var hbox = debug_entry["label"].get_parent()
+	var debug_entry : Dictionary  = debug_info[key]
+	var hbox : HBoxContainer = debug_entry["label"].get_parent()
 	debug_container.remove_child(hbox)
 	hbox.queue_free()
 	debug_info.erase(key)

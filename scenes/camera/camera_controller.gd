@@ -2,9 +2,9 @@ class_name GameCam
 extends Camera2D
 
 @export
-var zoom_speed = 0.1
+var zoom_speed : float = 0.1
 @export
-var move_speed = 10
+var move_speed : float= 10
 
 var actual_zoom : float = 1
 @export
@@ -17,7 +17,7 @@ var actual_h_pos : float = 0
 func _ready() -> void:
 	actual_zoom = zoom.x
 
-func _process(_delta: float):
+func _process(_delta: float) -> void:
 	if (actual_zoom != zoom.x):
 		actual_zoom = clamp(actual_zoom, min_zoom, max_zoom)
 		zoom = lerp(zoom, Vector2(actual_zoom, actual_zoom), .2)
@@ -25,7 +25,7 @@ func _process(_delta: float):
 
 
 	if (actual_h_pos != global_position.x):
-		var viewport = get_viewport()
+		var viewport : Viewport = get_viewport()
 		actual_h_pos = clamp(actual_h_pos, (viewport.size.x / 2) / actual_zoom, limit_right - (viewport.size.x / 2) / actual_zoom)
 		global_position.x = lerp(global_position.x, actual_h_pos, .2)
 		Global.center_camera_pos = global_position
@@ -47,9 +47,9 @@ func _input(event: InputEvent) -> void:
 		actual_h_pos += move_speed
 	
 
-func move_camera_to_with_zoom():
-	var viewport = get_viewport()
-	var viewport_center = viewport.size / 2.0
-	var direction = viewport.get_mouse_position() - viewport_center
+func move_camera_to_with_zoom() -> void:
+	var viewport : Viewport = get_viewport()
+	var viewport_center : Vector2 = viewport.size / 2.0
+	var direction : Vector2 = viewport.get_mouse_position() - viewport_center
 	actual_h_pos += round((direction.x / viewport_center.x)) * move_speed * actual_zoom
 	#prints(viewport.get_mouse_position() - viewport_center)

@@ -38,9 +38,12 @@ z_index = 200
 position = Vector2(-26, 368)
 k = 0.01
 d = 0.08
+spread = null
 distance_between_springs = 30
 spring_number = 60
 depth = 100
+border_thickness = null
+random_waves = null
 
 [node name="Background" type="ColorRect" parent="Environment"]
 z_index = -1800

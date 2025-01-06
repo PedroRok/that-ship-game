@@ -12,13 +12,13 @@ func check_radar(team_id: int, direction: int) -> Node:
 	else:
 		target_position.x = -ship.boat_stats.radar_distance
 	
-	var collider = get_collider()
+	var collider : Object = get_collider()
 	if (collider and collider is HitboxComponent):
-		var boat = collider.ship as Ship
+		var boat : Ship = collider.ship
 		if (boat.team_stats.team_id != team_id and collider.enabled):
 			return collider.ship
 	if (collider and collider is BaseHitboxComponent):
-		var base = collider.base as Base
+		var base : Base = collider.base
 		if (base.team_stats.team_id != team_id):
 			return collider.base
 	return null

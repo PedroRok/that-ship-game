@@ -22,7 +22,7 @@ func _ready() -> void:
 	shape = ship.boat_stats.particles_shape
 	position = ship.boat_stats.particles_pos
 	
-	var rect = shape.get_rect() as Rect2
+	var rect : Rect2 = shape.get_rect()
 	
 	trail.init(position, shape, rect)
 	fire.init(position, shape, rect)

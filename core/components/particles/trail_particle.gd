@@ -7,7 +7,7 @@ var current_dir : int = 0
 var origin_pos : Vector2
 var origin_rect : Rect2
 
-func init(pos : Vector2, _shape : Shape2D, rect : Rect2):
+func init(pos : Vector2, _shape : Shape2D, rect : Rect2) -> void:
 	origin_pos = pos
 	origin_rect = rect
 	position.x = pos.x
@@ -17,9 +17,9 @@ func init(pos : Vector2, _shape : Shape2D, rect : Rect2):
 	#material.gravity.x = -team_stats.direction * 90
 	pass
 
-func flip(to_right : bool):
+func flip(to_right : bool) -> void:
 	
-	var rect_diff = 0
+	var rect_diff : float = 0
 	if to_right:
 		rect_diff = -(origin_rect.size.x / 2)
 		get_particle().direction.x = -1
@@ -29,7 +29,7 @@ func flip(to_right : bool):
 	position.x = origin_pos.x + rect_diff
 	
 
-func delta_speed(dir : int, velocity : float):
+func delta_speed(dir : int, velocity : float) -> void:
 	if (dir != current_dir):
 		flip(dir > 0)
 	else:

@@ -26,7 +26,7 @@ func process_physics(delta: float) -> void:
 	#prints(parent.gravity_scale)
 	death_deespawn_delay -= 1;
 	if death_deespawn_delay == 0:
-		var particle = particle_component.hit.process_material as ParticleProcessMaterial
+		var particle : ParticleProcessMaterial = particle_component.hit.process_material
 		particle.direction.y = 0
 		particle.gravity.y = 20
 		particle.spread = 180

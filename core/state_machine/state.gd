@@ -17,7 +17,7 @@ func process_input(_event: InputEvent) -> void:
 func process_frame(_delta: float) -> void:
 	return
 	
-var current_speed = 0.0
+var current_speed : float = 0.0
 	
 func process_physics(delta: float) -> void:
 	parent.rotation = lerp(parent.rotation, -parent.linear_velocity.x / parent.boat_stats.speed * parent.boat_stats.max_tilt_angle, parent.boat_stats.deceleration * delta)

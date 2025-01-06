@@ -24,7 +24,7 @@ func change_state(state : State, new_state_name : String) -> void:
 	if state != current_state:
 		return
 
-	var new_state = states.get(new_state_name.to_lower())
+	var new_state : State = states.get(new_state_name.to_lower())
 	if !new_state:
 		push_warning('"' +state.name + '" is Trying to go to a unknow state')
 		return

@@ -7,7 +7,7 @@ var health_component : HealthComponent
 var radar_component : RadarComponent
 
 func enter() -> void:
-	var enemy = radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)
+	var enemy : Node = radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)
 	for gun in parent.get_guns():
 		gun.enemy = enemy
 	pass

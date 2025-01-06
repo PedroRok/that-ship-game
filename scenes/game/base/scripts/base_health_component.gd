@@ -9,7 +9,7 @@ var label : Label
 
 signal death_event
 
-func handle_hit(damage : Damage):
+func handle_hit(damage : Damage) -> void:
 	if health - damage.damage <= 0:
 		emit_signal("death_event")
 	health -= damage.damage

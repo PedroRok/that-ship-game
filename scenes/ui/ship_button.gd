@@ -15,7 +15,7 @@ var button : Button = $Button
 signal spawn_ship(ship_name : String)
 
 func _ready() -> void:
-	var shader_material = button.material as ShaderMaterial
+	var shader_material : ShaderMaterial = button.material as ShaderMaterial
 	shader_material.set_shader_parameter("reference_texture", ship_sprite)
 	button.icon = ship_sprite
 
