@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=16 format=3 uid="uid://cld2wbv3iqt05"]
 
 [ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
 [ext_resource type="Script" path="res://scenes/game/scripts/game.gd" id="1_lrdil"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cvidy1earqqq0" path="res://scenes/game/base/enemy_base.tscn" id="10_tihlc"]
 [ext_resource type="Resource" uid="uid://dd6pt4gviahlu" path="res://core/resources/teams/team_right.tres" id="11_ek8oh"]
 [ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
+[ext_resource type="PackedScene" uid="uid://cv0agbbhivib0" path="res://scenes/entities/misc/screw.tscn" id="14_oysn5"]
 [ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game_ui.tscn" id="15_hn43x"]
 [ext_resource type="Script" path="res://scenes/game/temp_spawner.gd" id="15_rgq2s"]
 
@@ -97,5 +98,8 @@ script = ExtResource("15_rgq2s")
 [node name="Spawner" type="Timer" parent="TempSpawner"]
 wait_time = 5.0
 autostart = true
+
+[node name="Screw" parent="." instance=ExtResource("14_oysn5")]
+position = Vector2(397, 296)
 
 [connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]
