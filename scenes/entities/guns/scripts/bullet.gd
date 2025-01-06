@@ -16,6 +16,7 @@ var team : int = -1
 
 var already_hit = false
 
+
 func _physics_process(_delta: float) -> void:
 	if direction != Vector2.ZERO:
 		var velocity = direction * speed

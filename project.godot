@@ -25,7 +25,6 @@ buses/default_bus_layout="res://core/utils/default_bus_layout.tres"
 
 [autoload]
 
-EventBus="*res://scripts/event_bus.gd"
 Signal_Debugger="*res://addons/SignalVisualizer/Debugger/SignalDebugger.gd"
 Enums="*res://scripts/enums.gd"
 Global="*res://scripts/global.gd"

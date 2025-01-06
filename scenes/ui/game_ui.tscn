@@ -1,7 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=13 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
+[ext_resource type="Script" path="res://scenes/ui/game_ui.gd" id="2_pwgb8"]
 [ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="5_73k7f"]
 [ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_byohh"]
 
@@ -58,6 +59,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_froqm")
+script = ExtResource("2_pwgb8")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -76,17 +78,17 @@ scale = Vector2(3, 3)
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_right = 10
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="GameUiButton" parent="MarginContainer/HBoxContainer" instance=ExtResource("5_73k7f")]
+[node name="GameUiButton" parent="MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("1_y3jf6")
 ship_name = "small"
 
-[node name="GameUiButton2" parent="MarginContainer/HBoxContainer" instance=ExtResource("5_73k7f")]
+[node name="GameUiButton2" parent="MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("5_byohh")
 ship_name = "tank"

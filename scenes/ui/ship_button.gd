@@ -1,4 +1,5 @@
 @tool
+class_name ShipButton
 extends PanelContainer
 
 
@@ -11,6 +12,8 @@ var ship_name : String
 @onready
 var button : Button = $Button
 
+signal spawn_ship(ship_name : String)
+
 func _ready() -> void:
 	var shader_material = button.material as ShaderMaterial
 	shader_material.set_shader_parameter("reference_texture", ship_sprite)
@@ -18,5 +21,5 @@ func _ready() -> void:
 
 
 func _on_button_down() -> void:
-	EventBus.ship_spawned(ship_name)
-	pass # Replace with function body.
+	spawn_ship.emit(ship_name)
+	pass

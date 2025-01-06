@@ -1,6 +1,9 @@
 class_name ShipManager
 extends Node2D
 
+@export
+var bullet_manager : BulletManager
+
 @onready
 var ship_entity = preload("res://scenes/entities/ship/ship_entity.tscn")
 
@@ -19,10 +22,6 @@ var team_resource = preload("res://core/resources/teams/team_left.tres")
 @onready
 var gun = preload("res://scenes/entities/guns/gun.tscn")
 
-func _ready() -> void:
-	EventBus.spawn_ship.connect(Callable(self, "select_ship"))
-	pass
-
 func select_ship(ship_name : String):
 	if (ship_name == "small"):
 		handle_ship_spawn(position, ships.get(ShipsTypes.SMALL))
@@ -37,6 +36,7 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 	if boat:
 		boat.team_stats = team_res
 		boat.boat_stats = ship_resource
+		boat.connect("bullet_fired", Callable(bullet_manager, "handle_bullet_spawned"))
 		add_child(boat)
 		for slots in boat.boat_stats.gun_slots:
 			boat.add_new_gun(gun.instantiate())
