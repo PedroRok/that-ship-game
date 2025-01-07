@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cvidy1earqqq0"]
+[gd_scene load_steps=11 format=3 uid="uid://cvidy1earqqq0"]
 
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base.gd" id="1_oee04"]
 [ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="2_0pxwk"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bbm0w030f1nf2" path="res://assets/game/base/dock_shadow.png" id="5_hemv0"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base_hitbox.gd" id="6_gpemj"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base_health_component.gd" id="7_0cgtq"]
+[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="7_rshfm"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qceai"]
 friction = 0.0
@@ -79,6 +80,7 @@ offset_left = -136.0
 offset_top = 304.0
 offset_right = -62.0
 offset_bottom = 327.0
+theme_override_fonts/font = ExtResource("7_rshfm")
 text = "100"
 vertical_alignment = 1
 
