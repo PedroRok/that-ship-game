@@ -1,12 +1,14 @@
-[gd_scene load_steps=7 format=3 uid="uid://bnaod6sgb8n5x"]
+[gd_scene load_steps=8 format=3 uid="uid://bnaod6sgb8n5x"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_2d8q0"]
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="2_yswwm"]
 [ext_resource type="Script" path="res://scenes/ui/ship_button.gd" id="5_s7vka"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kx714"]
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_p7nb3"]
 atlas = ExtResource("1_2d8q0")
-region = Rect2(50, 6, 37, 25)
+region = Rect2(32, 9, 32, 23)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2cn2u"]
 content_margin_left = 2.0
@@ -15,6 +17,7 @@ content_margin_right = 2.0
 content_margin_bottom = 7.0
 texture = SubResource("AtlasTexture_p7nb3")
 texture_margin_left = 5.0
+texture_margin_top = 3.0
 texture_margin_right = 5.0
 texture_margin_bottom = 9.0
 
@@ -30,17 +33,31 @@ shader_parameter/shadow_size = 0.055
 custom_minimum_size = Vector2(60, 40)
 offset_right = 82.0
 offset_bottom = 45.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_kx714")
 script = ExtResource("5_s7vka")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="BgMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_top = 5
+
+[node name="Bg" type="Panel" parent="BgMargin"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
+
+[node name="InnerMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 7
+
+[node name="MarginContainer" type="MarginContainer" parent="InnerMargin"]
 layout_mode = 2
 theme_override_constants/margin_left = 20
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 10
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="InnerMargin"]
 texture_filter = 1
 texture_repeat = 1
 material = SubResource("ShaderMaterial_a8d44")
@@ -50,4 +67,4 @@ action_mode = 0
 icon_alignment = 1
 expand_icon = true
 
-[connection signal="button_down" from="Button" to="." method="_on_button_down"]
+[connection signal="button_down" from="InnerMargin/Button" to="." method="_on_button_down"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=21 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
@@ -10,31 +10,29 @@
 [ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_byohh"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="6_yt1wj"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8qppg"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_8m3px"]
 atlas = ExtResource("1_vmi2c")
-region = Rect2(192, 4, 33, 20)
+region = Rect2(192, 11, 32, 21)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rhewh"]
-content_margin_top = 7.0
-content_margin_bottom = 7.0
-texture = SubResource("AtlasTexture_8qppg")
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2tkxl"]
+texture = SubResource("AtlasTexture_8m3px")
 texture_margin_left = 2.0
 texture_margin_top = 6.0
 texture_margin_right = 2.0
-texture_margin_bottom = 6.0
+texture_margin_bottom = 3.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fquhi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_vws41"]
 atlas = ExtResource("1_vmi2c")
-region = Rect2(149, 4, 33, 20)
+region = Rect2(96, 11, 32, 21)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jlbv7"]
 content_margin_top = 5.0
 content_margin_bottom = 9.0
 texture = SubResource("AtlasTexture_vws41")
 texture_margin_left = 2.0
-texture_margin_top = 2.0
+texture_margin_top = 3.0
 texture_margin_right = 2.0
 texture_margin_bottom = 6.0
 
@@ -43,18 +41,31 @@ content_margin_top = 5.0
 content_margin_bottom = 9.0
 texture = SubResource("AtlasTexture_vws41")
 texture_margin_left = 2.0
-texture_margin_top = 2.0
+texture_margin_top = 3.0
+texture_margin_right = 2.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8qppg"]
+atlas = ExtResource("1_vmi2c")
+region = Rect2(160, 11, 32, 21)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bymft"]
+content_margin_top = 7.0
+content_margin_bottom = 7.0
+texture = SubResource("AtlasTexture_8qppg")
+texture_margin_left = 2.0
+texture_margin_top = 8.0
 texture_margin_right = 2.0
 texture_margin_bottom = 6.0
 
 [sub_resource type="Theme" id="Theme_froqm"]
 Button/font_sizes/font_size = 16
 Button/fonts/font = ExtResource("4_idpxb")
-Button/styles/disabled = SubResource("StyleBoxTexture_rhewh")
+Button/styles/disabled = SubResource("StyleBoxTexture_2tkxl")
 Button/styles/focus = SubResource("StyleBoxEmpty_fquhi")
 Button/styles/hover = SubResource("StyleBoxTexture_jlbv7")
 Button/styles/normal = SubResource("StyleBoxTexture_t0qnc")
-Button/styles/pressed = SubResource("StyleBoxTexture_rhewh")
+Button/styles/pressed = SubResource("StyleBoxTexture_bymft")
 Label/constants/outline_size = 4
 Label/constants/shadow_offset_x = 0
 Label/constants/shadow_offset_y = 0
@@ -62,14 +73,7 @@ Label/constants/shadow_outline_size = 2
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ept8f"]
 atlas = ExtResource("1_vmi2c")
-region = Rect2(101, 6, 37, 25)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y58m0"]
-texture = SubResource("AtlasTexture_ept8f")
-texture_margin_left = 5.0
-texture_margin_top = 5.0
-texture_margin_right = 5.0
-texture_margin_bottom = 8.0
+region = Rect2(64, 7, 32, 25)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_shik3"]
 shader = ExtResource("3_xl1jr")
@@ -89,55 +93,47 @@ grow_vertical = 2
 theme = SubResource("Theme_froqm")
 script = ExtResource("2_pwgb8")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_direction = 1
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -275.41
-offset_top = -85.0
-offset_right = 310.59
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 0
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+layout_mode = 2
+offset_left = 219.59
+offset_top = 604.86
+offset_right = 785.59
+offset_bottom = 679.86
 scale = Vector2(1.5, 1.5)
-pivot_offset = Vector2(320, 60.28)
-theme_override_constants/margin_left = 10
-theme_override_constants/margin_right = 10
+texture = SubResource("AtlasTexture_ept8f")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 8
 
-[node name="Panel" type="Panel" parent="MarginContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxTexture_y58m0")
-
-[node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
-layout_mode = 2
+offset_right = 566.0
+offset_bottom = 75.0
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="NinePatchRect/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="Stats" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="Stats" type="HBoxContainer" parent="NinePatchRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Panel" type="GridContainer" parent="MarginContainer/MarginContainer/VBoxContainer/Stats"]
+[node name="Panel" type="GridContainer" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 columns = 3
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/MarginContainer/VBoxContainer/Stats/Panel"]
+[node name="TextureRect" type="TextureRect" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel"]
 material = SubResource("ShaderMaterial_shik3")
 custom_minimum_size = Vector2(12, 12)
 layout_mode = 2
 texture = ExtResource("3_l0ngb")
 expand_mode = 2
 
-[node name="Label2" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer/Stats/Panel"]
+[node name="Label2" type="Label" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
@@ -145,45 +141,45 @@ theme_override_fonts/font = ExtResource("6_yt1wj")
 theme_override_font_sizes/font_size = 8
 text = "SCREWS - 0"
 
-[node name="Label" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer/Stats/Panel"]
+[node name="Label" type="Label" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel"]
 layout_mode = 2
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
 theme_override_fonts/font = ExtResource("4_idpxb")
 theme_override_font_sizes/font_size = 8
 
-[node name="HSeparator" type="HSeparator" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="NinePatchRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = -21
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer"]
+[node name="ButtonsContainer" type="HBoxContainer" parent="NinePatchRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="1" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="1" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("1_y3jf6")
 ship_name = "small"
 
-[node name="2" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="2" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("5_byohh")
 ship_name = "tank"
 
-[node name="3" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="3" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 
-[node name="4" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="4" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 
-[node name="5" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="5" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 
-[node name="6" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="6" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 
-[node name="7" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="7" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 
-[node name="8" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="8" parent="NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2

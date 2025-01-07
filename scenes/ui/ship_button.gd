@@ -10,7 +10,7 @@ var ship_sprite : Texture2D
 var ship_name : String
 
 @onready
-var button : Button = $Button
+var button : Button = $InnerMargin/Button
 
 signal spawn_ship(ship_name : String)
 

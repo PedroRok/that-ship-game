@@ -5,7 +5,7 @@ extends Control
 var ship_manager : ShipManager
 
 @onready
-var buttons_container : HBoxContainer  = $MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer
+var buttons_container : HBoxContainer  = $NinePatchRect/MarginContainer/VBoxContainer/ButtonsContainer
 
 func _ready() -> void:
 	for button in buttons_container.get_children():

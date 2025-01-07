@@ -22,7 +22,7 @@ void fragment() {
 	    
 	    // Só processa se o pixel de referência não for transparente
 	    if (reference_color.a > 0.1) {
-	        float threshold = 1.;
+	        float threshold = 0.00001;
 	        bool matches_reference = 
 	            length(current_color.rgb - reference_color.rgb) < threshold;
 	        
