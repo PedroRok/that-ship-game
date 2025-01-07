@@ -1,10 +1,27 @@
-[gd_scene load_steps=13 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=20 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
 [ext_resource type="Script" path="res://scenes/ui/game_ui.gd" id="2_pwgb8"]
+[ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="3_l0ngb"]
+[ext_resource type="Shader" path="res://shaders/outline.gdshader" id="3_xl1jr"]
+[ext_resource type="FontFile" uid="uid://c7qcyex45wu78" path="res://assets/fonts/dogicapixel.ttf" id="4_idpxb"]
 [ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="5_73k7f"]
 [ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_byohh"]
+[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="6_yt1wj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8qppg"]
+atlas = ExtResource("1_vmi2c")
+region = Rect2(192, 4, 33, 20)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rhewh"]
+content_margin_top = 7.0
+content_margin_bottom = 7.0
+texture = SubResource("AtlasTexture_8qppg")
+texture_margin_left = 2.0
+texture_margin_top = 6.0
+texture_margin_right = 2.0
+texture_margin_bottom = 6.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fquhi"]
 
@@ -13,8 +30,8 @@ atlas = ExtResource("1_vmi2c")
 region = Rect2(149, 4, 33, 20)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jlbv7"]
-content_margin_top = 3.0
-content_margin_bottom = 7.0
+content_margin_top = 5.0
+content_margin_bottom = 9.0
 texture = SubResource("AtlasTexture_vws41")
 texture_margin_left = 2.0
 texture_margin_top = 2.0
@@ -22,32 +39,43 @@ texture_margin_right = 2.0
 texture_margin_bottom = 6.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t0qnc"]
-content_margin_top = 3.0
-content_margin_bottom = 7.0
+content_margin_top = 5.0
+content_margin_bottom = 9.0
 texture = SubResource("AtlasTexture_vws41")
 texture_margin_left = 2.0
 texture_margin_top = 2.0
 texture_margin_right = 2.0
 texture_margin_bottom = 6.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8qppg"]
-atlas = ExtResource("1_vmi2c")
-region = Rect2(192, 4, 33, 20)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rhewh"]
-content_margin_top = 5.0
-content_margin_bottom = 5.0
-texture = SubResource("AtlasTexture_8qppg")
-texture_margin_left = 2.0
-texture_margin_top = 2.0
-texture_margin_right = 2.0
-texture_margin_bottom = 6.0
-
 [sub_resource type="Theme" id="Theme_froqm"]
+Button/font_sizes/font_size = 16
+Button/fonts/font = ExtResource("4_idpxb")
+Button/styles/disabled = SubResource("StyleBoxTexture_rhewh")
 Button/styles/focus = SubResource("StyleBoxEmpty_fquhi")
 Button/styles/hover = SubResource("StyleBoxTexture_jlbv7")
 Button/styles/normal = SubResource("StyleBoxTexture_t0qnc")
 Button/styles/pressed = SubResource("StyleBoxTexture_rhewh")
+Label/constants/outline_size = 4
+Label/constants/shadow_offset_x = 0
+Label/constants/shadow_offset_y = 0
+Label/constants/shadow_outline_size = 2
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ept8f"]
+atlas = ExtResource("1_vmi2c")
+region = Rect2(101, 6, 37, 25)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y58m0"]
+texture = SubResource("AtlasTexture_ept8f")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 8.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_shik3"]
+shader = ExtResource("3_xl1jr")
+shader_parameter/enable = true
+shader_parameter/bold = null
+shader_parameter/outline_color = Color(1, 1, 1, 1)
 
 [node name="GameUI" type="Control"]
 z_index = 4096
@@ -62,33 +90,100 @@ theme = SubResource("Theme_froqm")
 script = ExtResource("2_pwgb8")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+layout_direction = 1
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -96.0
-offset_top = -81.0
-offset_right = -32.0
-offset_bottom = -54.0
+offset_left = -275.41
+offset_top = -85.0
+offset_right = 310.59
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(3, 3)
+scale = Vector2(1.5, 1.5)
+pivot_offset = Vector2(320, 60.28)
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_right = 10
 
-[node name="ButtonsContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="Panel" type="Panel" parent="MarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_y58m0")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Stats" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Panel" type="GridContainer" parent="MarginContainer/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+columns = 3
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/MarginContainer/VBoxContainer/Stats/Panel"]
+material = SubResource("ShaderMaterial_shik3")
+custom_minimum_size = Vector2(12, 12)
+layout_mode = 2
+texture = ExtResource("3_l0ngb")
+expand_mode = 2
+
+[node name="Label2" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer/Stats/Panel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("6_yt1wj")
+theme_override_font_sizes/font_size = 8
+text = "SCREWS - 0"
+
+[node name="Label" type="Label" parent="MarginContainer/MarginContainer/VBoxContainer/Stats/Panel"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_fonts/font = ExtResource("4_idpxb")
+theme_override_font_sizes/font_size = 8
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = -21
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="MarginContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="GameUiButton" parent="MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="1" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("1_y3jf6")
 ship_name = "small"
 
-[node name="GameUiButton2" parent="MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+[node name="2" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("5_byohh")
 ship_name = "tank"
+
+[node name="3" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="4" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="5" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="6" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="7" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="8" parent="MarginContainer/MarginContainer/VBoxContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2

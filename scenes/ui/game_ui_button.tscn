@@ -21,11 +21,15 @@ texture_margin_bottom = 9.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a8d44"]
 resource_local_to_scene = true
 shader = ExtResource("2_yswwm")
+shader_parameter/enabled = false
 shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
 shader_parameter/shadow_gray = Color(0.18, 0.18, 0.18, 1)
 shader_parameter/shadow_size = 0.055
 
 [node name="GameUiButton" type="PanelContainer"]
+custom_minimum_size = Vector2(60, 40)
+offset_right = 82.0
+offset_bottom = 45.0
 theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
 script = ExtResource("5_s7vka")
 
@@ -41,6 +45,7 @@ texture_filter = 1
 texture_repeat = 1
 material = SubResource("ShaderMaterial_a8d44")
 layout_mode = 2
+disabled = true
 action_mode = 0
 icon_alignment = 1
 expand_icon = true
