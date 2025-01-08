@@ -10,8 +10,11 @@ shader = ExtResource("2_5yead")
 shader_parameter/enable = false
 shader_parameter/bold = false
 shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/opacity = 100.0
 
 [node name="Screw" type="RigidBody2D"]
+self_modulate = Color(1, 1, 1, 0.423529)
+z_index = 10
 collision_layer = 3
 collision_mask = 0
 input_pickable = true

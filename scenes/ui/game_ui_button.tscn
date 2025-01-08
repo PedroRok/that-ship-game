@@ -27,12 +27,17 @@ shader = ExtResource("2_yswwm")
 shader_parameter/enabled = false
 shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
 shader_parameter/shadow_gray = Color(0.18, 0.18, 0.18, 1)
+shader_parameter/darker_shadow_gray = Color(0.14, 0.14, 0.14, 1)
+shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
 shader_parameter/shadow_size = 0.055
+shader_parameter/down_light = true
+shader_parameter/invert_top_to_bottom = false
 
 [node name="GameUiButton" type="PanelContainer"]
 custom_minimum_size = Vector2(60, 40)
 offset_right = 82.0
 offset_bottom = 45.0
+scale = Vector2(1.5, 1.5)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kx714")
 script = ExtResource("5_s7vka")
 

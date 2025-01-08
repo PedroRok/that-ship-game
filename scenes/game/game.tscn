@@ -100,8 +100,9 @@ position = Vector2(101, 363)
 [node name="BulletManager" type="Node" parent="."]
 script = ExtResource("9_ucfpf")
 
-[node name="ScrewManager" type="Node" parent="."]
+[node name="ScrewManager" type="Node" parent="." node_paths=PackedStringArray("game_ui")]
 script = ExtResource("13_thedk")
+game_ui = NodePath("../CanvasLayer/GameUI")
 
 [node name="TempSpawner" type="Node2D" parent="."]
 position = Vector2(1184, 363)

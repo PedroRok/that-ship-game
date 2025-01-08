@@ -3,6 +3,7 @@ shader_type canvas_item;
 uniform bool enable:instance_index(0);
 uniform bool bold:instance_index(0);
 uniform vec4 outline_color:source_color;
+uniform float opacity = 100;
 
 vec4 apply_outline_if_needed(sampler2D texture, vec2 uv, vec2 pixel_size, vec2 pixel_offset) {
     if (texture(texture, uv + (pixel_offset * pixel_size)).a > 0.0) {
@@ -50,4 +51,5 @@ void fragment() {
             COLOR = texture(TEXTURE, UV);
         }
     }
+	COLOR.a = (COLOR.a/100.0) * opacity;
 }
