@@ -57,5 +57,8 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 func handle_ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : TeamStats) -> void:
 	if (team_stats.team_id == base.team_stats.team_id):
 		return
-	screw_manager.handle_screw_spawn(pos, true)
+	var i : int = 10 # TEMPORARY
+	while i > 0:
+		screw_manager.handle_screw_spawn(pos, true)
+		i -= 1;
 	pass

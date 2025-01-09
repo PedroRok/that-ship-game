@@ -34,10 +34,10 @@ shader_parameter/down_light = true
 shader_parameter/invert_top_to_bottom = false
 
 [node name="GameUiButton" type="PanelContainer"]
-custom_minimum_size = Vector2(60, 40)
+custom_minimum_size = Vector2(70, 40)
 offset_right = 82.0
 offset_bottom = 45.0
-scale = Vector2(1.5, 1.5)
+scale = Vector2(2, 2)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kx714")
 script = ExtResource("5_s7vka")
 
@@ -67,8 +67,10 @@ texture_filter = 1
 texture_repeat = 1
 material = SubResource("ShaderMaterial_a8d44")
 layout_mode = 2
+theme_override_font_sizes/font_size = 8
 disabled = true
 action_mode = 0
+alignment = 2
 icon_alignment = 1
 expand_icon = true
 

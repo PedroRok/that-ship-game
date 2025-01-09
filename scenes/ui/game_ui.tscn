@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=24 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="5_73k7f"]
 [ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_byohh"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="6_yt1wj"]
+[ext_resource type="AudioStream" uid="uid://tv078j1cdq7k" path="res://assets/game/sounds/pling.wav" id="7_42mi0"]
+[ext_resource type="Script" path="res://scenes/ui/screw_label.gd" id="7_nfsqg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8m3px"]
 atlas = ExtResource("1_vmi2c")
@@ -90,6 +92,7 @@ shader_parameter/invert_top_to_bottom = false
 shader_parameter/reference_texture = ExtResource("3_l0ngb")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jf3a6"]
+resource_local_to_scene = true
 shader = ExtResource("4_v33xj")
 shader_parameter/enabled = true
 shader_parameter/base_gray = Color(0.39, 0.39, 0.39, 1)
@@ -100,7 +103,7 @@ shader_parameter/shadow_size = 0.008
 shader_parameter/down_light = false
 shader_parameter/invert_top_to_bottom = false
 
-[node name="GameUI" type="Control"]
+[node name="GameUI" type="Control" node_paths=PackedStringArray("screw_label")]
 z_index = 4096
 z_as_relative = false
 layout_mode = 3
@@ -111,13 +114,14 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_froqm")
 script = ExtResource("2_pwgb8")
+screw_label = NodePath("NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer/ValueLabel")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
 layout_mode = 2
 offset_left = 325.0
-offset_top = 636.055
+offset_top = 615.0
 offset_right = 975.0
-offset_bottom = 720.095
+offset_bottom = 698.45
 texture = SubResource("AtlasTexture_ept8f")
 patch_margin_left = 5
 patch_margin_top = 5
@@ -127,7 +131,7 @@ patch_margin_bottom = 8
 [node name="MarginContainer" type="MarginContainer" parent="NinePatchRect"]
 layout_mode = 2
 offset_right = 650.0
-offset_bottom = 85.0
+offset_bottom = 105.0
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 8
@@ -160,7 +164,9 @@ theme_override_constants/separation = 2
 [node name="ValueLabel" type="Label" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer"]
 material = SubResource("ShaderMaterial_jf3a6")
 layout_mode = 2
+size_flags_horizontal = 0
 text = "0"
+script = ExtResource("7_nfsqg")
 
 [node name="ScrewLabel" type="Label" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer"]
 material = SubResource("ShaderMaterial_jf3a6")
@@ -170,6 +176,11 @@ theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("6_yt1wj")
 theme_override_font_sizes/font_size = 8
 text = "SCREW"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer"]
+stream = ExtResource("7_42mi0")
+volume_db = -11.886
+pitch_scale = 2.0
 
 [node name="HSeparator" type="HSeparator" parent="NinePatchRect/MarginContainer/VBoxContainer"]
 layout_mode = 2

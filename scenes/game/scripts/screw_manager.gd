@@ -12,7 +12,7 @@ func handle_screw_spawn(pos : Vector2, explode : bool) -> void:
 	if screw:
 		add_child(screw)
 		screw.global_position = pos
-		screw.connect("pickup_screw", Callable(game_ui, "change_screw"))
+		screw.connect("pickup_screw", Callable(game_ui.screw_label, "change_screw"))
 		if explode:
 			screw.explode()
 	pass
