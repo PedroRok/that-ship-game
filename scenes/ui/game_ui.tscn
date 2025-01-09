@@ -1,16 +1,14 @@
-[gd_scene load_steps=24 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=20 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
 [ext_resource type="Script" path="res://scenes/ui/game_ui.gd" id="2_pwgb8"]
 [ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="3_l0ngb"]
 [ext_resource type="FontFile" uid="uid://c7qcyex45wu78" path="res://assets/fonts/dogicapixel.ttf" id="4_idpxb"]
-[ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="4_v33xj"]
 [ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="5_73k7f"]
+[ext_resource type="PackedScene" uid="uid://dj8gm2q4jdoeq" path="res://scenes/ui/bar_values/value_panel.tscn" id="5_138iq"]
 [ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_byohh"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="6_yt1wj"]
-[ext_resource type="AudioStream" uid="uid://tv078j1cdq7k" path="res://assets/game/sounds/pling.wav" id="7_42mi0"]
-[ext_resource type="Script" path="res://scenes/ui/screw_label.gd" id="7_nfsqg"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8m3px"]
 atlas = ExtResource("1_vmi2c")
@@ -79,31 +77,7 @@ Label/fonts/font = ExtResource("6_yt1wj")
 atlas = ExtResource("1_vmi2c")
 region = Rect2(64, 7, 32, 25)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_shik3"]
-shader = ExtResource("4_v33xj")
-shader_parameter/enabled = true
-shader_parameter/base_gray = Color(0.388235, 0.388235, 0.388235, 1)
-shader_parameter/shadow_gray = Color(0.160784, 0.160784, 0.160784, 1)
-shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
-shader_parameter/light_color = Color(0.4, 0.4, 0.4, 1)
-shader_parameter/shadow_size = 0.124
-shader_parameter/down_light = false
-shader_parameter/invert_top_to_bottom = false
-shader_parameter/reference_texture = ExtResource("3_l0ngb")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jf3a6"]
-resource_local_to_scene = true
-shader = ExtResource("4_v33xj")
-shader_parameter/enabled = true
-shader_parameter/base_gray = Color(0.39, 0.39, 0.39, 1)
-shader_parameter/shadow_gray = Color(0.16, 0.16, 0.16, 1)
-shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
-shader_parameter/light_color = Color(0.475, 0.475, 0.475, 1)
-shader_parameter/shadow_size = 0.008
-shader_parameter/down_light = false
-shader_parameter/invert_top_to_bottom = false
-
-[node name="GameUI" type="Control" node_paths=PackedStringArray("screw_label")]
+[node name="GameUI" type="Control" node_paths=PackedStringArray("screw_label", "gear_label")]
 z_index = 4096
 z_as_relative = false
 layout_mode = 3
@@ -114,14 +88,16 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_froqm")
 script = ExtResource("2_pwgb8")
-screw_label = NodePath("NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer/ValueLabel")
+screw_label = NodePath("NinePatchRect/MarginContainer/VBoxContainer/Stats/Screw")
+gear_label = NodePath("NinePatchRect/MarginContainer/VBoxContainer/Stats/Gear")
+metadata/_edit_vertical_guides_ = [640.0]
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
 layout_mode = 2
-offset_left = 325.0
+offset_left = 220.0
 offset_top = 615.0
-offset_right = 975.0
-offset_bottom = 698.45
+offset_right = 1060.0
+offset_bottom = 711.0
 texture = SubResource("AtlasTexture_ept8f")
 patch_margin_left = 5
 patch_margin_top = 5
@@ -143,44 +119,19 @@ theme_override_constants/separation = 3
 
 [node name="Stats" type="HBoxContainer" parent="NinePatchRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
-
-[node name="Panel" type="GridContainer" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats"]
-layout_mode = 2
-size_flags_horizontal = 3
-columns = 2
-
-[node name="TextureRect" type="TextureRect" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel"]
-material = SubResource("ShaderMaterial_shik3")
-custom_minimum_size = Vector2(24, 24)
-layout_mode = 2
-texture = ExtResource("3_l0ngb")
-expand_mode = 3
-stretch_mode = 4
-
-[node name="VBoxContainer" type="VBoxContainer" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel"]
-layout_mode = 2
-theme_override_constants/separation = 2
-
-[node name="ValueLabel" type="Label" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer"]
-material = SubResource("ShaderMaterial_jf3a6")
-layout_mode = 2
 size_flags_horizontal = 0
-text = "0"
-script = ExtResource("7_nfsqg")
 
-[node name="ScrewLabel" type="Label" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer"]
-material = SubResource("ShaderMaterial_jf3a6")
+[node name="Screw" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
 layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_outline_color = Color(1, 1, 1, 1)
-theme_override_fonts/font = ExtResource("6_yt1wj")
-theme_override_font_sizes/font_size = 8
-text = "SCREW"
+icon_texture = ExtResource("3_l0ngb")
+name_string = "SCREW"
 
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats/Panel/VBoxContainer"]
-stream = ExtResource("7_42mi0")
-volume_db = -11.886
-pitch_scale = 2.0
+[node name="VSeparator" type="VSeparator" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+
+[node name="Gear" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
+layout_mode = 2
+name_string = "GEAR"
 
 [node name="HSeparator" type="HSeparator" parent="NinePatchRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -198,26 +149,34 @@ alignment = 1
 layout_mode = 2
 ship_sprite = ExtResource("1_y3jf6")
 ship_name = "small"
+price_value = 10
 
 [node name="2" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("5_byohh")
 ship_name = "tank"
+price_value = 50
 
 [node name="3" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+price_value = 0
 
 [node name="4" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+price_value = 0
 
 [node name="5" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+price_value = 0
 
 [node name="6" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+price_value = 0
 
 [node name="7" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+price_value = 0
 
 [node name="8" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+price_value = 0

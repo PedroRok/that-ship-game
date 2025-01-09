@@ -1,8 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://bnaod6sgb8n5x"]
+[gd_scene load_steps=14 format=3 uid="uid://bnaod6sgb8n5x"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_2d8q0"]
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="2_yswwm"]
+[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="3_qtp3v"]
+[ext_resource type="Shader" path="res://shaders/outline.gdshader" id="4_qph4b"]
 [ext_resource type="Script" path="res://scenes/ui/ship_button.gd" id="5_s7vka"]
+[ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="6_0l5q0"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kx714"]
 
@@ -25,21 +28,42 @@ texture_margin_bottom = 9.0
 resource_local_to_scene = true
 shader = ExtResource("2_yswwm")
 shader_parameter/enabled = false
+shader_parameter/shadow_size = 0.055
+shader_parameter/down_light = true
+shader_parameter/invert_top_to_bottom = false
 shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
 shader_parameter/shadow_gray = Color(0.18, 0.18, 0.18, 1)
 shader_parameter/darker_shadow_gray = Color(0.14, 0.14, 0.14, 1)
 shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
-shader_parameter/shadow_size = 0.055
-shader_parameter/down_light = true
-shader_parameter/invert_top_to_bottom = false
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q6v8x"]
+shader = ExtResource("4_qph4b")
+shader_parameter/enable = true
+shader_parameter/bold = true
+shader_parameter/outline_color = Color(0.615686, 0.615686, 0.615686, 1)
+shader_parameter/opacity = 100.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_i7tm8"]
+font_size = 8
+font_color = Color(0.352941, 0.352941, 0.352941, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qp3xx"]
+shader = ExtResource("4_qph4b")
+shader_parameter/enable = true
+shader_parameter/bold = true
+shader_parameter/outline_color = Color(0.615686, 0.615686, 0.615686, 1)
+shader_parameter/opacity = 100.0
 
 [node name="GameUiButton" type="PanelContainer"]
 custom_minimum_size = Vector2(70, 40)
-offset_right = 82.0
-offset_bottom = 45.0
+offset_right = 94.3
+offset_bottom = 52.0
 scale = Vector2(2, 2)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kx714")
 script = ExtResource("5_s7vka")
+price_value = null
 
 [node name="BgMargin" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -50,17 +74,11 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxTexture_2cn2u")
 
 [node name="InnerMargin" type="MarginContainer" parent="."]
+custom_minimum_size = Vector2(94.3, 51.75)
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 7
-
-[node name="MarginContainer" type="MarginContainer" parent="InnerMargin"]
-layout_mode = 2
-theme_override_constants/margin_left = 20
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 20
-theme_override_constants/margin_bottom = 10
 
 [node name="Button" type="Button" parent="InnerMargin"]
 texture_filter = 1
@@ -74,4 +92,30 @@ alignment = 2
 icon_alignment = 1
 expand_icon = true
 
+[node name="Price" type="Label" parent="InnerMargin"]
+material = SubResource("ShaderMaterial_q6v8x")
+custom_minimum_size = Vector2(62.12, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("3_qtp3v")
+theme_override_font_sizes/font_size = 8
+text = "1555
+"
+label_settings = SubResource("LabelSettings_i7tm8")
+horizontal_alignment = 2
+
+[node name="TextureRect" type="TextureRect" parent="InnerMargin/Price"]
+material = SubResource("ShaderMaterial_qp3xx")
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = 1.0
+offset_top = -1.0
+offset_right = 10.0
+offset_bottom = 8.0
+texture = ExtResource("6_0l5q0")
+stretch_mode = 2
+
 [connection signal="button_down" from="InnerMargin/Button" to="." method="_on_button_down"]
+[connection signal="button_up" from="InnerMargin/Button" to="." method="_on_button_button_up"]

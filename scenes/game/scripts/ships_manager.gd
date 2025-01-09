@@ -8,7 +8,7 @@ var base : Base
 var bullet_manager : BulletManager
 
 @export
-var screw_manager : ScrewManager
+var item_manager : ItemManager
 
 @onready
 var ship_entity : PackedScene = preload("res://scenes/entities/ship/ship_entity.tscn")
@@ -59,6 +59,6 @@ func handle_ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : Tea
 		return
 	var i : int = 10 # TEMPORARY
 	while i > 0:
-		screw_manager.handle_screw_spawn(pos, true)
+		item_manager.handle_gear_spawn(pos, true)
 		i -= 1;
 	pass

@@ -8,7 +8,9 @@ var ship_manager : ShipManager
 var buttons_container : HBoxContainer  = $NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer
 
 @export
-var screw_label : ScrewLabel
+var screw_label : BarValue
+@export
+var gear_label : BarValue
 
 func _ready() -> void:
 	for button in buttons_container.get_children():

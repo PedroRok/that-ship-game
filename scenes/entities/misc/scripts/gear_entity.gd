@@ -1,4 +1,4 @@
-class_name ScrewEntity
+class_name GearEntity
 extends RigidBody2D
 
 @onready
@@ -6,7 +6,7 @@ var sprite : Sprite2D = $Sprite2D
 @export_range(1,20)
 var catch_threshold : float = 10
 
-signal pickup_screw(plus : int)
+signal pickup_gear(plus : int)
 
 func explode() -> void:
 	linear_velocity.y = randf_range(-200, -400)
@@ -29,7 +29,7 @@ func _physics_process(delta: float) -> void:
 	
 	if (get_global_mouse_position().distance_to(global_position) < catch_threshold && !desapier):
 		desapier = true
-		pickup_screw.emit(1)
+		pickup_gear.emit(1)
 		if randi_range(0,1) == 0:
 			angular_velocity = -80
 		else:

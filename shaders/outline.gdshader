@@ -15,6 +15,7 @@ vec4 apply_outline_if_needed(sampler2D texture, vec2 uv, vec2 pixel_size, vec2 p
 }
 
 void fragment() {
+	vec4 color = COLOR;
     if (enable) 
     {
         float pixel_size_x = 1.0 / float(textureSize(TEXTURE, 0).x);
@@ -52,4 +53,7 @@ void fragment() {
         }
     }
 	COLOR.a = (COLOR.a/100.0) * opacity;
+	if (color.a > 0.1) {
+		COLOR = color;
+	}
 }

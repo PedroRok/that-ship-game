@@ -1,0 +1,78 @@
+[gd_scene load_steps=8 format=3 uid="uid://dj8gm2q4jdoeq"]
+
+[ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="1_ludup"]
+[ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="2_4mlqb"]
+[ext_resource type="Script" path="res://scenes/ui/bar_values/screw_label.gd" id="3_g1xcr"]
+[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="4_obnpr"]
+[ext_resource type="AudioStream" uid="uid://tv078j1cdq7k" path="res://assets/game/sounds/pling.wav" id="5_ps3bi"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_30vna"]
+resource_local_to_scene = true
+shader = ExtResource("1_ludup")
+shader_parameter/enabled = true
+shader_parameter/shadow_size = 0.1
+shader_parameter/down_light = false
+shader_parameter/invert_top_to_bottom = false
+shader_parameter/reference_texture = ExtResource("2_4mlqb")
+shader_parameter/base_gray = Color(0.388236, 0.388236, 0.388236, 1)
+shader_parameter/shadow_gray = Color(0.160784, 0.160784, 0.160784, 1)
+shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
+shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(1, 1, 1, 0.54902)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jf3a6"]
+resource_local_to_scene = true
+shader = ExtResource("1_ludup")
+shader_parameter/enabled = true
+shader_parameter/shadow_size = 0.0078
+shader_parameter/down_light = false
+shader_parameter/invert_top_to_bottom = false
+shader_parameter/base_gray = Color(0.388236, 0.388236, 0.388236, 1)
+shader_parameter/shadow_gray = Color(0.16, 0.16, 0.16, 1)
+shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
+shader_parameter/light_color = Color(0.475, 0.475, 0.475, 1)
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
+
+[node name="BarValue" type="GridContainer"]
+custom_minimum_size = Vector2(70, 0)
+size_flags_horizontal = 3
+columns = 2
+script = ExtResource("3_g1xcr")
+icon_texture = ExtResource("2_4mlqb")
+name_string = "Value"
+
+[node name="Icon" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_30vna")
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("2_4mlqb")
+expand_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ValueLabel" type="Label" parent="VBoxContainer"]
+z_index = 1
+material = SubResource("ShaderMaterial_jf3a6")
+custom_minimum_size = Vector2(38.87, 16.48)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("4_obnpr")
+theme_override_font_sizes/font_size = 16
+text = "0"
+vertical_alignment = 1
+
+[node name="NameLabel" type="Label" parent="VBoxContainer"]
+material = SubResource("ShaderMaterial_jf3a6")
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_obnpr")
+theme_override_font_sizes/font_size = 8
+text = "Value"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="VBoxContainer"]
+stream = ExtResource("5_ps3bi")
+volume_db = -11.886
+pitch_scale = 2.0

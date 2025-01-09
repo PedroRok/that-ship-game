@@ -1,14 +1,27 @@
 shader_type canvas_item;
 
+group_uniforms Properties;
 uniform bool enabled : instance_index(0) = true;
-uniform vec4 base_gray: source_color = vec4(0.7, 0.7, 0.7, 1.0);
-uniform vec4 shadow_gray: source_color = vec4(0.4, 0.4, 0.4, 1.0);
-uniform vec4 darker_shadow_gray: source_color = vec4(0.33, 0.33, 0.33, 1.0);
-uniform vec4 light_color: source_color = vec4(0.4825, 0.4825, 0.4825, 1.0);
 uniform sampler2D reference_texture;
 uniform float shadow_size: hint_range(0.001, 0.15) = 0.01; // Tamanho fixo da sombra
 uniform bool down_light = true;
 uniform bool invert_top_to_bottom = false;
+group_uniforms Colors;
+uniform vec4 base_gray: source_color = vec4(0.7, 0.7, 0.7, 1.0);
+uniform vec4 shadow_gray: source_color = vec4(0.4, 0.4, 0.4, 1.0);
+uniform vec4 darker_shadow_gray: source_color = vec4(0.33, 0.33, 0.33, 1.0);
+uniform vec4 light_color: source_color = vec4(0.4825, 0.4825, 0.4825, 1.0);
+// Progress bar module
+group_uniforms ProgressBar;
+uniform float progress_bar : hint_range(0.0, 1.0);
+uniform vec4 progress_bar_color : source_color = vec4(0.4825, 0.4825, 0.4825, 1.0);
+
+vec4 manage_progress_bar(vec2 uv, vec4 color) {
+	if (uv.y > (1.0 - progress_bar)) {
+		return mix(color, progress_bar_color, progress_bar_color.a);
+	}
+	return color;
+}
 
 void fragment() {
 	if (enabled) {
@@ -51,6 +64,8 @@ void fragment() {
 	                COLOR = vec4(light_color.rgb, current_color.a);
 	            }
 	        }
+			COLOR = manage_progress_bar(uv, COLOR);
 	    }
 	}
 }
+
