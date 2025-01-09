@@ -17,7 +17,7 @@ var button : Button = $InnerMargin/Button
 @onready
 var price_label : Label = $InnerMargin/Price
 
-signal spawn_ship(ship_name : String)
+signal spawn_ship(ship_name : String, price : int)
 
 var enabled : bool = true
 
@@ -39,9 +39,20 @@ func _ready() -> void:
 	shader_material.set_shader_parameter("reference_texture", ship_sprite)
 	button.icon = ship_sprite
 
+func on_value_change(new_val : int) -> void:
+	if (!enabled): return
+	if (new_val >= price_value):
+		if (button.disabled):
+			price_label.custom_minimum_size.y = 32
+		button.disabled = false
+		
+	else:
+		button.disabled = true
+		price_label.custom_minimum_size.y = 26
+		
 
 func _on_button_down() -> void:
-	spawn_ship.emit(ship_name)
+	spawn_ship.emit(ship_name, price_value)
 	price_label.custom_minimum_size.y = 27
 	pass
 

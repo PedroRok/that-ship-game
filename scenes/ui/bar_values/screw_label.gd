@@ -24,6 +24,8 @@ var waiting_to_increment : int = 0
 
 var progress_bar : float = 0
 
+signal value_change(new_val : int)
+
 func _ready() -> void:
 	texture.texture = icon_texture
 	name_label.text = name_string
@@ -37,12 +39,14 @@ func change_value(plus_amout: int) -> void:
 	value_label.text = str(total_value)
 	value_label.pivot_offset = value_label.size/2
 	value_label.rotation_degrees -= 3
+	value_change.emit(total_value)
 	
 func change_value_animated(plus_amount : int) -> void:
 	increment_cd = 120
 	waiting_to_increment += 1
 	value_label.text = str(total_value) + "+" + str(waiting_to_increment)
 	audio.pitch_scale = 1.
+	
 	pass
 
 var pos_increment_cd : int = 30
@@ -67,6 +71,7 @@ func _physics_process(delta: float) -> void:
 				value_label.material.set_shader_parameter("base_gray", Color("#ffffff"))
 				texture.material.set_shader_parameter("base_gray", Color("#ffffff"))
 			pos_increment_cd -= 1
+			value_change.emit(total_value)
 			pass
 		increment_cd -= 1
 	

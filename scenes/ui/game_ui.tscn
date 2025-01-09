@@ -15,6 +15,8 @@ atlas = ExtResource("1_vmi2c")
 region = Rect2(192, 11, 32, 21)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2tkxl"]
+content_margin_top = 8.0
+content_margin_bottom = 6.0
 texture = SubResource("AtlasTexture_8m3px")
 texture_margin_left = 2.0
 texture_margin_top = 6.0
@@ -149,34 +151,28 @@ alignment = 1
 layout_mode = 2
 ship_sprite = ExtResource("1_y3jf6")
 ship_name = "small"
-price_value = 10
+price_value = 2
 
 [node name="2" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
 ship_sprite = ExtResource("5_byohh")
 ship_name = "tank"
-price_value = 50
+price_value = 10
 
 [node name="3" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
-price_value = 0
 
 [node name="4" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
-price_value = 0
 
 [node name="5" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
-price_value = 0
 
 [node name="6" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
-price_value = 0
 
 [node name="7" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
-price_value = 0
 
 [node name="8" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
-price_value = 0

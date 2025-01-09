@@ -63,7 +63,6 @@ offset_bottom = 52.0
 scale = Vector2(2, 2)
 theme_override_styles/panel = SubResource("StyleBoxEmpty_kx714")
 script = ExtResource("5_s7vka")
-price_value = null
 
 [node name="BgMargin" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -93,6 +92,7 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Price" type="Label" parent="InnerMargin"]
+visible = false
 material = SubResource("ShaderMaterial_q6v8x")
 custom_minimum_size = Vector2(62.12, 32)
 layout_mode = 2
@@ -114,6 +114,7 @@ offset_left = 1.0
 offset_top = -1.0
 offset_right = 10.0
 offset_bottom = 8.0
+grow_horizontal = 0
 texture = ExtResource("6_0l5q0")
 stretch_mode = 2
 

@@ -68,10 +68,11 @@ max_zoom = 3.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="GameUI" parent="CanvasLayer" node_paths=PackedStringArray("ship_manager") instance=ExtResource("15_hn43x")]
+[node name="GameUI" parent="CanvasLayer" node_paths=PackedStringArray("ship_manager", "item_manager") instance=ExtResource("15_hn43x")]
 offset_top = 3.0
 offset_bottom = 3.0
 ship_manager = NodePath("../../ShipsManager")
+item_manager = NodePath("../../ItemManager")
 
 [node name="Debugger" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("camera", "ship_spawner", "bullet_manager")]
 layout_mode = 3
