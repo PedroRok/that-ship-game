@@ -1,0 +1,58 @@
+[gd_scene load_steps=9 format=3 uid="uid://cmcis6lmx3463"]
+
+[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/missile.gd" id="1_ee5i1"]
+[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/damage.gd" id="2_wyh67"]
+
+[sub_resource type="Resource" id="Resource_n25ww"]
+script = ExtResource("2_wyh67")
+damage = 1
+knockback = 1
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mqo2c"]
+size = Vector2(3, 2)
+
+[sub_resource type="Curve" id="Curve_vpm11"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_cnq7h"]
+offsets = PackedFloat32Array(0, 0.222222, 1)
+colors = PackedColorArray(0.95, 0.362267, 0.342, 1, 1, 0.8, 0, 1, 1, 1, 1, 1)
+
+[sub_resource type="Curve" id="Curve_64v8q"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="CurveTexture" id="CurveTexture_42syb"]
+curve = SubResource("Curve_64v8q")
+
+[node name="Missile" type="Area2D"]
+collision_layer = 514
+collision_mask = 514
+script = ExtResource("1_ee5i1")
+speed = 100
+damage = SubResource("Resource_n25ww")
+killTime = 200
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(1.5, 0)
+shape = SubResource("RectangleShape2D_mqo2c")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
+amount = 80
+direction = Vector2(-1, 0)
+spread = 10.0
+gravity = Vector2(0, 0)
+initial_velocity_min = 10.0
+initial_velocity_max = 10.0
+linear_accel_max = 22.09
+scale_amount_curve = SubResource("Curve_vpm11")
+color_ramp = SubResource("Gradient_cnq7h")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+self_modulate = Color(1, 0.616667, 0, 1)
+position = Vector2(1.39, 0)
+scale = Vector2(0.0108125, 1.5)
+texture = SubResource("CurveTexture_42syb")
+
+[connection signal="area_shape_entered" from="." to="." method="_on_area_shape_entered"]

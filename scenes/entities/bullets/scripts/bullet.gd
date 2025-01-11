@@ -1,7 +1,6 @@
 class_name Bullet
 extends Area2D
 
-
 @export
 var speed : int = 3
 
@@ -10,6 +9,7 @@ var damage : Damage
 
 var direction : Vector2 = Vector2.ZERO
 
+@export
 var killTime : int = 50
 
 var team : int = -1
@@ -17,7 +17,6 @@ var team : int = -1
 var already_hit : bool = false
 
 var target : Node2D
-
 
 func _physics_process(_delta: float) -> void:
 	if direction != Vector2.ZERO:
@@ -42,11 +41,14 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 			if (area.enabled):
 				already_hit = true
 				area.handle_hit(damage, direction.x)
-				queue_free()
+				remove_bullet()
 	if (area is BaseHitboxComponent):
 		var base : Base = area.base
 		if (base.team_stats.team_id != team):
 			already_hit = true
 			area.handle_hit(damage, direction.x)
-			queue_free()
+			remove_bullet()
 	pass # Replace with function body.
+
+func remove_bullet() -> void:
+	queue_free()

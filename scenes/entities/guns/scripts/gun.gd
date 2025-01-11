@@ -4,7 +4,7 @@ extends Node2D
 @export
 var time_to_shoot : int = 50
 @export 
-var bullet : PackedScene = preload("res://scenes/entities/guns/bullet.tscn")
+var bullet : PackedScene = preload("res://scenes/entities/bullets/bullet.tscn")
 @export
 var audio : AudioStreamPlayer2D
 

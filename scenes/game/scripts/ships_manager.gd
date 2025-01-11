@@ -29,7 +29,7 @@ var ships : Dictionary = {
 @onready
 var team_resource : TeamStats = preload("res://core/resources/teams/team_left.tres")
 @onready
-var gun : PackedScene = preload("res://scenes/entities/guns/simple_gun.tscn")
+var gun : PackedScene = preload("res://scenes/entities/guns/missile_gun.tscn")
 
 func select_ship(ship_name : String) -> void:
 	if (ship_name == "small"):

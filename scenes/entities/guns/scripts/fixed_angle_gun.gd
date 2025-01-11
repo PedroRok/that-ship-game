@@ -1,7 +1,6 @@
 class_name FixedAngleGun
 extends Gun
 
-
 @export
 var direction : Vector2
 

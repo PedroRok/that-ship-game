@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://yvfpblcc2e4q"]
+[gd_scene load_steps=3 format=3 uid="uid://yvfpblcc2e4q"]
 
 [ext_resource type="Script" path="res://scenes/entities/guns/scripts/fixed_angle_gun.gd" id="1_c8vtt"]
+[ext_resource type="PackedScene" uid="uid://cmcis6lmx3463" path="res://scenes/entities/bullets/missile.tscn" id="2_p0y00"]
 
-[node name="MissileGun" type="Node2D"]
+[node name="MissileGun" type="Node2D" node_paths=PackedStringArray("end_barrel")]
 script = ExtResource("1_c8vtt")
+bullet = ExtResource("2_p0y00")
+end_barrel = NodePath("EndBarrel")
+
+[node name="EndBarrel" type="Marker2D" parent="."]
+gizmo_extents = 0.0
