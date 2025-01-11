@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://yvfpblcc2e4q"]
+
+[ext_resource type="Script" path="res://scenes/entities/guns/scripts/fixed_angle_gun.gd" id="1_c8vtt"]
+
+[node name="MissileGun" type="Node2D"]
+script = ExtResource("1_c8vtt")

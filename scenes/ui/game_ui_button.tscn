@@ -92,13 +92,15 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Price" type="Label" parent="InnerMargin"]
+visible = false
 material = SubResource("ShaderMaterial_q6v8x")
 custom_minimum_size = Vector2(62.12, 32)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_fonts/font = ExtResource("3_qtp3v")
 theme_override_font_sizes/font_size = 8
-text = "1555
+text = "
+
 "
 label_settings = SubResource("LabelSettings_i7tm8")
 horizontal_alignment = 2

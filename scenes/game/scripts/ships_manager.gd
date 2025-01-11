@@ -29,7 +29,7 @@ var ships : Dictionary = {
 @onready
 var team_resource : TeamStats = preload("res://core/resources/teams/team_left.tres")
 @onready
-var gun : PackedScene = preload("res://scenes/entities/guns/gun.tscn")
+var gun : PackedScene = preload("res://scenes/entities/guns/simple_gun.tscn")
 
 func select_ship(ship_name : String) -> void:
 	if (ship_name == "small"):
@@ -57,8 +57,5 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 func handle_ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : TeamStats) -> void:
 	if (team_stats.team_id == base.team_stats.team_id):
 		return
-	var i : int = 10 # TEMPORARY
-	while i > 0:
-		item_manager.handle_gear_spawn(pos, true)
-		i -= 1;
+	item_manager.handle_random_spawn(pos, true)
 	pass

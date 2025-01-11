@@ -16,6 +16,8 @@ var team : int = -1
 
 var already_hit : bool = false
 
+var target : Node2D
+
 
 func _physics_process(_delta: float) -> void:
 	if direction != Vector2.ZERO:

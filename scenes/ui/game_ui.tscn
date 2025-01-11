@@ -177,3 +177,85 @@ layout_mode = 2
 
 [node name="8" parent="NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+
+[node name="NinePatchRect2" type="NinePatchRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -253.0
+offset_right = 110.0
+offset_bottom = 254.0
+grow_vertical = 2
+texture = SubResource("AtlasTexture_ept8f")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NinePatchRect2"]
+layout_mode = 2
+offset_left = 8.0
+offset_top = 5.0
+offset_right = 102.0
+offset_bottom = 492.0
+theme_override_constants/separation = 3
+
+[node name="Stats" type="VBoxContainer" parent="NinePatchRect2/VBoxContainer"]
+layout_mode = 2
+
+[node name="Screw" parent="NinePatchRect2/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
+layout_mode = 2
+icon_texture = ExtResource("3_l0ngb")
+name_string = "SCREW"
+
+[node name="HSeparator" type="HSeparator" parent="NinePatchRect2/VBoxContainer/Stats"]
+layout_mode = 2
+
+[node name="Gear" parent="NinePatchRect2/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
+layout_mode = 2
+name_string = "GEAR"
+
+[node name="HSeparator" type="HSeparator" parent="NinePatchRect2/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = -21
+
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect2/VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="NinePatchRect2/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="1" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+ship_sprite = ExtResource("1_y3jf6")
+ship_name = "small"
+price_value = 2
+
+[node name="2" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+ship_sprite = ExtResource("5_byohh")
+ship_name = "tank"
+price_value = 10
+
+[node name="3" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="4" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="5" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="6" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="7" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2
+
+[node name="8" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
+layout_mode = 2

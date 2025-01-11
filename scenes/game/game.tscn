@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://cvidy1earqqq0" path="res://scenes/game/base/enemy_base.tscn" id="10_tihlc"]
 [ext_resource type="Resource" uid="uid://dd6pt4gviahlu" path="res://core/resources/teams/team_right.tres" id="11_ek8oh"]
 [ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
-[ext_resource type="Script" path="res://scenes/game/scripts/screw_manager.gd" id="13_thedk"]
+[ext_resource type="Script" path="res://scenes/game/scripts/item_manager.gd" id="13_thedk"]
 [ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game_ui.tscn" id="15_hn43x"]
 [ext_resource type="Script" path="res://scenes/game/temp_spawner.gd" id="15_rgq2s"]
 
@@ -104,6 +104,8 @@ script = ExtResource("9_ucfpf")
 [node name="ItemManager" type="Node" parent="." node_paths=PackedStringArray("game_ui")]
 script = ExtResource("13_thedk")
 game_ui = NodePath("../CanvasLayer/GameUI")
+chance_to_spawn = 0.2
+amout_to_spawn = 2
 
 [node name="TempSpawner" type="Node2D" parent="."]
 position = Vector2(1184, 363)
