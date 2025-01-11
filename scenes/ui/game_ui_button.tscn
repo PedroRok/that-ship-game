@@ -92,7 +92,6 @@ icon_alignment = 1
 expand_icon = true
 
 [node name="Price" type="Label" parent="InnerMargin"]
-visible = false
 material = SubResource("ShaderMaterial_q6v8x")
 custom_minimum_size = Vector2(62.12, 32)
 layout_mode = 2
