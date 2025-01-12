@@ -9,7 +9,7 @@ func set_direction(new_direction: Vector2) -> void:
 
 func _physics_process(delta: float) -> void:
 	if target:
-		var direction_to_target : Vector2 = (target.global_position - global_position).normalized()
+		var direction_to_target : Vector2 = (target.get_center_pos() - global_position).normalized()
 		direction = direction.lerp(direction_to_target * speed, turn_speed * delta)
 		look_at(direction * speed)
 	else:

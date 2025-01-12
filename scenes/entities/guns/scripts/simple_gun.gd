@@ -5,4 +5,5 @@ extends Gun
 var barrel_texture : Sprite2D
 
 func _physics_process(delta: float) -> void:
-	barrel_texture.look_at(enemy.get_center_pos())
+	if (enemy):
+		barrel_texture.look_at(enemy.get_center_pos())

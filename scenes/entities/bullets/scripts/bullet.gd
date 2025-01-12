@@ -3,6 +3,8 @@ extends Area2D
 
 @export
 var speed : int = 3
+@export
+var piercing : int = 1
 
 @export
 var damage : Damage
@@ -14,7 +16,7 @@ var killTime : int = 50
 
 var team : int = -1
 
-var already_hit : bool = false
+var already_hit : Array[Area2D]
 
 var target : Node2D
 
@@ -33,21 +35,23 @@ func set_direction(new_direction: Vector2) -> void:
 	new_direction = self.direction.rotated(rotation)
 
 func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int, _local_shape_index: int) -> void:
-	if (already_hit):
+	if (already_hit.has(area) || piercing <= already_hit.size()):
 		return 
 	if (area is HitboxComponent):
 		var ship : Ship = area.ship
 		if (ship.team_stats.team_id != team):
 			if (area.enabled):
-				already_hit = true
+				already_hit.append(area)
 				area.handle_hit(damage, direction.x)
-				remove_bullet()
+				if (piercing <= already_hit.size()):
+					remove_bullet()
 	if (area is BaseHitboxComponent):
 		var base : Base = area.base
 		if (base.team_stats.team_id != team):
-			already_hit = true
+			already_hit.append(area)
 			area.handle_hit(damage, direction.x)
-			remove_bullet()
+			if (piercing <= already_hit.size()):
+				remove_bullet()
 	pass # Replace with function body.
 
 func remove_bullet() -> void:
