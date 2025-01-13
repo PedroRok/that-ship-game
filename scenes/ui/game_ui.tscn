@@ -1,80 +1,13 @@
-[gd_scene load_steps=20 format=3 uid="uid://bbxtuwbkfqawl"]
+[gd_scene load_steps=10 format=3 uid="uid://bbxtuwbkfqawl"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
+[ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_vn06h"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
 [ext_resource type="Script" path="res://scenes/ui/game_ui.gd" id="2_pwgb8"]
 [ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="3_l0ngb"]
-[ext_resource type="FontFile" uid="uid://c7qcyex45wu78" path="res://assets/fonts/dogicapixel.ttf" id="4_idpxb"]
 [ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="5_73k7f"]
 [ext_resource type="PackedScene" uid="uid://dj8gm2q4jdoeq" path="res://scenes/ui/bar_values/value_panel.tscn" id="5_138iq"]
 [ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_byohh"]
-[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="6_yt1wj"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8m3px"]
-atlas = ExtResource("1_vmi2c")
-region = Rect2(192, 11, 32, 21)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2tkxl"]
-content_margin_top = 8.0
-content_margin_bottom = 6.0
-texture = SubResource("AtlasTexture_8m3px")
-texture_margin_left = 2.0
-texture_margin_top = 6.0
-texture_margin_right = 2.0
-texture_margin_bottom = 3.0
-modulate_color = Color(0.77, 0.77, 0.77, 1)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fquhi"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_vws41"]
-atlas = ExtResource("1_vmi2c")
-region = Rect2(96, 11, 32, 21)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jlbv7"]
-content_margin_top = 5.0
-content_margin_bottom = 9.0
-texture = SubResource("AtlasTexture_vws41")
-texture_margin_left = 2.0
-texture_margin_top = 3.0
-texture_margin_right = 2.0
-texture_margin_bottom = 6.0
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t0qnc"]
-content_margin_top = 5.0
-content_margin_bottom = 9.0
-texture = SubResource("AtlasTexture_vws41")
-texture_margin_left = 2.0
-texture_margin_top = 3.0
-texture_margin_right = 2.0
-texture_margin_bottom = 6.0
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8qppg"]
-atlas = ExtResource("1_vmi2c")
-region = Rect2(160, 11, 32, 21)
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bymft"]
-content_margin_top = 7.0
-content_margin_bottom = 7.0
-texture = SubResource("AtlasTexture_8qppg")
-texture_margin_left = 2.0
-texture_margin_top = 8.0
-texture_margin_right = 2.0
-texture_margin_bottom = 6.0
-
-[sub_resource type="Theme" id="Theme_froqm"]
-Button/font_sizes/font_size = 16
-Button/fonts/font = ExtResource("4_idpxb")
-Button/styles/disabled = SubResource("StyleBoxTexture_2tkxl")
-Button/styles/focus = SubResource("StyleBoxEmpty_fquhi")
-Button/styles/hover = SubResource("StyleBoxTexture_jlbv7")
-Button/styles/normal = SubResource("StyleBoxTexture_t0qnc")
-Button/styles/pressed = SubResource("StyleBoxTexture_bymft")
-Label/constants/outline_size = 0
-Label/constants/shadow_offset_x = 0
-Label/constants/shadow_offset_y = 0
-Label/constants/shadow_outline_size = 0
-Label/font_sizes/font_size = 16
-Label/fonts/font = ExtResource("6_yt1wj")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ept8f"]
 atlas = ExtResource("1_vmi2c")
@@ -89,7 +22,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_froqm")
+theme = ExtResource("1_vn06h")
 script = ExtResource("2_pwgb8")
 screw_label = NodePath("NinePatchRect/MarginContainer/VBoxContainer/Stats/Screw")
 gear_label = NodePath("NinePatchRect/MarginContainer/VBoxContainer/Stats/Gear")

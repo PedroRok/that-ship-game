@@ -1,0 +1,76 @@
+[gd_resource type="Theme" load_steps=12 format=3 uid="uid://1a6d0oqf6wrx"]
+
+[ext_resource type="FontFile" uid="uid://c7qcyex45wu78" path="res://assets/fonts/dogicapixel.ttf" id="1_p71go"]
+[ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_le42m"]
+[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="3_lk6e3"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8m3px"]
+atlas = ExtResource("2_le42m")
+region = Rect2(192, 11, 32, 21)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_2tkxl"]
+content_margin_top = 8.0
+content_margin_bottom = 6.0
+texture = SubResource("AtlasTexture_8m3px")
+texture_margin_left = 2.0
+texture_margin_top = 6.0
+texture_margin_right = 2.0
+texture_margin_bottom = 3.0
+modulate_color = Color(0.77, 0.77, 0.77, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_fquhi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vws41"]
+atlas = ExtResource("2_le42m")
+region = Rect2(96, 11, 32, 21)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_jlbv7"]
+content_margin_top = 5.0
+content_margin_bottom = 9.0
+texture = SubResource("AtlasTexture_vws41")
+texture_margin_left = 2.0
+texture_margin_top = 3.0
+texture_margin_right = 2.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_t0qnc"]
+content_margin_top = 5.0
+content_margin_bottom = 9.0
+texture = SubResource("AtlasTexture_vws41")
+texture_margin_left = 2.0
+texture_margin_top = 3.0
+texture_margin_right = 2.0
+texture_margin_bottom = 6.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8qppg"]
+atlas = ExtResource("2_le42m")
+region = Rect2(160, 11, 32, 21)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bymft"]
+content_margin_top = 7.0
+content_margin_bottom = 7.0
+texture = SubResource("AtlasTexture_8qppg")
+texture_margin_left = 2.0
+texture_margin_top = 8.0
+texture_margin_right = 2.0
+texture_margin_bottom = 6.0
+
+[resource]
+Button/font_sizes/font_size = 16
+Button/fonts/font = ExtResource("1_p71go")
+Button/styles/disabled = SubResource("StyleBoxTexture_2tkxl")
+Button/styles/focus = SubResource("StyleBoxEmpty_fquhi")
+Button/styles/hover = SubResource("StyleBoxTexture_jlbv7")
+Button/styles/normal = SubResource("StyleBoxTexture_t0qnc")
+Button/styles/pressed = SubResource("StyleBoxTexture_bymft")
+Label/constants/outline_size = 0
+Label/constants/shadow_offset_x = 0
+Label/constants/shadow_offset_y = 0
+Label/constants/shadow_outline_size = 0
+Label/font_sizes/font_size = 16
+Label/fonts/font = ExtResource("3_lk6e3")
+RichTextLabel/constants/line_separation = 3
+RichTextLabel/font_sizes/bold_font_size = 8
+RichTextLabel/font_sizes/normal_font_size = 8
+RichTextLabel/fonts/bold_font = ExtResource("3_lk6e3")
+RichTextLabel/fonts/normal_font = ExtResource("1_p71go")
