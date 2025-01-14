@@ -1,0 +1,65 @@
+[gd_scene load_steps=6 format=3 uid="uid://d2fupnskmnlu4"]
+
+[ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_tfs0n"]
+[ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_3fabb"]
+[ext_resource type="Script" path="res://scenes/ui/rounds/rounds_menu.gd" id="2_tfltf"]
+[ext_resource type="PackedScene" uid="uid://es41pk64h1jh" path="res://scenes/ui/rounds/round_card.tscn" id="3_3l6aw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xrqp4"]
+atlas = ExtResource("2_3fabb")
+region = Rect2(64, 7, 32, 25)
+
+[node name="RoundsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+pivot_offset = Vector2(640, 360)
+theme = ExtResource("1_tfs0n")
+script = ExtResource("2_tfltf")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.492
+anchor_top = 0.5
+anchor_right = 0.492
+anchor_bottom = 0.5
+offset_left = -419.76
+offset_top = -200.0
+offset_right = 420.24
+offset_bottom = 200.0
+texture = SubResource("AtlasTexture_xrqp4")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 8
+
+[node name="MarginContainer2" type="MarginContainer" parent="NinePatchRect"]
+layout_mode = 2
+offset_right = 840.0
+offset_bottom = 400.0
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="Cards" type="HBoxContainer" parent="NinePatchRect/MarginContainer2"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="R1" parent="NinePatchRect/MarginContainer2/Cards" instance=ExtResource("3_3l6aw")]
+modulate = Color(0.85, 0.85, 0.85, 1)
+layout_mode = 2
+active = false
+button_label = "CLEAR"
+
+[node name="R2" parent="NinePatchRect/MarginContainer2/Cards" instance=ExtResource("3_3l6aw")]
+layout_mode = 2
+base_color = Color(0.483333, 1, 0, 1)
+
+[node name="R3" parent="NinePatchRect/MarginContainer2/Cards" instance=ExtResource("3_3l6aw")]
+modulate = Color(0.85, 0.85, 0.85, 1)
+layout_mode = 2
+base_color = Color(1, 0.833333, 0, 1)
+active = false
+button_label = "NEXT"

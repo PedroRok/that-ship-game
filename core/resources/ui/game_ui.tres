@@ -57,7 +57,7 @@ texture_margin_bottom = 6.0
 
 [resource]
 Button/font_sizes/font_size = 16
-Button/fonts/font = ExtResource("1_p71go")
+Button/fonts/font = ExtResource("3_lk6e3")
 Button/styles/disabled = SubResource("StyleBoxTexture_2tkxl")
 Button/styles/focus = SubResource("StyleBoxEmpty_fquhi")
 Button/styles/hover = SubResource("StyleBoxTexture_jlbv7")

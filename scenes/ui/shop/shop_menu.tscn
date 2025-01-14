@@ -1,0 +1,576 @@
+[gd_scene load_steps=20 format=3 uid="uid://cenaic0dr71up"]
+
+[ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_usg2j"]
+[ext_resource type="Script" path="res://scenes/ui/shop/scripts/shop_menu.gd" id="2_dqn55"]
+[ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_l3mik"]
+[ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="3_6u4gw"]
+[ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="4_vhcu4"]
+[ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_0v5h3"]
+[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="6_l4ima"]
+[ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="7_pjvt1"]
+[ext_resource type="PackedScene" uid="uid://dj8gm2q4jdoeq" path="res://scenes/ui/bar_values/value_panel.tscn" id="8_ws30j"]
+[ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="9_5gpou"]
+[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="10_fav5t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_831bn"]
+atlas = ExtResource("2_l3mik")
+region = Rect2(64, 7, 32, 25)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_458ye"]
+texture = ExtResource("2_l3mik")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 10.0
+region_rect = Rect2(64, 7, 32, 25)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_q1qst"]
+shader = ExtResource("3_6u4gw")
+shader_parameter/enabled = true
+shader_parameter/shadow_size = 0.008
+shader_parameter/down_light = false
+shader_parameter/invert_top_to_bottom = false
+shader_parameter/base_gray = Color(0.388235, 0.388235, 0.388235, 1)
+shader_parameter/shadow_gray = Color(0.160784, 0.160784, 0.160784, 1)
+shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
+shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_63yts"]
+shader = ExtResource("3_6u4gw")
+shader_parameter/enabled = true
+shader_parameter/shadow_size = 0.048
+shader_parameter/down_light = true
+shader_parameter/invert_top_to_bottom = false
+shader_parameter/reference_texture = ExtResource("4_vhcu4")
+shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
+shader_parameter/shadow_gray = Color(0.180392, 0.180392, 0.180392, 1)
+shader_parameter/darker_shadow_gray = Color(0.141176, 0.141176, 0.141176, 1)
+shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_g1t4c"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kngvp"]
+shader = ExtResource("3_6u4gw")
+shader_parameter/enabled = true
+shader_parameter/shadow_size = 0.055
+shader_parameter/down_light = true
+shader_parameter/invert_top_to_bottom = false
+shader_parameter/reference_texture = ExtResource("5_0v5h3")
+shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
+shader_parameter/shadow_gray = Color(0.180392, 0.180392, 0.180392, 1)
+shader_parameter/darker_shadow_gray = Color(0.141176, 0.141176, 0.141176, 1)
+shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j1ynl"]
+resource_local_to_scene = true
+shader = ExtResource("3_6u4gw")
+shader_parameter/enabled = true
+shader_parameter/shadow_size = 0.0078
+shader_parameter/down_light = false
+shader_parameter/invert_top_to_bottom = false
+shader_parameter/base_gray = Color(0.388236, 0.388236, 0.388236, 1)
+shader_parameter/shadow_gray = Color(0.16, 0.16, 0.16, 1)
+shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
+shader_parameter/light_color = Color(0.475, 0.475, 0.475, 1)
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_eh1yj"]
+resource_local_to_scene = true
+shader = ExtResource("3_6u4gw")
+shader_parameter/enabled = true
+shader_parameter/shadow_size = 0.1
+shader_parameter/down_light = false
+shader_parameter/invert_top_to_bottom = false
+shader_parameter/reference_texture = ExtResource("7_pjvt1")
+shader_parameter/base_gray = Color(0.388236, 0.388236, 0.388236, 1)
+shader_parameter/shadow_gray = Color(0.160784, 0.160784, 0.160784, 1)
+shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
+shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
+shader_parameter/progress_bar = null
+shader_parameter/progress_bar_color = Color(1, 1, 1, 0.54902)
+
+[node name="ShopMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 360.0
+offset_right = 640.0
+offset_bottom = 360.0
+theme = ExtResource("1_usg2j")
+script = ExtResource("2_dqn55")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="."]
+layout_mode = 0
+offset_left = -420.0
+offset_top = -240.0
+offset_right = 420.0
+offset_bottom = 240.0
+texture = SubResource("AtlasTexture_831bn")
+patch_margin_left = 5
+patch_margin_top = 5
+patch_margin_right = 5
+patch_margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NinePatchRect"]
+layout_mode = 0
+offset_right = 840.0
+offset_bottom = 480.0
+theme_override_constants/separation = 0
+
+[node name="Top" type="MarginContainer" parent="NinePatchRect/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Top"]
+layout_mode = 2
+alignment = 2
+
+[node name="Button" type="Button" parent="NinePatchRect/VBoxContainer/Top/HBoxContainer"]
+modulate = Color(1, 0, 0, 1)
+custom_minimum_size = Vector2(230, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.41, 0.41, 0.41, 1)
+theme_override_font_sizes/font_size = 16
+text = "SELECT ROUND"
+
+[node name="Middle" type="MarginContainer" parent="NinePatchRect/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_bottom = 10
+
+[node name="Shop" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle"]
+layout_mode = 2
+alignment = 1
+
+[node name="Cards" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop"]
+layout_mode = 2
+alignment = 1
+
+[node name="Card" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_458ye")
+
+[node name="Margin" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "TITLE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card/Margin/VBox"]
+material = SubResource("ShaderMaterial_63yts")
+layout_mode = 2
+texture = ExtResource("4_vhcu4")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Desc" type="RichTextLabel" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "Simple action from this card
+"
+fit_content = true
+
+[node name="Card2" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_458ye")
+
+[node name="Margin" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card2"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card2/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card2/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "TITLE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card2/Margin/VBox"]
+material = SubResource("ShaderMaterial_63yts")
+layout_mode = 2
+texture = ExtResource("4_vhcu4")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Desc" type="RichTextLabel" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card2/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "Simple action from this card
+"
+fit_content = true
+
+[node name="Card3" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_458ye")
+
+[node name="Margin" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card3"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card3/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card3/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "TITLE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card3/Margin/VBox"]
+material = SubResource("ShaderMaterial_63yts")
+layout_mode = 2
+texture = ExtResource("4_vhcu4")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Desc" type="RichTextLabel" parent="NinePatchRect/VBoxContainer/Middle/Shop/Cards/Card3/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "Simple action from this card
+"
+fit_content = true
+
+[node name="SubShop" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop"]
+layout_mode = 2
+theme_override_constants/separation = 70
+alignment = 1
+
+[node name="Ships" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop"]
+layout_mode = 2
+alignment = 1
+
+[node name="Card" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships"]
+material = SubResource("ShaderMaterial_g1t4c")
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_458ye")
+
+[node name="Margin" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "TITLE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card/Margin/VBox"]
+material = SubResource("ShaderMaterial_kngvp")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("5_0v5h3")
+stretch_mode = 5
+
+[node name="Price" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card/Margin/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="ValueLabel" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card/Margin/VBox/Price"]
+z_index = 1
+material = SubResource("ShaderMaterial_j1ynl")
+custom_minimum_size = Vector2(38.87, 16.48)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("6_l4ima")
+theme_override_font_sizes/font_size = 16
+text = "10
+"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card/Margin/VBox/Price"]
+material = SubResource("ShaderMaterial_eh1yj")
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_pjvt1")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="Card2" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships"]
+material = SubResource("ShaderMaterial_g1t4c")
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_458ye")
+
+[node name="Margin" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card2"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card2/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card2/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "TITLE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card2/Margin/VBox"]
+material = SubResource("ShaderMaterial_kngvp")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("5_0v5h3")
+stretch_mode = 5
+
+[node name="Price" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card2/Margin/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="ValueLabel" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card2/Margin/VBox/Price"]
+z_index = 1
+material = SubResource("ShaderMaterial_j1ynl")
+custom_minimum_size = Vector2(38.87, 16.48)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("6_l4ima")
+theme_override_font_sizes/font_size = 16
+text = "10
+"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card2/Margin/VBox/Price"]
+material = SubResource("ShaderMaterial_eh1yj")
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_pjvt1")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="Card3" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships"]
+material = SubResource("ShaderMaterial_g1t4c")
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_458ye")
+
+[node name="Margin" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card3"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card3/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card3/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "TITLE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card3/Margin/VBox"]
+material = SubResource("ShaderMaterial_kngvp")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("5_0v5h3")
+stretch_mode = 5
+
+[node name="Price" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card3/Margin/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="ValueLabel" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card3/Margin/VBox/Price"]
+z_index = 1
+material = SubResource("ShaderMaterial_j1ynl")
+custom_minimum_size = Vector2(38.87, 16.48)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("6_l4ima")
+theme_override_font_sizes/font_size = 16
+text = "10
+"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card3/Margin/VBox/Price"]
+material = SubResource("ShaderMaterial_eh1yj")
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_pjvt1")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="Card4" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships"]
+material = SubResource("ShaderMaterial_g1t4c")
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxTexture_458ye")
+
+[node name="Margin" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card4"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 0
+
+[node name="VBox" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card4/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card4/Margin/VBox"]
+material = SubResource("ShaderMaterial_q1qst")
+layout_mode = 2
+text = "TITLE
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card4/Margin/VBox"]
+material = SubResource("ShaderMaterial_kngvp")
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+texture = ExtResource("5_0v5h3")
+stretch_mode = 5
+
+[node name="Price" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card4/Margin/VBox"]
+layout_mode = 2
+alignment = 2
+
+[node name="ValueLabel" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card4/Margin/VBox/Price"]
+z_index = 1
+material = SubResource("ShaderMaterial_j1ynl")
+custom_minimum_size = Vector2(38.87, 16.48)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_fonts/font = ExtResource("6_l4ima")
+theme_override_font_sizes/font_size = 16
+text = "10
+"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/SubShop/Ships/Card4/Margin/VBox/Price"]
+material = SubResource("ShaderMaterial_eh1yj")
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+texture = ExtResource("7_pjvt1")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="Bottom" type="MarginContainer" parent="NinePatchRect/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Bottom"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Stats" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="Screw" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/Stats" instance=ExtResource("8_ws30j")]
+layout_mode = 2
+icon_texture = ExtResource("4_vhcu4")
+name_string = "SCREW"
+
+[node name="VSeparator" type="VSeparator" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/Stats"]
+layout_mode = 2
+
+[node name="Gear" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/Stats" instance=ExtResource("8_ws30j")]
+layout_mode = 2
+name_string = "GEAR"
+
+[node name="HSeparator" type="HSeparator" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = -21
+
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer"]
+layout_mode = 2
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="1" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+ship_sprite = ExtResource("10_fav5t")
+ship_name = "small"
+price_value = 2
+
+[node name="2" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+ship_sprite = ExtResource("5_0v5h3")
+ship_name = "tank"
+price_value = 10
+
+[node name="3" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+
+[node name="4" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+
+[node name="5" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+
+[node name="6" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+
+[node name="7" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+
+[node name="8" parent="NinePatchRect/VBoxContainer/Bottom/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("9_5gpou")]
+layout_mode = 2
+
+[connection signal="button_down" from="NinePatchRect/VBoxContainer/Top/HBoxContainer/Button" to="." method="_on_button_button_down"]

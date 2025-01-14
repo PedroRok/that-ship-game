@@ -31,9 +31,9 @@ shader_parameter/enabled = false
 shader_parameter/shadow_size = 0.055
 shader_parameter/down_light = true
 shader_parameter/invert_top_to_bottom = false
-shader_parameter/base_gray = Color(0.219608, 0.219608, 0.219608, 1)
-shader_parameter/shadow_gray = Color(0.18, 0.18, 0.18, 1)
-shader_parameter/darker_shadow_gray = Color(0.14, 0.14, 0.14, 1)
+shader_parameter/base_gray = Color(0.42, 0.42, 0.42, 1)
+shader_parameter/shadow_gray = Color(0.38, 0.38, 0.38, 1)
+shader_parameter/darker_shadow_gray = Color(0.34, 0.34, 0.34, 1)
 shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
 shader_parameter/progress_bar = null
 shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
@@ -42,7 +42,7 @@ shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
 shader = ExtResource("4_qph4b")
 shader_parameter/enable = true
 shader_parameter/bold = true
-shader_parameter/outline_color = Color(0.615686, 0.615686, 0.615686, 1)
+shader_parameter/outline_color = Color(0.82, 0.82, 0.82, 1)
 shader_parameter/opacity = 100.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_i7tm8"]
@@ -53,7 +53,7 @@ font_color = Color(0.352941, 0.352941, 0.352941, 1)
 shader = ExtResource("4_qph4b")
 shader_parameter/enable = true
 shader_parameter/bold = true
-shader_parameter/outline_color = Color(0.615686, 0.615686, 0.615686, 1)
+shader_parameter/outline_color = Color(0.82, 0.82, 0.82, 1)
 shader_parameter/opacity = 100.0
 
 [node name="GameUiButton" type="PanelContainer"]

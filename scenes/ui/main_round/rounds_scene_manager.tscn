@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cunue2ob1vdcg"]
+
+[ext_resource type="Script" path="res://scenes/game/scripts/main_round.gd" id="1_k8ikh"]
+
+[node name="RoundsSceneManager" type="Node2D"]
+script = ExtResource("1_k8ikh")
+start_scene_name = "SHOP"
