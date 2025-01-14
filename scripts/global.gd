@@ -6,7 +6,7 @@ var camera_zoom : float
 
 signal change_to_scene(name : Menu)
 
-var player_stats : PlayerStats
+var player_stats : PlayerStats = load("res://core/resources/player_stats.tres")
 
 enum Menu {
 	SHOP,

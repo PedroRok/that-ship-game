@@ -37,15 +37,24 @@ void fragment() {
 	    
 	    vec4 current_color = texture(TEXTURE, uv);
 	    vec4 reference_color = texture(reference_texture, uv);
+		vec4 reference_color_above = texture(reference_texture, uv_above);
+		vec4 reference_color_above_2 = texture(reference_texture, uv_above_2);
+		vec4 reference_color_below = texture(reference_texture, uv_below);
 	    vec4 color_above = texture(TEXTURE, uv_above);
 	    vec4 color_above_2 = texture(TEXTURE, uv_above_2);
 	    vec4 color_below = texture(TEXTURE, uv_below);
 	    
 	    // Só processa se o pixel de referência não for transparente
 	    if (reference_color.a > 0.1) {
-	        float threshold = 0.00001;
+	        float threshold = 0.5;
 	        bool matches_reference = 
-	            length(current_color.rgb - reference_color.rgb) < threshold;
+	            length(current_color.rgb - reference_color.rgb) < threshold
+				&&
+				length(color_above.rgb - reference_color_above.rgb) < threshold
+				&&
+				length(color_above_2.rgb - reference_color_above_2.rgb) < threshold
+				&&
+				length(color_below.rgb - reference_color_below.rgb) < threshold;
 	        
 	        if (matches_reference) {
 				bool current_above = false;

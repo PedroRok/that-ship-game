@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerStats" load_steps=4 format=3 uid="uid://bhoo8y2apd6cl"]
+
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="1_sp1nr"]
+[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="2_v2kir"]
+[ext_resource type="Script" path="res://core/resources/player_stats.gd" id="3_j57pa"]
+
+[resource]
+script = ExtResource("3_j57pa")
+start_screw = 10
+gear = 10
+owned_ships = Array[ExtResource("1_sp1nr")]([ExtResource("2_v2kir")])

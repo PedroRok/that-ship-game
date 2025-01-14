@@ -1,8 +1,9 @@
-[gd_scene load_steps=14 format=3 uid="uid://bnaod6sgb8n5x"]
+[gd_scene load_steps=15 format=3 uid="uid://bnaod6sgb8n5x"]
 
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_2d8q0"]
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="2_yswwm"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="3_qtp3v"]
+[ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="4_75kyk"]
 [ext_resource type="Shader" path="res://shaders/outline.gdshader" id="4_qph4b"]
 [ext_resource type="Script" path="res://scenes/ui/ship_button.gd" id="5_s7vka"]
 [ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="6_0l5q0"]
@@ -27,7 +28,7 @@ texture_margin_bottom = 9.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a8d44"]
 resource_local_to_scene = true
 shader = ExtResource("2_yswwm")
-shader_parameter/enabled = false
+shader_parameter/enabled = true
 shader_parameter/shadow_size = 0.055
 shader_parameter/down_light = true
 shader_parameter/invert_top_to_bottom = false
@@ -84,6 +85,7 @@ texture_filter = 1
 texture_repeat = 1
 material = SubResource("ShaderMaterial_a8d44")
 layout_mode = 2
+theme = ExtResource("4_75kyk")
 theme_override_font_sizes/font_size = 8
 disabled = true
 action_mode = 0

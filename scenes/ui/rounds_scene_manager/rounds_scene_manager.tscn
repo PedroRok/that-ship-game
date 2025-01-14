@@ -1,16 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://cunue2ob1vdcg"]
+[gd_scene load_steps=3 format=3 uid="uid://cunue2ob1vdcg"]
 
 [ext_resource type="Script" path="res://scenes/ui/rounds_scene_manager/scripts/rounds_scene_manager.gd" id="1_8rofq"]
-[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="2_cy41i"]
-[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="3_01dbo"]
-[ext_resource type="Script" path="res://core/resources/player_stats.gd" id="3_6sb6o"]
-
-[sub_resource type="Resource" id="Resource_uwmto"]
-script = ExtResource("3_6sb6o")
-start_screw = 10
-gear = 10
-owned_ships = Array[ExtResource("2_cy41i")]([ExtResource("3_01dbo")])
+[ext_resource type="Resource" uid="uid://bhoo8y2apd6cl" path="res://core/resources/player/player_stats.tres" id="2_tv0yi"]
 
 [node name="RoundsSceneManager" type="Node2D"]
 script = ExtResource("1_8rofq")
-player_stats = SubResource("Resource_uwmto")
+player_stats = ExtResource("2_tv0yi")

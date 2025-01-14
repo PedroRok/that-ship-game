@@ -10,7 +10,10 @@ var container: HBoxContainer = $Container
 signal spawn_ship(ship_name : String, price : int)
 
 func _ready() -> void:
-	player_stats = Global.player_stats
+	if (Engine.is_editor_hint()):
+		player_stats = load("res://core/resources/player_stats_full.tres")
+	else:
+		player_stats = Global.player_stats
 	if (!player_stats):
 		return
 	var idx : int = 0
