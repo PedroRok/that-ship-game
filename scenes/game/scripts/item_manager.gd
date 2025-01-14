@@ -25,7 +25,6 @@ func auto_gear() -> void:
 	
 	
 func handle_random_spawn(pos : Vector2, explode : bool) -> void:
-	
 	if (chance_to_spawn > randf()):
 		for i in amout_to_spawn:
 			handle_gear_spawn(pos, explode)
@@ -35,7 +34,7 @@ func handle_gear_spawn(pos : Vector2, explode : bool) -> void:
 	if gear:
 		add_child(gear)
 		gear.global_position = pos
-		gear.connect("pickup_gear", Callable(game_ui.gear_label, "change_value_animated"))
+		gear.connect("pickup_gear", Callable(game_ui, "collect_gear"))
 		if explode:
 			gear.explode()
 	pass

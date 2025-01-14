@@ -19,6 +19,8 @@ var gear_label : BarValue
 func _ready() -> void:
 	ships_slots.connect("spawn_ship", Callable(self, "spawn_ship"))
 	screw_label.connect("value_change", Callable(ships_slots, "on_value_change"))
+	screw_label.change_value(Global.player_stats.start_screw)
+	gear_label.change_value(Global.player_stats.gear)
 
 func spawn_ship(ship_name : String, price : int) -> void:
 	ship_manager.select_ship(ship_name)
@@ -28,3 +30,7 @@ func spawn_ship(ship_name : String, price : int) -> void:
 func _on_temporary_button_button_up() -> void:
 	Global.change_to_scene.emit(Global.Menu.SHOP)
 	pass # Replace with function body.
+	
+func collect_gear(value_collected : int) -> void:
+	gear_label.change_value_animated(value_collected)
+	Global.player_stats.gear += value_collected
