@@ -1,6 +1,6 @@
 [gd_scene load_steps=19 format=3 uid="uid://bltffp755yv3d"]
 
-[ext_resource type="Script" path="res://scenes/entities/ship/ship_entity.gd" id="1_ohlg0"]
+[ext_resource type="Script" path="res://scenes/entities/ship/scripts/ship_entity.gd" id="1_ohlg0"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_yq7l4"]
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://core/state_machine/state_machine.tscn" id="3_ogx4m"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="4_4ouwh"]

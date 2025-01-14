@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="1_vmi2c"]
 [ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_vn06h"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="1_y3jf6"]
-[ext_resource type="Script" path="res://scenes/ui/game/game_ui.gd" id="2_pwgb8"]
+[ext_resource type="Script" path="res://scenes/ui/game/scripts/game_ui.gd" id="2_pwgb8"]
 [ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="3_l0ngb"]
 [ext_resource type="PackedScene" uid="uid://bnaod6sgb8n5x" path="res://scenes/ui/game_ui_button.tscn" id="5_73k7f"]
 [ext_resource type="PackedScene" uid="uid://dj8gm2q4jdoeq" path="res://scenes/ui/bar_values/value_panel.tscn" id="5_138iq"]

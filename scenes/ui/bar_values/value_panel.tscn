@@ -2,7 +2,7 @@
 
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="1_ludup"]
 [ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="2_4mlqb"]
-[ext_resource type="Script" path="res://scenes/ui/bar_values/screw_label.gd" id="3_g1xcr"]
+[ext_resource type="Script" path="res://scenes/ui/bar_values/scripts/screw_label.gd" id="3_g1xcr"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="4_obnpr"]
 [ext_resource type="AudioStream" uid="uid://tv078j1cdq7k" path="res://assets/game/sounds/pling.wav" id="5_ps3bi"]
 

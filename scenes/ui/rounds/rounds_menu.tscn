@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_tfs0n"]
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_3fabb"]
-[ext_resource type="Script" path="res://scenes/ui/rounds/rounds_menu.gd" id="2_tfltf"]
+[ext_resource type="Script" path="res://scenes/ui/rounds/scripts/rounds_menu.gd" id="2_tfltf"]
 [ext_resource type="PackedScene" uid="uid://es41pk64h1jh" path="res://scenes/ui/rounds/round_card.tscn" id="3_3l6aw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xrqp4"]
