@@ -5,9 +5,11 @@ extends Control
 var ship_manager : ShipManager
 @export
 var item_manager : ItemManager
+@export
+var game_round : GameRound
 
 @onready
-var buttons_container : HBoxContainer  = $NinePatchRect/MarginContainer/VBoxContainer/MarginContainer/ButtonsContainer
+var ships_slots : ShipsSlotUI = $NinePatchRect/MarginContainer/VBoxContainer/ShipsSlots
 
 @export
 var screw_label : BarValue
@@ -15,10 +17,10 @@ var screw_label : BarValue
 var gear_label : BarValue
 
 func _ready() -> void:
-	for button in buttons_container.get_children():
-		if button.enabled:
-			button.connect("spawn_ship", Callable(self, "spawn_ship"))
-			screw_label.connect("value_change", Callable(button, "on_value_change"))
+	ships_slots.player_stats = game_round.player_stats
+	ships_slots.setup()
+	ships_slots.connect("spawn_ship", Callable(self, "spawn_ship"))
+	screw_label.connect("value_change", Callable(ships_slots, "on_value_change"))
 
 func spawn_ship(ship_name : String, price : int) -> void:
 	ship_manager.select_ship(ship_name)

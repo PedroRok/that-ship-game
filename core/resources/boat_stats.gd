@@ -1,7 +1,15 @@
 class_name BoatStats
 extends Resource
 
-@export_group("Properties")
+@export_group("Object Properties")
+@export
+var name: String
+@export
+var price: int = 5
+@export
+var produce_cd: int = 5
+
+@export_group("Game Properties")
 @export
 var health: float = 10
 @export
@@ -16,8 +24,6 @@ var speed: float = 400
 var deceleration: float = 0.5
 @export
 var max_tilt_angle: float = 0.2
-
-
 
 @export_category("Ship Entity Object")
 

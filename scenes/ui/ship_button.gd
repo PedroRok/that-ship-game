@@ -4,27 +4,25 @@ extends PanelContainer
 
 
 @export
-var ship_sprite : Texture2D
-
-@export
-var ship_name : String
-
-@export
-var price_value : int = 0
+var boat_stats : BoatStats
 
 @onready
 var button : Button = $InnerMargin/Button
 @onready
 var price_label : Label = $InnerMargin/Price
 
-signal spawn_ship(ship_name : String, price : int)
+signal spawn_ship(ship_stats : BoatStats)
 
 var enabled : bool = true
 
 func _ready() -> void:
+	if (Engine.is_editor_hint()):
+		setup()
+	
+func setup() -> void:
 	var shader_material : ShaderMaterial = button.material as ShaderMaterial
 	
-	if !ship_name && !ship_sprite:
+	if !boat_stats:
 		button.disabled = true
 		shader_material.set_shader_parameter("enabled", false)
 		enabled = false
@@ -35,13 +33,14 @@ func _ready() -> void:
 		shader_material.set_shader_parameter("enabled", true)
 		enabled = true
 		price_label.show()
-	price_label.text = str(price_value)
-	shader_material.set_shader_parameter("reference_texture", ship_sprite)
-	button.icon = ship_sprite
-
+	price_label.text = str(boat_stats.price)
+	shader_material.set_shader_parameter("reference_texture", boat_stats.sprite)
+	button.icon = boat_stats.sprite
+	
+	
 func on_value_change(new_val : int) -> void:
-	if (!enabled): return
-	if (new_val >= price_value):
+	if (!boat_stats): return
+	if (new_val >= boat_stats.price):
 		if (button.disabled):
 			price_label.custom_minimum_size.y = 32
 		button.disabled = false
@@ -52,7 +51,7 @@ func on_value_change(new_val : int) -> void:
 		
 
 func _on_button_down() -> void:
-	spawn_ship.emit(ship_name, price_value)
+	spawn_ship.emit(boat_stats)
 	price_label.custom_minimum_size.y = 27
 	pass
 

@@ -21,11 +21,9 @@ shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
 shader_parameter/CloudColor = Color(0.611765, 0.854902, 1, 1)
 shader_parameter/speed = 0.5
 
-[node name="Game" type="Node2D" node_paths=PackedStringArray("camera", "ship_manager", "bullet_manager")]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("camera")]
 script = ExtResource("1_lrdil")
 camera = NodePath("GameCam")
-ship_manager = NodePath("ShipsManager")
-bullet_manager = NodePath("BulletManager")
 
 [node name="Base" parent="." instance=ExtResource("1_q0hc1")]
 team_stats = ExtResource("2_r27un")
@@ -68,11 +66,12 @@ max_zoom = 3.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="GameUI" parent="CanvasLayer" node_paths=PackedStringArray("ship_manager", "item_manager") instance=ExtResource("15_hn43x")]
+[node name="GameUI" parent="CanvasLayer" node_paths=PackedStringArray("ship_manager", "item_manager", "game_round") instance=ExtResource("15_hn43x")]
 offset_top = 3.0
 offset_bottom = 3.0
 ship_manager = NodePath("../../ShipsManager")
 item_manager = NodePath("../../ItemManager")
+game_round = NodePath("../..")
 
 [node name="Debugger" type="Control" parent="CanvasLayer" node_paths=PackedStringArray("camera", "ship_spawner", "bullet_manager")]
 layout_mode = 3

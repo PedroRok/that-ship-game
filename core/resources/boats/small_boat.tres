@@ -20,6 +20,9 @@ size = Vector2(30, 9)
 
 [resource]
 script = ExtResource("1_d0lg6")
+name = "small"
+price = 5
+produce_cd = 5
 health = 10.0
 radar_distance = 100
 knockback_resistance = 0.0

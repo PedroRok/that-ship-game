@@ -25,6 +25,9 @@ size = Vector2(51, 9)
 
 [resource]
 script = ExtResource("1_pe3gt")
+name = "tank"
+price = 5
+produce_cd = 5
 health = 20.0
 radar_distance = 200
 knockback_resistance = 0.85

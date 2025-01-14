@@ -1,10 +1,8 @@
-extends Control
+extends MenuControl
 
 
 @onready
 var rounds : HBoxContainer = $NinePatchRect/MarginContainer2/Cards
-
-signal change_to_menu(name : String)
 
 func _ready() -> void:
 	for node : RoundCard in rounds.get_children():

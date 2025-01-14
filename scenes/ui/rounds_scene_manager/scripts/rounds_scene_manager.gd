@@ -16,6 +16,7 @@ const menus : Dictionary = {
 func _ready() -> void:
 	var node : Node = get_node_by_scene("SHOP")
 	node.connect("change_to_menu", Callable(self, "change_to_menu"))
+	node.player_stats = player_stats
 	menu_scene = node
 	pass
 
@@ -30,5 +31,7 @@ func change_to_menu(next_menu : String) -> void:
 func get_node_by_scene(menu : String) -> Node:
 	var packed : PackedScene = load(menus.get(menu))
 	var next_level : Node = packed.instantiate()
+	if (menu_scene):
+		next_level.player_stats = menu_scene.player_stats
 	call_deferred("add_child", next_level)
 	return next_level

@@ -1,11 +1,8 @@
 class_name GameRound
 extends Node2D
 
+var player_stats : PlayerStats
+
 @export
 var camera : GameCam
-
-@export
-var ship_manager : ShipManager
-
-@export
-var bullet_manager : BulletManager
+	

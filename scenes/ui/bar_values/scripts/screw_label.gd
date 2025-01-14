@@ -18,7 +18,7 @@ var value_label : Label = $VBoxContainer/ValueLabel
 @onready
 var name_label : Label = $VBoxContainer/NameLabel
 
-var total_value : int = start_value
+var total_value : int
 var increment_cd : int = 120
 var waiting_to_increment : int = 0
 
@@ -27,11 +27,12 @@ var progress_bar : float = 0
 signal value_change(new_val : int)
 
 func _ready() -> void:
+	total_value = start_value
 	texture.texture = icon_texture
 	name_label.text = name_string
-	value_label.text = str(total_value)
+	value_label.text = str(start_value)
 	texture.material.set_shader_parameter("reference_texture", icon_texture)
-	
+	print(start_value)
 	pass
 	
 func change_value(plus_amout: int) -> void:
