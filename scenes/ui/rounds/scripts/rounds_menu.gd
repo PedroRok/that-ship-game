@@ -1,5 +1,4 @@
-extends MenuControl
-
+extends Control
 
 @onready
 var rounds : HBoxContainer = $NinePatchRect/MarginContainer2/Cards
@@ -10,4 +9,4 @@ func _ready() -> void:
 		pass
 		
 func change_to_game() -> void:
-	change_to_menu.emit("GAME")
+	Global.change_to_scene.emit(Global.Menu.GAME)

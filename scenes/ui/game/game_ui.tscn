@@ -150,3 +150,14 @@ layout_mode = 2
 
 [node name="8" parent="NinePatchRect2/VBoxContainer/MarginContainer/ButtonsContainer" instance=ExtResource("5_73k7f")]
 layout_mode = 2
+
+[node name="Temporary Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1071.0
+offset_top = 22.0
+offset_right = 1267.0
+offset_bottom = 50.0
+text = "BACK TO SHOP
+"
+
+[connection signal="button_up" from="Temporary Button" to="." method="_on_temporary_button_button_up"]

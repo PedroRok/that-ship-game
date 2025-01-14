@@ -32,7 +32,6 @@ func _ready() -> void:
 	name_label.text = name_string
 	value_label.text = str(start_value)
 	texture.material.set_shader_parameter("reference_texture", icon_texture)
-	print(start_value)
 	pass
 	
 func change_value(plus_amout: int) -> void:

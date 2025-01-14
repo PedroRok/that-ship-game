@@ -10,10 +10,7 @@ var container: HBoxContainer = $Container
 signal spawn_ship(ship_name : String, price : int)
 
 func _ready() -> void:
-	if (Engine.is_editor_hint()):
-		setup()
-	
-func setup() -> void:
+	player_stats = Global.player_stats
 	if (!player_stats):
 		return
 	var idx : int = 0
