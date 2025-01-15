@@ -15,8 +15,9 @@ friction = 0.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_otcg8"]
 size = Vector2(137, 230)
 
-[node name="EnemyBase" type="Node2D"]
+[node name="EnemyBase" type="Node2D" node_paths=PackedStringArray("health_component")]
 script = ExtResource("1_oee04")
+health_component = NodePath("BaseHealthComponent")
 
 [node name="BaseSprite" type="Node2D" parent="."]
 

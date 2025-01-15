@@ -21,9 +21,11 @@ shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
 shader_parameter/CloudColor = Color(0.611765, 0.854902, 1, 1)
 shader_parameter/speed = 0.5
 
-[node name="Game" type="Node2D" node_paths=PackedStringArray("camera")]
+[node name="Game" type="Node2D" node_paths=PackedStringArray("camera", "ally_base", "enemy_base")]
 script = ExtResource("1_lrdil")
 camera = NodePath("GameCam")
+ally_base = NodePath("Base")
+enemy_base = NodePath("EnemyBase")
 
 [node name="Base" parent="." instance=ExtResource("1_q0hc1")]
 team_stats = ExtResource("2_r27un")

@@ -28,7 +28,7 @@ texture_margin_bottom = 9.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_a8d44"]
 resource_local_to_scene = true
 shader = ExtResource("2_yswwm")
-shader_parameter/enabled = true
+shader_parameter/enabled = false
 shader_parameter/shadow_size = 0.055
 shader_parameter/down_light = true
 shader_parameter/invert_top_to_bottom = false
