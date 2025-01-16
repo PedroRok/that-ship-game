@@ -8,7 +8,7 @@ var gear : int = 10
 @export
 var owned_ships : Array[BoatStats]
 
-var round : int = 0
+var round_num : int = 0
 
 func has_boat(boat_name : String) -> bool:
 	for stats : BoatStats in owned_ships:

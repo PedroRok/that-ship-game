@@ -1,0 +1,35 @@
+[gd_scene load_steps=6 format=3 uid="uid://c2xgcl17l1i8i"]
+
+[ext_resource type="Script" path="res://scenes/ui/game/win_screen/scripts/value_show.gd" id="1_sfikd"]
+[ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="2_xx6fh"]
+[ext_resource type="Shader" path="res://shaders/fill_rect.gdshader" id="3_nuw2v"]
+[ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="4_74ucg"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_yg30u"]
+shader = ExtResource("3_nuw2v")
+shader_parameter/overlay_color = Color(0.39, 0.39, 0.39, 1)
+
+[node name="ValueShowUp" type="HBoxContainer"]
+size_flags_horizontal = 4
+theme_override_constants/separation = -2
+script = ExtResource("1_sfikd")
+label_value = "Test"
+value = 10
+show_time = 2
+
+[node name="ValueLabel" type="Label" parent="."]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.388235, 0.388235, 0.388235, 1)
+theme_override_fonts/font = ExtResource("2_xx6fh")
+theme_override_font_sizes/font_size = 8
+text = "Test..............................................10"
+clip_text = true
+uppercase = true
+
+[node name="Icon" type="TextureRect" parent="."]
+material = SubResource("ShaderMaterial_yg30u")
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+texture = ExtResource("4_74ucg")
+stretch_mode = 5

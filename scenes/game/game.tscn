@@ -113,7 +113,7 @@ position = Vector2(1184, 363)
 script = ExtResource("15_rgq2s")
 
 [node name="Spawner" type="Timer" parent="TempSpawner"]
-wait_time = 5.0
+wait_time = 4096.0
 autostart = true
 
 [connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]

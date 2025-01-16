@@ -43,7 +43,7 @@ func change_value(plus_amout: int) -> void:
 	
 func change_value_animated(plus_amount : int) -> void:
 	increment_cd = 120
-	waiting_to_increment += 1
+	waiting_to_increment += plus_amount
 	value_label.text = str(total_value) + "+" + str(waiting_to_increment)
 	audio.pitch_scale = 1.
 	

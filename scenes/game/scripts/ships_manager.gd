@@ -54,7 +54,7 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 		boat.global_position = pos
 	pass
 
-func handle_ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : TeamStats) -> void:
+func handle_ship_destroy(pos : Vector2, _ship_stats : BoatStats, team_stats : TeamStats) -> void:
 	if (team_stats.team_id == base.team_stats.team_id):
 		return
 	item_manager.handle_random_spawn(pos, true)

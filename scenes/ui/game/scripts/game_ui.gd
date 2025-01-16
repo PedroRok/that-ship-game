@@ -33,4 +33,5 @@ func _on_temporary_button_button_up() -> void:
 	
 func collect_gear(value_collected : int) -> void:
 	gear_label.change_value_animated(value_collected)
+	game_round.gears_collected_in_round += value_collected
 	Global.player_stats.gear += value_collected
