@@ -82,9 +82,10 @@ offset_top = 304.0
 offset_right = -62.0
 offset_bottom = 327.0
 theme_override_fonts/font = ExtResource("7_rshfm")
-text = "100"
+text = "10"
 vertical_alignment = 1
 
 [node name="BaseHealthComponent" type="Node" parent="." node_paths=PackedStringArray("label")]
 script = ExtResource("7_0cgtq")
+health = 10.0
 label = NodePath("../HealthText")

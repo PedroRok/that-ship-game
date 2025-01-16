@@ -1,8 +1,8 @@
 [gd_scene load_steps=3 format=3 uid="uid://cunue2ob1vdcg"]
 
 [ext_resource type="Script" path="res://scenes/ui/rounds_scene_manager/scripts/rounds_scene_manager.gd" id="1_8rofq"]
-[ext_resource type="Resource" uid="uid://bhoo8y2apd6cl" path="res://core/resources/player/player_stats.tres" id="2_tv0yi"]
+[ext_resource type="Resource" uid="uid://bop3herse3c8d" path="res://core/resources/player/player_stats_full.tres" id="2_o2pjj"]
 
 [node name="RoundsSceneManager" type="Node2D"]
 script = ExtResource("1_8rofq")
-player_stats = ExtResource("2_tv0yi")
+player_stats = ExtResource("2_o2pjj")

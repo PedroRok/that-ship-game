@@ -58,6 +58,14 @@ version_control/autoload_on_startup=true
 
 enabled=PackedStringArray("res://addons/SignalVisualizer/plugin.cfg", "res://addons/copilot/plugin.cfg", "res://addons/function_type_autocomplete/plugin.cfg", "res://addons/wakatime/plugin.cfg")
 
+[file_customization]
+
+folder_colors={
+"res://assets/": "teal",
+"res://core/": "red",
+"res://scenes/": "blue"
+}
+
 [input]
 
 ui_left={

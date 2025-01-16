@@ -1,10 +1,11 @@
-[gd_scene load_steps=13 format=3 uid="uid://j75cf40m4udi"]
+[gd_scene load_steps=14 format=3 uid="uid://j75cf40m4udi"]
 
 [ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_dyg2c"]
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_8n3qq"]
+[ext_resource type="Script" path="res://scenes/ui/game/scripts/win_screen.gd" id="2_khj7n"]
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="3_3vpf2"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="4_1gxv8"]
-[ext_resource type="Script" path="res://scenes/ui/aaaaaaaaaaa.gd" id="4_q6rh0"]
+[ext_resource type="Script" path="res://scenes/ui/game/win_screen/scripts/value_show.gd" id="5_vj3e6"]
 [ext_resource type="Shader" path="res://shaders/fill_rect.gdshader" id="6_6hw3c"]
 [ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="7_fdlee"]
 
@@ -50,10 +51,13 @@ shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
 shader = ExtResource("6_6hw3c")
 shader_parameter/overlay_color = Color(0.39, 0.39, 0.39, 1)
 
-[node name="WinScreen" type="Control"]
+[node name="WinScreen" type="Control" node_paths=PackedStringArray("total_gear_earned")]
+z_index = 4096
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("1_dyg2c")
+script = ExtResource("2_khj7n")
+total_gear_earned = NodePath("NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer/ValueShowUp")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
 layout_mode = 0
@@ -76,11 +80,10 @@ theme_override_constants/separation = 0
 [node name="Middle" type="MarginContainer" parent="NinePatchRect/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/margin_top = 20
-theme_override_constants/margin_bottom = 10
 
 [node name="Shop" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 0
 alignment = 1
 
 [node name="Title" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop"]
@@ -94,7 +97,9 @@ vertical_alignment = 1
 [node name="MarginContainer" type="MarginContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop"]
 layout_mode = 2
 theme_override_constants/margin_left = 80
+theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 80
+theme_override_constants/margin_bottom = 10
 
 [node name="Card3" type="PanelContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer"]
 layout_mode = 2
@@ -116,41 +121,45 @@ material = SubResource("ShaderMaterial_pyebk")
 layout_mode = 2
 text = "EARNINGS"
 
-[node name="MarginContainer" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer"]
+layout_mode = 2
+
+[node name="ValueShowUp" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_constants/separation = 1
+theme_override_constants/separation = -2
+script = ExtResource("5_vj3e6")
 
-[node name="Label2" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer/MarginContainer"]
+[node name="ValueLabel" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer/ValueShowUp"]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.388235, 0.388235, 0.388235, 1)
 theme_override_fonts/font = ExtResource("4_1gxv8")
 theme_override_font_sizes/font_size = 8
-text = "Dinheiro Total...............................R$10.00"
-horizontal_alignment = 2
+text = "Dinheiro Total....................................10"
 clip_text = true
 uppercase = true
-script = ExtResource("4_q6rh0")
 
-[node name="TextureRect" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer/MarginContainer"]
+[node name="Icon" type="TextureRect" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer/ValueShowUp"]
 material = SubResource("ShaderMaterial_yg30u")
+custom_minimum_size = Vector2(10, 10)
 layout_mode = 2
 texture = ExtResource("7_fdlee")
 stretch_mode = 5
 
-[node name="GridContainer" type="GridContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer"]
-visible = false
-layout_mode = 2
-columns = 2
-
-[node name="Label2" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/VBoxContainer/GridContainer"]
-visible = false
-layout_mode = 2
-theme_override_colors/font_color = Color(0.388235, 0.388235, 0.388235, 1)
-text = "8"
-horizontal_alignment = 2
-
 [node name="Cards" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop"]
 layout_mode = 2
 alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="NinePatchRect/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 400
+theme_override_constants/margin_right = 100
+
+[node name="Button" type="Button" parent="NinePatchRect/VBoxContainer/MarginContainer"]
+material = SubResource("ShaderMaterial_8bdqv")
+custom_minimum_size = Vector2(0, 25.75)
+layout_mode = 2
+text = "LOJA"
+
+[connection signal="button_up" from="NinePatchRect/VBoxContainer/MarginContainer/Button" to="." method="_on_button_button_up"]

@@ -7,6 +7,6 @@
 
 [resource]
 script = ExtResource("3_ndtyj")
-start_screw = 10
+start_screw = 30
 gear = 10
 owned_ships = Array[ExtResource("1_7d3yo")]([ExtResource("2_2ubnt"), ExtResource("3_5ibdc")])
