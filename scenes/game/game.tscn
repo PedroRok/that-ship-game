@@ -3,17 +3,17 @@
 [ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
 [ext_resource type="Script" path="res://scenes/game/scripts/game.gd" id="1_lrdil"]
 [ext_resource type="PackedScene" uid="uid://jnwo22vy1jsj" path="res://scenes/game/base/base.tscn" id="1_q0hc1"]
-[ext_resource type="Resource" uid="uid://wf037tnljxu2" path="res://core/resources/teams/team_left.tres" id="2_r27un"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="5_2ef6v"]
 [ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
+[ext_resource type="Resource" uid="uid://37315asgr84l" path="res://core/resources/boats/tank_boat.tres" id="6_ok02i"]
+[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="6_ssnco"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
 [ext_resource type="Script" path="res://scenes/game/misc/debugger.gd" id="8_u3rrj"]
 [ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
 [ext_resource type="PackedScene" uid="uid://cvidy1earqqq0" path="res://scenes/game/base/enemy_base.tscn" id="10_tihlc"]
-[ext_resource type="Resource" uid="uid://dd6pt4gviahlu" path="res://core/resources/teams/team_right.tres" id="11_ek8oh"]
 [ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
 [ext_resource type="Script" path="res://scenes/game/scripts/item_manager.gd" id="13_thedk"]
 [ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game/game_ui.tscn" id="15_hn43x"]
-[ext_resource type="Script" path="res://scenes/game/temp_spawner.gd" id="15_rgq2s"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o45il"]
 shader = ExtResource("5_a1aak")
@@ -28,11 +28,10 @@ ally_base = NodePath("Base")
 enemy_base = NodePath("EnemyBase")
 
 [node name="Base" parent="." instance=ExtResource("1_q0hc1")]
-team_stats = ExtResource("2_r27un")
 
 [node name="EnemyBase" parent="." instance=ExtResource("10_tihlc")]
 position = Vector2(1283, 0)
-team_stats = ExtResource("11_ek8oh")
+ships = Array[ExtResource("5_2ef6v")]([ExtResource("6_ssnco"), ExtResource("6_ok02i")])
 
 [node name="Environment" type="Node" parent="."]
 
@@ -90,9 +89,9 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="ShipsManager" type="Node" parent="." node_paths=PackedStringArray("base", "bullet_manager", "item_manager")]
+[node name="ShipsManager" type="Node" parent="." node_paths=PackedStringArray("bases", "bullet_manager", "item_manager")]
 script = ExtResource("11_wfful")
-base = NodePath("../Base")
+bases = [NodePath("../Base"), NodePath("../EnemyBase")]
 bullet_manager = NodePath("../BulletManager")
 item_manager = NodePath("../ItemManager")
 
@@ -104,13 +103,3 @@ script = ExtResource("13_thedk")
 game_ui = NodePath("../CanvasLayer/GameUI")
 chance_to_spawn = 0.2
 amout_to_spawn = 2
-
-[node name="TempSpawner" type="Node2D" parent="."]
-position = Vector2(1184, 363)
-script = ExtResource("15_rgq2s")
-
-[node name="Spawner" type="Timer" parent="TempSpawner"]
-wait_time = 4096.0
-autostart = true
-
-[connection signal="timeout" from="TempSpawner/Spawner" to="TempSpawner" method="_on_spawner_timeout"]

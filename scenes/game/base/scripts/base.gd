@@ -16,12 +16,9 @@ var health_component : BaseHealthComponent
 @export
 var ship_constructor : ShipConstructor
 
-@export
-var spawn_point : Marker2D
-
 signal death_event(team_stats : TeamStats)
 
-signal spawn_ship_event(boat_stats : BoatStats)
+signal spawn_ship_event(spawn_pos : Vector2, boat_stats : BoatStats, team_stats : TeamStats)
 
 func _ready() -> void:
 	health_component.death_event.connect(Callable(self, "_death_event"))
@@ -40,7 +37,10 @@ func start_build_ship(ship : BoatStats) -> bool:
 	return true
 
 func _ship_build_finish(ship : BoatStats) -> void:
-	spawn_ship_event.emit(ship)
+	spawn_ship_event.emit(ship_constructor.global_position, ship, team_stats)
+	
+func get_spawn_point() -> Vector2:
+	return ship_constructor.global_position
 	
 	
 	
