@@ -68,10 +68,10 @@ max_zoom = 3.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="GameUI" parent="CanvasLayer" node_paths=PackedStringArray("ship_manager", "item_manager", "game_round") instance=ExtResource("15_hn43x")]
+[node name="GameUI" parent="CanvasLayer" node_paths=PackedStringArray("base", "item_manager", "game_round") instance=ExtResource("15_hn43x")]
 offset_top = 3.0
 offset_bottom = 3.0
-ship_manager = NodePath("../../ShipsManager")
+base = NodePath("../../Base")
 item_manager = NodePath("../../ItemManager")
 game_round = NodePath("../..")
 
@@ -95,9 +95,6 @@ script = ExtResource("11_wfful")
 base = NodePath("../Base")
 bullet_manager = NodePath("../BulletManager")
 item_manager = NodePath("../ItemManager")
-
-[node name="SpawnPos" type="Marker2D" parent="ShipsManager"]
-position = Vector2(101, 363)
 
 [node name="BulletManager" type="Node" parent="."]
 script = ExtResource("9_ucfpf")

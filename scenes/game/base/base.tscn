@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://jnwo22vy1jsj"]
+[gd_scene load_steps=15 format=3 uid="uid://jnwo22vy1jsj"]
 
 [ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="1_ttlhy"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base.gd" id="1_xvdiq"]
@@ -8,6 +8,9 @@
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base_hitbox.gd" id="5_iw32w"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="7_bicx8"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base_health_component.gd" id="7_ralhy"]
+[ext_resource type="Shader" path="res://shaders/construct_sprite_shader.gdshader" id="9_mjkt8"]
+[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="10_7ob6i"]
+[ext_resource type="Script" path="res://scenes/game/base/scripts/ship_constructor.gd" id="11_lprda"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]
 friction = 0.0
@@ -15,9 +18,16 @@ friction = 0.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_auemn"]
 size = Vector2(137, 230)
 
-[node name="Base" type="Node2D" node_paths=PackedStringArray("health_component")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rars1"]
+shader = ExtResource("9_mjkt8")
+shader_parameter/build_progress = 0.0
+shader_parameter/block_size = 3
+
+[node name="Base" type="Node2D" node_paths=PackedStringArray("health_component", "ship_constructor", "spawn_point")]
 script = ExtResource("1_xvdiq")
 health_component = NodePath("BaseHealthComponent")
+ship_constructor = NodePath("ShipBeeingConstruct")
+spawn_point = NodePath("Spawner")
 
 [node name="BaseSprite" type="Node2D" parent="."]
 
@@ -84,3 +94,12 @@ vertical_alignment = 1
 [node name="BaseHealthComponent" type="Node" parent="." node_paths=PackedStringArray("label")]
 script = ExtResource("7_ralhy")
 label = NodePath("../HealthText")
+
+[node name="Spawner" type="Marker2D" parent="."]
+position = Vector2(101, 366)
+
+[node name="ShipBeeingConstruct" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_rars1")
+position = Vector2(101, 361)
+texture = ExtResource("10_7ob6i")
+script = ExtResource("11_lprda")

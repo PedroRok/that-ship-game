@@ -6,19 +6,19 @@
 
 [sub_resource type="Resource" id="Resource_v5hh7"]
 script = ExtResource("1_lqch0")
-position = Vector2(14, -7)
+position = Vector2(13, -1)
 allowed_types = Array[int]([0])
 
 [sub_resource type="Resource" id="Resource_3i3oi"]
 script = ExtResource("1_lqch0")
-position = Vector2(6, -7)
+position = Vector2(5, -1)
 allowed_types = Array[int]([0])
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eh53h"]
 size = Vector2(53, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ngcti"]
-size = Vector2(52.5, 10.5)
+size = Vector2(52, 10.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1ve70"]
 size = Vector2(51, 9)
@@ -27,7 +27,7 @@ size = Vector2(51, 9)
 script = ExtResource("1_pe3gt")
 name = "tank"
 price = 5
-produce_cd = 5
+produce_cd = 3
 health = 20.0
 radar_distance = 200
 knockback_resistance = 0.85
@@ -35,11 +35,11 @@ speed = 300.0
 deceleration = 0.6
 max_tilt_angle = 0.2
 sprite = ExtResource("3_4ivnm")
-center = Vector2(0, -5)
+center = Vector2(0, 2)
 gun_slots = Array[ExtResource("1_lqch0")]([SubResource("Resource_v5hh7"), SubResource("Resource_3i3oi")])
 water_colision_shape = SubResource("RectangleShape2D_1ve70")
-water_colision_pos = Vector2(-2.5, -6)
+water_colision_pos = Vector2(0.5, 0)
 hitbox_colision_shape = SubResource("RectangleShape2D_eh53h")
-hitbox_colision_pos = Vector2(-2.5, -6)
+hitbox_colision_pos = Vector2(-1.5, 0)
 particles_shape = SubResource("RectangleShape2D_ngcti")
-particles_pos = Vector2(-2.25, -4)
+particles_pos = Vector2(-1.25, 2)

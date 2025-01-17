@@ -46,7 +46,6 @@ func change_value_animated(plus_amount : int) -> void:
 	waiting_to_increment += plus_amount
 	value_label.text = str(total_value) + "+" + str(waiting_to_increment)
 	audio.pitch_scale = 1.
-	
 	pass
 
 var pos_increment_cd : int = 30

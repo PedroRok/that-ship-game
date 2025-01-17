@@ -1,6 +1,7 @@
-[gd_scene load_steps=19 format=3 uid="uid://bltffp755yv3d"]
+[gd_scene load_steps=20 format=3 uid="uid://bltffp755yv3d"]
 
 [ext_resource type="Script" path="res://scenes/entities/ship/scripts/ship_entity.gd" id="1_ohlg0"]
+[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="2_djkht"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_yq7l4"]
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://core/state_machine/state_machine.tscn" id="3_ogx4m"]
 [ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="4_4ouwh"]
@@ -59,15 +60,16 @@ gravity_scale = 0.1
 inertia = 96.02
 linear_damp = 3.0
 script = ExtResource("1_ohlg0")
+boat_stats = ExtResource("2_djkht")
 
 [node name="BoatSprite" type="Sprite2D" parent="."]
 texture_filter = 1
 material = SubResource("ShaderMaterial_gboy0")
-position = Vector2(0, -6)
+position = Vector2(-1, 0)
 texture = ExtResource("4_4ouwh")
 
 [node name="WaterCollisionComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("5_pvrbk")]
-position = Vector2(1, -6.5)
+position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_2pvmq")
 ship = NodePath("..")
 
@@ -97,13 +99,14 @@ particle_component = NodePath("../ParticlesComponent")
 ship = NodePath("..")
 
 [node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
-position = Vector2(0, -6)
+position = Vector2(-1, 0)
 shape = SubResource("RectangleShape2D_mr0fb")
 debug_color = Color(0.976049, 0, 0.414808, 0.42)
 
 [node name="HealthComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("8_qehx0")]
 default_health = 10.0
 ship = NodePath("..")
+metadata/_edit_use_anchors_ = true
 
 [node name="RadarComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("9_wiqbi")]
 target_position = Vector2(0, -5)
@@ -113,7 +116,7 @@ collide_with_bodies = false
 ship = NodePath("..")
 
 [node name="ParticlesComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("10_4k1mg")]
-position = Vector2(-1, -5.75)
+position = Vector2(-1, -0.75)
 shape = SubResource("RectangleShape2D_d4pvh")
 debug_color = Color(0, 0.643738, 0.294445, 0.42)
 ship = NodePath("..")

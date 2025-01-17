@@ -4,6 +4,7 @@ extends GPUParticles2D
 
 func init(pos : Vector2, _shape : Shape2D, _rect : Rect2) -> void:
 	position = pos
+	
 	pass
 
 

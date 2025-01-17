@@ -118,7 +118,7 @@ z_index = -630
 amount = 100
 amount_ratio = 0.0
 process_material = SubResource("ParticleProcessMaterial_ananb")
-visibility_rect = Rect2(-15, -18, 30, 20)
+visibility_rect = Rect2(0, 0, 0, 0)
 script = ExtResource("3_jxc27")
 
 [node name="HitParticle" type="GPUParticles2D" parent="."]
@@ -129,7 +129,7 @@ amount_ratio = 0.1257
 process_material = SubResource("ParticleProcessMaterial_jowva")
 one_shot = true
 explosiveness = 1.0
-visibility_rect = Rect2(-15, -15, 30, 20)
+visibility_rect = Rect2(0, 0, 0, 0)
 script = ExtResource("4_fcvn6")
 
 [node name="TrailParticle" type="GPUParticles2D" parent="."]
@@ -137,6 +137,7 @@ z_index = -665
 amount = 40
 amount_ratio = 0.0
 process_material = SubResource("ParticleProcessMaterial_p3w04")
+visibility_rect = Rect2(0, 0, 0, 0)
 trail_lifetime = 0.05
 trail_section_subdivisions = 1
 script = ExtResource("2_jslqo")

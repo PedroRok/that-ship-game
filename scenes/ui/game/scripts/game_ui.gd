@@ -2,7 +2,7 @@ class_name GameUI
 extends Control
 
 @export
-var ship_manager : ShipManager
+var base : Base
 @export
 var item_manager : ItemManager
 @export
@@ -22,9 +22,9 @@ func _ready() -> void:
 	screw_label.change_value(Global.player_stats.start_screw)
 	gear_label.change_value(Global.player_stats.gear)
 
-func spawn_ship(ship_name : String, price : int) -> void:
-	ship_manager.select_ship(ship_name)
-	screw_label.change_value(-price)
+func spawn_ship(ship_name : BoatStats) -> void:
+	if (base.start_build_ship(ship_name)):
+		screw_label.change_value(-ship_name.price)
 
 
 func _on_temporary_button_button_up() -> void:

@@ -9,6 +9,7 @@ var price: int = 5
 @export
 var produce_cd: int = 5
 
+
 @export_group("Game Properties")
 @export
 var health: float = 10

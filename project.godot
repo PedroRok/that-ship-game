@@ -63,7 +63,8 @@ enabled=PackedStringArray("res://addons/SignalVisualizer/plugin.cfg", "res://add
 folder_colors={
 "res://assets/": "teal",
 "res://core/": "red",
-"res://scenes/": "blue"
+"res://scenes/": "blue",
+"res://shaders/": "pink"
 }
 
 [input]

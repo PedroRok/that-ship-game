@@ -11,7 +11,7 @@ func init(pos : Vector2, _shape : Shape2D, rect : Rect2) -> void:
 	origin_pos = pos
 	origin_rect = rect
 	position.x = pos.x
-	position.y = pos.y +(rect.size.y / 1.1)
+	position.y = pos.y + (rect.size.y / 2)
 	amount_ratio = 0
 	#var material = particle.process_material as ParticleProcessMaterial
 	#material.gravity.x = -team_stats.direction * 90

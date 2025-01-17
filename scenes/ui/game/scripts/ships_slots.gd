@@ -7,7 +7,7 @@ var player_stats : PlayerStats
 @onready 
 var container: HBoxContainer = $Container
 
-signal spawn_ship(ship_name : String, price : int)
+signal spawn_ship(ship_name : BoatStats)
 
 func _ready() -> void:
 	if (Engine.is_editor_hint()):
@@ -25,7 +25,7 @@ func _ready() -> void:
 		idx += 1
 
 func emit_spawn_signal(boat_stats : BoatStats) -> void:
-	spawn_ship.emit(boat_stats.name, boat_stats.price)
+	spawn_ship.emit(boat_stats)
 	
 func on_value_change(new_int : int) -> void:
 	for button : ShipButton in container.get_children():

@@ -4,6 +4,7 @@ extends Node
 @export
 var base : Base
 
+
 @export
 var bullet_manager : BulletManager
 
@@ -12,9 +13,6 @@ var item_manager : ItemManager
 
 @onready
 var ship_entity : PackedScene = preload("res://scenes/entities/ship/ship_entity.tscn")
-
-@onready
-var spawn_pos : Marker2D = $SpawnPos
 
 enum ShipsTypes {
 	SMALL,
@@ -31,11 +29,11 @@ var team_resource : TeamStats = preload("res://core/resources/teams/team_left.tr
 @onready
 var gun : PackedScene = preload("res://scenes/entities/guns/missile_gun.tscn")
 
-func select_ship(ship_name : String) -> void:
-	if (ship_name == "small"):
-		handle_ship_spawn(spawn_pos.position, ships.get(ShipsTypes.SMALL))
-	else:
-		handle_ship_spawn(spawn_pos.position, ships.get(ShipsTypes.TANKER))
+func _ready() -> void:
+	base.spawn_ship_event.connect(Callable(self, "select_ship"))
+
+func select_ship(ship_name : BoatStats) -> void:
+	handle_ship_spawn(base.ship_constructor.position, ship_name)
 	
 func handle_ship_spawn_by_type(pos : Vector2, ship_type : ShipsTypes, team_res : TeamStats = team_resource) -> void:
 	handle_ship_spawn(pos, ships.get(ship_type), team_res)
