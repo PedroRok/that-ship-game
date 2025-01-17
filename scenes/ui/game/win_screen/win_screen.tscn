@@ -43,13 +43,14 @@ shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
 shader_parameter/progress_bar = null
 shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
 
-[node name="WinScreen" type="Control" node_paths=PackedStringArray("values_container")]
+[node name="WinScreen" type="Control" node_paths=PackedStringArray("values_container", "final_value_container")]
 z_index = 4096
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("1_dyg2c")
 script = ExtResource("2_khj7n")
 values_container = NodePath("NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/ValuesContainer")
+final_value_container = NodePath("NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/FinalValue")
 
 [node name="NinePatchRect" type="NinePatchRect" parent="."]
 layout_mode = 0
@@ -104,7 +105,7 @@ layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 10
-theme_override_constants/margin_bottom = 0
+theme_override_constants/margin_bottom = 5
 
 [node name="ValuesContainer" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin"]
 layout_mode = 2
@@ -115,6 +116,13 @@ layout_mode = 2
 text = "EARNINGS"
 
 [node name="HSeparator" type="HSeparator" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/ValuesContainer"]
+layout_mode = 2
+
+[node name="FinalValue" type="VBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin"]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="HSeparator" type="HSeparator" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/FinalValue"]
 layout_mode = 2
 
 [node name="Cards" type="HBoxContainer" parent="NinePatchRect/VBoxContainer/Middle/Shop"]

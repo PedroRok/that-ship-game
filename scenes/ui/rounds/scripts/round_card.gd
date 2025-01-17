@@ -4,11 +4,7 @@ extends PanelContainer
 
 @export_group("Button")
 @export
-var base_color : Color
-@export
-var active : bool = true
-@export
-var button_label : String
+var card_stats : RoundCardStats
 @onready
 var button : Button = $Margin/VBox/Button
 
@@ -25,28 +21,15 @@ var card_desc : RichTextLabel = $Margin/VBox/Desc
 signal round_button_pressed
 
 func _ready() -> void:
-	button.modulate = base_color
-	button.disabled = !active
-	button.text = button_label
+	set_stats(card_stats)
+
+func set_stats(new_stats : RoundCardStats) -> void:
+	if (!card_stats):
+		push_error("Trying to start a card without a stats")
+		return
 	title_label.text = title
 	card_desc.text = desc
-	
-	modulate.v = 1
-	var brightness : float = 1
-	if (button.disabled):
-		brightness = 0.8
-		modulate.v = modulate.v * 0.85
-	apply_color("base_gray", 0.49)
-	apply_color("shadow_gray", 0.35)
-	apply_color("darker_shadow_gray", 0.49)
-
-func apply_color(parameter : String, brightness : float) -> void:
-	var cl : Color = button.material.get_shader_parameter(parameter)
-	cl.v = brightness
-	cl.s = base_color.s
-	cl.h = base_color.h
-	button.material.set_shader_parameter(parameter, cl)
-
+	card_stats.apply_card(self)
 
 func _on_button_button_up() -> void:
 	round_button_pressed.emit()

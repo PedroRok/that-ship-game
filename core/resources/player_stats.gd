@@ -10,6 +10,8 @@ var owned_ships : Array[BoatStats]
 
 var round_num : int = 0
 
+var round_group_num : int = 0
+
 func has_boat(boat_name : String) -> bool:
 	for stats : BoatStats in owned_ships:
 		if (boat_name == stats.name):

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RoundCardStats" load_steps=2 format=3 uid="uid://dvgg872nt8de8"]
+
+[ext_resource type="Script" path="res://core/resources/ui/round_button_stats.gd" id="1_82vxr"]
+
+[resource]
+script = ExtResource("1_82vxr")
+base_color = Color(1, 1, 1, 1)
+active = false
+button_label = "CLEAR"

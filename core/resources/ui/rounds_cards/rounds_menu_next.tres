@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RoundCardStats" load_steps=2 format=3 uid="uid://vx44xo5rafah"]
+
+[ext_resource type="Script" path="res://core/resources/ui/round_button_stats.gd" id="1_h8jc2"]
+
+[resource]
+script = ExtResource("1_h8jc2")
+base_color = Color(1, 0.8115, 0.13, 1)
+active = false
+button_label = "NEXT"

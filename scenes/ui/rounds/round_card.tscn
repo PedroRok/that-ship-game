@@ -61,8 +61,6 @@ size_flags_vertical = 4
 theme = ExtResource("1_fwtgr")
 theme_override_styles/panel = SubResource("StyleBoxTexture_mw6ud")
 script = ExtResource("3_rpl24")
-base_color = Color(1, 1, 1, 1)
-button_label = "PLAY"
 desc = "Simples description here"
 
 [node name="Margin" type="MarginContainer" parent="."]

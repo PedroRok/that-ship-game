@@ -1,9 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://d2fupnskmnlu4"]
+[gd_scene load_steps=5 format=3 uid="uid://d2fupnskmnlu4"]
 
 [ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_tfs0n"]
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_3fabb"]
 [ext_resource type="Script" path="res://scenes/ui/rounds/scripts/rounds_menu.gd" id="2_tfltf"]
-[ext_resource type="PackedScene" uid="uid://es41pk64h1jh" path="res://scenes/ui/rounds/round_card.tscn" id="3_3l6aw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xrqp4"]
 atlas = ExtResource("2_3fabb")
@@ -46,20 +45,3 @@ theme_override_constants/margin_bottom = 40
 layout_mode = 2
 theme_override_constants/separation = 20
 alignment = 1
-
-[node name="R1" parent="NinePatchRect/MarginContainer2/Cards" instance=ExtResource("3_3l6aw")]
-modulate = Color(0.85, 0.85, 0.85, 1)
-layout_mode = 2
-active = false
-button_label = "CLEAR"
-
-[node name="R2" parent="NinePatchRect/MarginContainer2/Cards" instance=ExtResource("3_3l6aw")]
-layout_mode = 2
-base_color = Color(0.483333, 1, 0, 1)
-
-[node name="R3" parent="NinePatchRect/MarginContainer2/Cards" instance=ExtResource("3_3l6aw")]
-modulate = Color(0.85, 0.85, 0.85, 1)
-layout_mode = 2
-base_color = Color(1, 0.833333, 0, 1)
-active = false
-button_label = "NEXT"

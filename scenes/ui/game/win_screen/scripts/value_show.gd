@@ -33,7 +33,7 @@ func _ready() -> void:
 	
 	# Gera e aplica o texto ajustado
 	label.text = generate_aligned_text(label_value, str(value), total_width, font)
-	label.visible_ratio = 0.1
+	label.visible_ratio = 0.0
 	
 	var tween : Tween = get_tree().create_tween()
 	tween.tween_interval(delay_to_show)
@@ -64,8 +64,6 @@ func generate_aligned_text(left_text: String, right_text: String, total_width: i
 
 func show_icon(show : bool = true) ->void:
 	if show:
-		return
 		icon.modulate.a = 1
 	else:
-		return
 		icon.modulate.a = 0
