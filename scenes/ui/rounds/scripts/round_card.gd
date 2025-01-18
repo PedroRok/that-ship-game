@@ -29,7 +29,7 @@ func set_stats(new_stats : RoundCardStats) -> void:
 		return
 	title_label.text = title
 	card_desc.text = desc
-	card_stats.apply_card(self)
+	new_stats.apply_card(self)
 
 func _on_button_button_up() -> void:
 	round_button_pressed.emit()

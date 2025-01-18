@@ -17,7 +17,6 @@ func _ready() -> void:
 	_on_timer_out()
 	
 func _on_timer_out() -> void:
-	print("spawning")
 	var ship : BoatStats = ships[randi_range(0, ships.size()-1)]
 	start_build_ship(ship)
 	

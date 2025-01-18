@@ -16,9 +16,7 @@ func apply_card(round_card : RoundCard) -> void:
 	round_card.button.modulate = base_color
 	round_card.button.disabled = !active
 	round_card.modulate.v = 1
-	var brightness : float = 1
 	if (round_card.button.disabled):
-		brightness = 0.8
 		round_card.modulate.v = round_card.modulate.v * 0.85
 	apply_color("base_gray", 0.49, round_card.button)
 	apply_color("shadow_gray", 0.35, round_card.button)

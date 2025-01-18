@@ -17,7 +17,7 @@ func _ready() -> void:
 	add_value("Total Gears", gears_fixed_gived + gears_winned_in_round, 2, final_value_container)
 	pass
 	
-func add_value(label : String, value : int, delay : float, container : VBoxContainer) -> void:
+func add_value(label : String, value : int, delay : int, container : VBoxContainer) -> void:
 	var value_row : WinShowValue = VALUE_SHOW_UP.instantiate()
 	value_row.label_value = label
 	value_row.value = value

@@ -62,8 +62,8 @@ func generate_aligned_text(left_text: String, right_text: String, total_width: i
 	return left_text + dots + right_text
 	
 
-func show_icon(show : bool = true) ->void:
-	if show:
+func show_icon(show_icon : bool = true) ->void:
+	if show_icon:
 		icon.modulate.a = 1
 	else:
 		icon.modulate.a = 0

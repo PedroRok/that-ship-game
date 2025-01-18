@@ -20,7 +20,7 @@ var is_glowing : bool = false
 var time_to_desapier : int = 60
 var desapier : bool = false
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	time_to_change -= 1
 	if (time_to_change <= 0):
 		time_to_change = 30

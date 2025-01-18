@@ -13,8 +13,6 @@ var status : Array[RoundCardStats] = [
 ]
 
 func _ready() -> void:
-	var index : int = 0
-	
 	var player_round : int = Global.player_stats.round_num
 	for i : int in range(3):
 		var round_card : RoundCard = ROUND_CARD.instantiate()
@@ -27,7 +25,6 @@ func _ready() -> void:
 		rounds.call_deferred("add_child", round_card)
 		round_card.connect("round_button_pressed", Callable(self, "change_to_game"))
 		pass
-	var round : int = Global.player_stats.round_num
 	
 		
 func change_to_game() -> void:

@@ -11,7 +11,7 @@ signal spawn_ship(ship_name : BoatStats)
 
 func _ready() -> void:
 	if (Engine.is_editor_hint()):
-		player_stats = load("res://core/resources/player_stats_full.tres")
+		player_stats = load("res://core/resources/player/player_stats_full.tres")
 	else:
 		player_stats = Global.player_stats
 	if (!player_stats):
