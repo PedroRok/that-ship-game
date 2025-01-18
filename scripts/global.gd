@@ -19,3 +19,6 @@ const menus : Dictionary = {
 	Menu.SELECT : "res://scenes/ui/rounds/rounds_menu.tscn",
 	Menu.GAME : "res://scenes/game/game.tscn"
 }
+
+func change_scene(name : Menu) -> void:
+	change_to_scene.emit(name)

@@ -12,5 +12,5 @@ func _ready() -> void:
 	gear_value.change_value(Global.player_stats.gear)
 	
 func _on_button_button_down() -> void:
-	Global.change_to_scene.emit(Global.Menu.SELECT)
+	Global.change_scene(Global.Menu.SELECT)
 	pass # Replace with function body.

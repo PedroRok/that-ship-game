@@ -28,4 +28,4 @@ func _ready() -> void:
 	
 		
 func change_to_game() -> void:
-	Global.change_to_scene.emit(Global.Menu.GAME)
+	Global.change_scene(Global.Menu.GAME)

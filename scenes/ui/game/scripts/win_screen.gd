@@ -31,5 +31,5 @@ func _on_button_button_up() -> void:
 		player_round = 0
 		Global.player_stats.round_group_num += 1
 	Global.player_stats.round_num = player_round
-	Global.change_to_scene.emit(Global.Menu.SHOP)
+	Global.change_scene(Global.Menu.SHOP)
 	pass # Replace with function body.
