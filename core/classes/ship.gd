@@ -29,8 +29,6 @@ func add_new_gun(new_gun : Gun) -> void:
 	for gun_slot_index in range(boat_stats.gun_slots.size()):
 		var gun_slot : GunSlot = boat_stats.gun_slots[gun_slot_index]
 		if (gun_slot.allowed_types.has(new_gun.gun_type) and !occupied_slots.has(gun_slot_index)):
-			print("appended" + str(gun_slot_index))
-			print(gun_slot.position)
 			selected_gun_slot = gun_slot
 			occupied_slots.append(gun_slot_index)
 			break

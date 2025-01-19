@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="BoatStats" load_steps=8 format=3 uid="uid://d2u8fkngrix6h"]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="1_8v0pq"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="2_nshyk"]
+[ext_resource type="Texture2D" uid="uid://cvt3a6em00wa0" path="res://assets/game/ships/small.png" id="3_mkp6l"]
+
+[sub_resource type="Resource" id="Resource_k1g3u"]
+script = ExtResource("1_8v0pq")
+position = Vector2(6, 0.5)
+allowed_types = Array[int]([0])
+with_base = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_quv4v"]
+size = Vector2(20, 8)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3gque"]
+size = Vector2(20, 5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_3q3qn"]
+size = Vector2(30, 10)
+
+[resource]
+script = ExtResource("2_nshyk")
+name = "mini"
+price = 3
+produce_cd = 1
+health = 3.0
+radar_distance = 100
+knockback_resistance = 0.0
+speed = 800.0
+deceleration = 0.5
+max_tilt_angle = 0.8
+sprite = ExtResource("3_mkp6l")
+center = Vector2(0, 0)
+gun_slots = Array[ExtResource("1_8v0pq")]([SubResource("Resource_k1g3u")])
+water_colision_shape = SubResource("RectangleShape2D_3q3qn")
+water_colision_pos = Vector2(1, -2)
+hitbox_colision_shape = SubResource("RectangleShape2D_quv4v")
+hitbox_colision_pos = Vector2(0, 1)
+particles_shape = SubResource("RectangleShape2D_3gque")
+particles_pos = Vector2(0, 1)
