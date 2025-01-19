@@ -8,6 +8,7 @@
 script = ExtResource("1_7jw4l")
 position = Vector2(10, 0)
 allowed_types = Array[int]([0])
+with_base = false
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mr0fb"]
 size = Vector2(30, 16)

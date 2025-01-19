@@ -14,7 +14,7 @@ var item_manager : ItemManager
 var ship_entity : PackedScene = preload("res://scenes/entities/ship/ship_entity.tscn")
 
 @onready
-var gun : PackedScene = preload("res://scenes/entities/guns/missile_gun.tscn")
+var gun : PackedScene = preload("res://scenes/entities/guns/simple_gun.tscn")
 
 func _ready() -> void:
 	for base in bases:

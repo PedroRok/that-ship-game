@@ -87,7 +87,7 @@ position = Vector2(-69, 347)
 shape = SubResource("RectangleShape2D_otcg8")
 
 [node name="BaseCenter" type="Node2D" parent="."]
-position = Vector2(-91, 337)
+position = Vector2(-117, 308)
 
 [node name="HealthText" type="Label" parent="."]
 z_index = 1000

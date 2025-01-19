@@ -19,6 +19,8 @@ const WIN_SCREEN = preload("res://scenes/ui/game/win_screen/win_screen.tscn")
 @onready
 var canvas_layer : CanvasLayer = $CanvasLayer
 
+var game_ended : bool = false
+
 func _ready() -> void:
 	ally_base.death_event.connect(Callable(self, "base_death_event"))
 	enemy_base.death_event.connect(Callable(self, "base_death_event"))
@@ -31,3 +33,5 @@ func base_death_event(team_stats: TeamStats) -> void:
 		win_screen.gears_winned_in_round = gears_collected_in_round
 		Global.player_stats.gear += 10
 		canvas_layer.call_deferred("add_child", win_screen) 
+	#create_tween().tween_property(Engine, "time_scale", 0.1, 2)
+	game_ended = true
