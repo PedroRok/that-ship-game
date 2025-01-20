@@ -28,8 +28,8 @@ func process_physics(delta: float) -> void:
 		Transitioned.emit(self, "death")
 		return
 	
-	var target_velocity_x : float = parent.team_stats.direction * parent.boat_stats.speed
-	parent.linear_velocity.x = lerp(parent.linear_velocity.x, target_velocity_x, parent.boat_stats.deceleration * delta)
+	var target_velocity_x : float = parent.team_stats.direction * parent.entity_stats.speed
+	parent.linear_velocity.x = lerp(parent.linear_velocity.x, target_velocity_x, parent.entity_stats.deceleration * delta)
 	if (radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)):
 		Transitioned.emit(self, "attack")
 		return

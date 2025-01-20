@@ -21,20 +21,20 @@ func _ready() -> void:
 		base.spawn_ship_event.connect(Callable(self, "handle_ship_spawn"))
 
 func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamStats) -> void:
-	var boat : ShipEntity = ship_entity.instantiate()
+	var boat : Entity = ship_entity.instantiate()
 	if boat:
 		boat.team_stats = team_res
-		boat.boat_stats = ship_resource
+		boat.entity_stats = ship_resource
 		boat.connect("bullet_fired", Callable(bullet_manager, "handle_bullet_spawned"))
-		boat.connect("ship_destroy", Callable(self, "handle_ship_destroy"))
+		boat.connect("entity_destroy", Callable(self, "handle_ship_destroy"))
 		add_child(boat)
-		for slots in boat.boat_stats.gun_slots:
+		for slots in boat.entity_stats.gun_slots:
 			boat.add_new_gun(gun.instantiate())
 			pass
 		boat.global_position = pos
 	pass
 
-func handle_ship_destroy(pos : Vector2, _ship_stats : BoatStats, team_stats : TeamStats) -> void:
+func handle_ship_destroy(pos : Vector2, _entity_stats : EntityStats, team_stats : TeamStats) -> void:
 	if (team_stats.team_id == 1):
 		return
 	item_manager.handle_random_spawn(pos, true)

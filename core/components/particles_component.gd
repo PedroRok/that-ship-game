@@ -11,16 +11,16 @@ var fire : ParticleBase = $FireParticle
 var hit : ParticleBase = $HitParticle
 
 @export
-var ship : Ship
+var entity : Entity
 
 func _ready() -> void:
-	if !ship:
+	if !entity:
 		return
-	if (!ship.boat_stats):
+	if (!entity.entity_stats):
 		return
 	
-	shape = ship.boat_stats.particles_shape
-	position = ship.boat_stats.particles_pos
+	shape = entity.entity_stats.particles_shape
+	position = entity.entity_stats.particles_pos
 	
 	var rect : Rect2 = shape.get_rect()
 	
@@ -28,7 +28,6 @@ func _ready() -> void:
 	fire.init(position, shape, rect)
 	hit.init(position, shape, rect)
 	if Engine.is_editor_hint():
-		print("here")
 		trail.delta_speed(1, 50)
 		trail.amount_ratio = 1
 		fire.amount_ratio = 1

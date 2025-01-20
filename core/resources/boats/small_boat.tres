@@ -2,40 +2,40 @@
 
 [ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="1_7jw4l"]
 [ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="1_d0lg6"]
-[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="3_mgh42"]
+[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/troops/small_boat.png" id="3_jocjm"]
 
-[sub_resource type="Resource" id="Resource_i04h8"]
+[sub_resource type="Resource" id="Resource_a8422"]
 script = ExtResource("1_7jw4l")
-position = Vector2(10, 0)
+position = Vector2(9.5, -0.5)
 allowed_types = Array[int]([0])
 with_base = false
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_mr0fb"]
-size = Vector2(30, 16)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gnul5"]
+size = Vector2(30, 15)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_d4pvh"]
-size = Vector2(27, 10.5)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_g2h8i"]
+size = Vector2(30, 12)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2pvmq"]
 size = Vector2(30, 9)
 
 [resource]
 script = ExtResource("1_d0lg6")
-name = "small"
-price = 5
-produce_cd = 1
-health = 10.0
-radar_distance = 150
-knockback_resistance = 0.0
-speed = 600.0
 deceleration = 0.5
 max_tilt_angle = 0.3
-sprite = ExtResource("3_mgh42")
-center = Vector2(1, 1)
-gun_slots = Array[ExtResource("1_7jw4l")]([SubResource("Resource_i04h8")])
+knockback_resistance = 0.0
 water_colision_shape = SubResource("RectangleShape2D_2pvmq")
 water_colision_pos = Vector2(1, -0.5)
-hitbox_colision_shape = SubResource("RectangleShape2D_mr0fb")
+health = 10.0
+radar_distance = 100
+speed = 400.0
+name = ""
+price = 5
+produce_cd = 5
+sprite = ExtResource("3_jocjm")
+center = Vector2(0, 0)
+gun_slots = Array[ExtResource("1_7jw4l")]([SubResource("Resource_a8422")])
+hitbox_colision_shape = SubResource("RectangleShape2D_gnul5")
 hitbox_colision_pos = Vector2(0, 0)
-particles_shape = SubResource("RectangleShape2D_d4pvh")
-particles_pos = Vector2(0, -0.75)
+particles_shape = SubResource("RectangleShape2D_g2h8i")
+particles_pos = Vector2(0, 0)

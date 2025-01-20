@@ -34,6 +34,7 @@ func _death_event() -> void:
 	death_event.emit(team_stats)
 	
 func start_build_ship(ship : BoatStats) -> bool:
+	print("start build")
 	if (ship_constructor.is_building()): return false
 	ship_constructor.build_ship(ship)
 	return true

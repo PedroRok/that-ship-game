@@ -1,12 +1,12 @@
 @tool
-class_name Ship
+class_name Entity
 extends RigidBody2D
 
 @export
 var team_stats : TeamStats
 
 @export
-var boat_stats : BoatStats
+var entity_stats : EntityStats
 
 @export
 var guns: Array[Gun]
@@ -15,7 +15,7 @@ var enabled : bool = true
 
 signal bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, rotation : float)
 
-signal ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : TeamStats)
+signal entity_destroy(pos : Vector2, ship_stats : EntityStats, team_stats : TeamStats)
 
 func get_guns() -> Array[Gun]:
 	return guns
@@ -23,13 +23,13 @@ func get_guns() -> Array[Gun]:
 var occupied_slots : Array[int]
 
 func add_new_gun(new_gun : Gun) -> void:
-	if (guns.size() >= boat_stats.gun_slots.size()):
+	if (guns.size() >= entity_stats.gun_slots.size()):
 		push_error("Trying to add new weapong when is already full")
 		return
 
 	var selected_gun_slot : GunSlot = null
-	for gun_slot_index in range(boat_stats.gun_slots.size()):
-		var gun_slot : GunSlot = boat_stats.gun_slots[gun_slot_index]
+	for gun_slot_index in range(entity_stats.gun_slots.size()):
+		var gun_slot : GunSlot = entity_stats.gun_slots[gun_slot_index]
 		if (gun_slot.allowed_types.has(new_gun.gun_type) and !occupied_slots.has(gun_slot_index)):
 			selected_gun_slot = gun_slot
 			occupied_slots.append(gun_slot_index)
@@ -51,7 +51,7 @@ func add_new_gun(new_gun : Gun) -> void:
 	guns.append(new_gun)
 
 func get_center_pos() -> Vector2:
-	return global_position + boat_stats.center
+	return global_position + entity_stats.center
 
 func handle_bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, rotation : float) -> void:
 	bullet.team = team_stats.team_id

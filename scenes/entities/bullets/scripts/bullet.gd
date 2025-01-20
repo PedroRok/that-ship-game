@@ -38,7 +38,7 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 	if (already_hit.has(area) || piercing <= already_hit.size()):
 		return 
 	if (area is HitboxComponent):
-		var ship : Ship = area.ship
+		var ship : Entity = area.entity
 		if (ship.team_stats.team_id != team):
 			if (area.enabled):
 				already_hit.append(area)

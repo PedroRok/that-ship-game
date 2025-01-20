@@ -3,17 +3,17 @@ class_name RadarComponent
 extends Area2D
 
 @export
-var ship : Ship
+var entity : Entity
 
 var enemy_hitbox : Array
 
 var target_enemy : Node2D
 
 func _ready() -> void:
-	if (!ship.boat_stats):
+	if (!entity.entity_stats):
 		return
 	var collision_shape : CollisionShape2D = get_child(0)
-	collision_shape.shape.radius = ship.boat_stats.radar_distance
+	collision_shape.shape.radius = entity.entity_stats.radar_distance
 	pass
 
 func check_radar(team_id: int, direction: int) -> Node2D:
@@ -37,7 +37,7 @@ func _get_nearest_enemy() -> Node:
 func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
 	if (enemy_hitbox.has(area)): return
 	if (area is SimpleHitboxComponent):
-		if (area.get_hitbox_parent().team_stats.team_id != ship.team_stats.team_id and area.enabled):
+		if (area.get_hitbox_parent().team_stats.team_id != entity.team_stats.team_id and area.enabled):
 			enemy_hitbox.append(area)
 	pass
 

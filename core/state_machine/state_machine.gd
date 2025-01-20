@@ -8,7 +8,7 @@ var current_state: State
 
 var states : Dictionary = {}
 
-func init(parent: Ship) -> void:
+func init(parent: Entity) -> void:
 	for child in get_children():
 		if child is State:
 			states[child.name.to_lower()] = child
@@ -18,7 +18,6 @@ func init(parent: Ship) -> void:
 	if starting_state:
 		starting_state.enter()
 		current_state = starting_state
-	
 
 func change_state(state : State, new_state_name : String) -> void:
 	if state != current_state:

@@ -17,14 +17,14 @@ var screw_label : BarValue
 var gear_label : BarValue
 
 func _ready() -> void:
-	ships_slots.connect("spawn_ship", Callable(self, "spawn_ship"))
+	ships_slots.connect("spawn_entity", Callable(self, "spawn_entity"))
 	screw_label.connect("value_change", Callable(ships_slots, "on_value_change"))
 	screw_label.change_value(Global.player_stats.start_screw)
 	gear_label.change_value(Global.player_stats.gear)
 
-func spawn_ship(ship_name : BoatStats) -> void:
-	if (base.start_build_ship(ship_name)):
-		screw_label.change_value(-ship_name.price)
+func spawn_entity(entity_name : EntityStats) -> void:
+	if (base.start_build_ship(entity_name)):
+		screw_label.change_value(-entity_name.price)
 
 
 func _on_temporary_button_button_up() -> void:

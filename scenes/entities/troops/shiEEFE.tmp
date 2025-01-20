@@ -1,8 +1,7 @@
-[gd_scene load_steps=21 format=3 uid="uid://bltffp755yv3d"]
+[gd_scene load_steps=20 format=3 uid="uid://bltffp755yv3d"]
 
 [ext_resource type="Script" path="res://scenes/entities/troops/scripts/ship_entity.gd" id="1_ohlg0"]
 [ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="2_yq7l4"]
-[ext_resource type="Resource" uid="uid://csmqewnj718dx" path="res://core/resources/boats/medium_boat.tres" id="2_yx2v4"]
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://core/state_machine/state_machine.tscn" id="3_ogx4m"]
 [ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/troops/tanker_small_boat.png" id="4_2lv2s"]
 [ext_resource type="Script" path="res://core/state_machine/states/move.gd" id="4_8etds"]
@@ -47,15 +46,15 @@ shader_parameter/Noise = SubResource("NoiseTexture2D_thubd")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1ve70"]
 size = Vector2(51, 9)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_sr6va"]
-size = Vector2(50, 15)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eh53h"]
+size = Vector2(53, 16)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_l442v"]
 resource_local_to_scene = true
-radius = 100.0
+radius = 200.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_cfsof"]
-size = Vector2(50, 10)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ngcti"]
+size = Vector2(52, 10.5)
 
 [node name="ShipEntity" type="RigidBody2D"]
 position = Vector2(1, 0)
@@ -64,7 +63,6 @@ gravity_scale = 0.1
 inertia = 96.02
 linear_damp = 3.0
 script = ExtResource("1_ohlg0")
-entity_stats = ExtResource("2_yx2v4")
 
 [node name="BoatSprite" type="Sprite2D" parent="."]
 z_index = 1
@@ -96,38 +94,38 @@ radar_component = NodePath("../../RadarComponent")
 script = ExtResource("6_d05p6")
 particle_component = NodePath("../../ParticlesComponent")
 
-[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "entity") instance=ExtResource("7_rw84j")]
+[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "ship") instance=ExtResource("7_rw84j")]
 collision_layer = 2
 collision_mask = 0
 health_component = NodePath("../HealthComponent")
 particle_component = NodePath("../ParticlesComponent")
-entity = NodePath("..")
+ship = NodePath("..")
 
 [node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
 z_index = 1
-position = Vector2(0, 2)
-shape = SubResource("RectangleShape2D_sr6va")
+position = Vector2(-0.5, 0)
+shape = SubResource("RectangleShape2D_eh53h")
 debug_color = Color(0.976049, 0, 0.414808, 0.42)
 
-[node name="HealthComponent" parent="." node_paths=PackedStringArray("entity") instance=ExtResource("8_qehx0")]
+[node name="HealthComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("8_qehx0")]
 default_health = 10.0
-entity = NodePath("..")
+ship = NodePath("..")
 metadata/_edit_use_anchors_ = true
 
-[node name="RadarComponent" parent="." node_paths=PackedStringArray("entity") instance=ExtResource("9_wiqbi")]
+[node name="RadarComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("9_wiqbi")]
 z_index = 1
 collision_mask = 514
-entity = NodePath("..")
+ship = NodePath("..")
 
 [node name="RadarShape" type="CollisionShape2D" parent="RadarComponent"]
 shape = SubResource("CircleShape2D_l442v")
 debug_color = Color(0.7, 0, 0.0116665, 0)
 
-[node name="ParticlesComponent" parent="." node_paths=PackedStringArray("entity") instance=ExtResource("10_4k1mg")]
+[node name="ParticlesComponent" parent="." node_paths=PackedStringArray("ship") instance=ExtResource("10_4k1mg")]
 z_index = 1
-position = Vector2(-2, 0)
-shape = SubResource("RectangleShape2D_cfsof")
+position = Vector2(-0.25, 2)
+shape = SubResource("RectangleShape2D_ngcti")
 debug_color = Color(0, 0.643738, 0.294445, 0.42)
-entity = NodePath("..")
+ship = NodePath("..")
 
 [connection signal="death_event" from="HealthComponent" to="HitboxComponent" method="_on_health_component_death_event"]

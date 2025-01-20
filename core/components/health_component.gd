@@ -5,16 +5,16 @@ extends RichTextLabel
 var default_health : float = 10
 
 @export
-var ship : Ship
+var entity : Entity
 
 var actual_health : float
 
 signal death_event
 
 func _ready() -> void:
-	if ship:
-		default_health = ship.boat_stats.health
-		actual_health = ship.boat_stats.health
+	if entity:
+		default_health = entity.entity_stats.health
+		actual_health = entity.entity_stats.health
 	else:
 		actual_health = default_health
 	

@@ -1,6 +1,6 @@
 @tool
 class_name ShipEntity
-extends Ship
+extends Entity
 
 @onready 
 var sprite: Sprite2D = $BoatSprite
@@ -9,9 +9,9 @@ var sprite: Sprite2D = $BoatSprite
 var state_machine : StateMachine = $StateMachine
 
 func _ready() -> void:
-	if (!boat_stats):
+	if (!entity_stats):
 		return
-	sprite.texture = boat_stats.sprite
+	sprite.texture = entity_stats.sprite
 	if (Engine.is_editor_hint()):
 		return
 	if (team_stats.direction > 0):

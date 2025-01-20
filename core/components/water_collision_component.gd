@@ -3,13 +3,13 @@ class_name WaterCollisionComponent
 extends CollisionShape2D
 
 @export
-var ship : Ship
+var ship : ShipEntity
 
 func _ready() -> void:
 	if (!ship):
 		return
-	if (!ship.boat_stats):
+	if (!ship.entity_stats):
 		return
-	shape = ship.boat_stats.water_colision_shape
-	position = ship.boat_stats.water_colision_pos
+	shape = ship.entity_stats.water_colision_shape
+	position = ship.entity_stats.water_colision_pos
 	pass

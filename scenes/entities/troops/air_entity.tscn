@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dbisvpck6t6q3"]
+[gd_scene load_steps=18 format=3 uid="uid://dbisvpck6t6q3"]
 
 [ext_resource type="Script" path="res://scenes/entities/troops/scripts/air_entity.gd" id="1_wppph"]
 [ext_resource type="Texture2D" uid="uid://bmiew882th7v" path="res://assets/game/troops/plane/plane_1.png" id="2_65h02"]
@@ -69,6 +69,9 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bkdqa"]
 size = Vector2(17, 14)
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_wgini"]
+radius = 50.0
+
 [node name="AirEntity" type="RigidBody2D" node_paths=PackedStringArray("animated_sprite", "animated_blades")]
 gravity_scale = 0.1
 script = ExtResource("1_wppph")
@@ -88,3 +91,9 @@ frame_progress = 0.13472
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_bkdqa")
+
+[node name="DistanceWarn" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DistanceWarn"]
+shape = SubResource("CircleShape2D_wgini")
+debug_color = Color(0.57, 0.52611, 0.5073, 0)
