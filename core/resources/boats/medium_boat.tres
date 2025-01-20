@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="BoatStats" load_steps=9 format=3 uid="uid://csmqewnj718dx"]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="1_kpnwe"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="2_k5kva"]
+[ext_resource type="Texture2D" uid="uid://baj8r7nyhkbx2" path="res://assets/game/ships/medium_boat.png" id="3_h6wms"]
+
+[sub_resource type="Resource" id="Resource_c2tgi"]
+script = ExtResource("1_kpnwe")
+position = Vector2(9, -1)
+allowed_types = Array[int]([1])
+with_base = true
+
+[sub_resource type="Resource" id="Resource_232rb"]
+script = ExtResource("1_kpnwe")
+position = Vector2(15, -1)
+allowed_types = Array[int]([1])
+with_base = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ehbdu"]
+size = Vector2(40, 15)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1n87g"]
+size = Vector2(35, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y2arm"]
+size = Vector2(40, 10)
+
+[resource]
+script = ExtResource("2_k5kva")
+name = "medium"
+price = 10
+produce_cd = 3
+health = 20.0
+radar_distance = 500
+knockback_resistance = 0.6
+speed = 400.0
+deceleration = 0.5
+max_tilt_angle = 0.2
+sprite = ExtResource("3_h6wms")
+center = Vector2(0, 0)
+gun_slots = Array[ExtResource("1_kpnwe")]([SubResource("Resource_c2tgi"), SubResource("Resource_232rb")])
+water_colision_shape = SubResource("RectangleShape2D_y2arm")
+water_colision_pos = Vector2(0, 0)
+hitbox_colision_shape = SubResource("RectangleShape2D_ehbdu")
+hitbox_colision_pos = Vector2(0, 1)
+particles_shape = SubResource("RectangleShape2D_1n87g")
+particles_pos = Vector2(0, 0)
