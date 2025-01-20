@@ -1,6 +1,6 @@
 @tool
 class_name HitboxComponent
-extends Area2D
+extends SimpleHitboxComponent
 
 @export
 var health_component : HealthComponent
@@ -10,8 +10,6 @@ var particle_component : ParticlesComponent
 
 @export
 var ship : Ship
-
-var enabled : bool = true
 
 func _ready() -> void:
 	if (!ship.boat_stats):
@@ -39,3 +37,6 @@ func handle_hit_visual(health : HealthComponent) -> void:
 	particle_component.fire.amount_ratio = amout_ratio_val
 	if (!particle_component.hit.emitting):
 		particle_component.hit.restart()
+
+func get_hitbox_parent() -> Node2D:
+	return ship

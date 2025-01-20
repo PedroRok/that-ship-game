@@ -1,5 +1,5 @@
 class_name BaseHitboxComponent
-extends Area2D
+extends SimpleHitboxComponent
 
 @export
 var base : Base
@@ -10,3 +10,5 @@ func handle_hit(damage : Damage, _direction : float) -> void:
 	health_component.handle_hit(damage)
 	pass
 	
+func get_hitbox_parent() -> Node2D:
+	return base

@@ -1,5 +1,5 @@
 class_name Base
-extends Node
+extends Node2D
 
 @export
 var team_stats : TeamStats
