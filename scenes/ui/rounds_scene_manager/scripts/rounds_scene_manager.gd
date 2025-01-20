@@ -22,7 +22,7 @@ func change_to_menu(next_menu : Global.Menu) -> void:
 	pass
 
 func get_node_by_scene(menu : Global.Menu) -> Node:
-	var packed : PackedScene = load(Global.menus.get(menu))
+	var packed : PackedScene = Global.menus.get(menu)
 	var next_level : Node = packed.instantiate()
 	call_deferred("add_child", next_level)
 	return next_level

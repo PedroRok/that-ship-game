@@ -15,9 +15,9 @@ enum Menu {
 }
 
 const menus : Dictionary = {
-	Menu.SHOP : "res://scenes/ui/shop/shop_menu.tscn",
-	Menu.SELECT : "res://scenes/ui/rounds/rounds_menu.tscn",
-	Menu.GAME : "res://scenes/game/game.tscn"
+	Menu.SHOP : preload("res://scenes/ui/shop/shop_menu.tscn"),
+	Menu.SELECT : preload("res://scenes/ui/rounds/rounds_menu.tscn"),
+	Menu.GAME : preload("res://scenes/game/game.tscn")
 }
 
 func change_scene(name : Menu) -> void:
