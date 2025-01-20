@@ -11,6 +11,8 @@ var boat_stats : BoatStats
 @export
 var guns: Array[Gun]
 
+var enabled : bool = true
+
 signal bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, rotation : float)
 
 signal ship_destroy(pos : Vector2, ship_stats : BoatStats, team_stats : TeamStats)

@@ -22,6 +22,7 @@ func _ready() -> void:
 func handle_hit(damage : Damage, direction : float) -> void:
 	if (health_component):
 		enabled = health_component.handle_hit(damage)
+		ship.enabled = enabled
 		handle_hit_visual(health_component)
 		
 	var final_knockback : float = damage.knockback * (1 - ship.boat_stats.knockback_resistance)

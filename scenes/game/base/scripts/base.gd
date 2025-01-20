@@ -16,6 +16,8 @@ var health_component : BaseHealthComponent
 @export
 var ship_constructor : ShipConstructor
 
+var enabled : bool = true
+
 signal death_event(team_stats : TeamStats)
 
 signal spawn_ship_event(spawn_pos : Vector2, boat_stats : BoatStats, team_stats : TeamStats)

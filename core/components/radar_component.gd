@@ -5,7 +5,7 @@ extends Area2D
 @export
 var ship : Ship
 
-var enemy_hitbox : Array[SimpleHitboxComponent]
+var enemy_hitbox : Array
 
 var target_enemy : Node2D
 
@@ -25,7 +25,7 @@ func check_radar(team_id: int, direction: int) -> Node2D:
 func _get_nearest_enemy() -> Node:
 	var distance : float = 99999
 	var selected_enemy : Node2D = null
-	for enemy in enemy_hitbox:
+	for enemy : SimpleHitboxComponent in enemy_hitbox:
 		if (enemy.enabled):
 			var enemy_distance : float = enemy.global_position.distance_to(global_position)
 			if (enemy_distance < distance):
@@ -39,7 +39,6 @@ func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, 
 	if (area is SimpleHitboxComponent):
 		if (area.get_hitbox_parent().team_stats.team_id != ship.team_stats.team_id and area.enabled):
 			enemy_hitbox.append(area)
-			print("area entered")
 	pass
 
 

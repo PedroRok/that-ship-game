@@ -6,9 +6,10 @@ extends Bullet
 
 func set_direction(new_direction: Vector2) -> void:
 	self.direction = Vector2(0, -1) * initial_speed
+	look_at(direction)
 
 func _physics_process(delta: float) -> void:
-	if target:
+	if target && target.enabled:
 		var direction_to_target : Vector2 = (target.get_center_pos() - global_position).normalized()
 		direction = direction.lerp(direction_to_target * speed, turn_speed * delta)
 		look_at(direction * speed)
@@ -29,5 +30,4 @@ func remove_bullet() -> void:
 		particle.scale_amount_max = 2
 		particle.one_shot = true
 		particle.reparent(get_tree().root)
-		
 	queue_free()
