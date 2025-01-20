@@ -10,7 +10,7 @@
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="7_bicx8"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base_health_component.gd" id="7_ralhy"]
 [ext_resource type="Shader" path="res://shaders/construct_sprite_shader.gdshader" id="9_mjkt8"]
-[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="10_7ob6i"]
+[ext_resource type="Texture2D" path="res://assets/game/ships/small_boat.png" id="10_7ob6i"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/ship_constructor.gd" id="11_lprda"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_kqiig"]

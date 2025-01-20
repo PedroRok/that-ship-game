@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://davfrb7w255h0"
-path="res://.godot/imported/guns.png-feb70ca0bc8665ae0ad2fdd35d247653.ctex"
+uid="uid://daer4iyqtrymd"
+path="res://.godot/imported/small_boat.png-6411fc98b086342c462720a7177911ad.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/game/ships/guns.png"
-dest_files=["res://.godot/imported/guns.png-feb70ca0bc8665ae0ad2fdd35d247653.ctex"]
+source_file="res://assets/game/troops/small_boat.png"
+dest_files=["res://.godot/imported/small_boat.png-6411fc98b086342c462720a7177911ad.ctex"]
 
 [params]
 

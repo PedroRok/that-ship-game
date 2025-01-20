@@ -11,7 +11,7 @@ var bullet_manager : BulletManager
 var item_manager : ItemManager
 
 @onready
-var ship_entity : PackedScene = preload("res://scenes/entities/ship/ship_entity.tscn")
+var ship_entity : PackedScene = preload("res://scenes/entities/troops/ship_entity.tscn")
 
 @onready
 var gun : PackedScene = preload("res://scenes/entities/guns/missile_gun.tscn")

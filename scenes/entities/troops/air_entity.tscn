@@ -1,0 +1,90 @@
+[gd_scene load_steps=17 format=3 uid="uid://dbisvpck6t6q3"]
+
+[ext_resource type="Script" path="res://scenes/entities/troops/scripts/air_entity.gd" id="1_wppph"]
+[ext_resource type="Texture2D" uid="uid://bmiew882th7v" path="res://assets/game/troops/plane/plane_1.png" id="2_65h02"]
+[ext_resource type="Texture2D" uid="uid://7fc3ln1vacwd" path="res://assets/game/troops/plane/plane_2.png" id="3_qibsq"]
+[ext_resource type="Texture2D" uid="uid://dmjmaet2fmdum" path="res://assets/game/troops/plane/plane_3.png" id="4_8vjt5"]
+[ext_resource type="Texture2D" uid="uid://l1e7gina5ihc" path="res://assets/game/troops/plane/plane_4.png" id="5_u6h35"]
+[ext_resource type="Texture2D" uid="uid://cen7gq5bh3sl8" path="res://assets/game/troops/plane/plane_5.png" id="6_tftk7"]
+[ext_resource type="Texture2D" uid="uid://b6bxjibky67po" path="res://assets/game/troops/plane/blades/blade1.png" id="7_xyv82"]
+[ext_resource type="Texture2D" uid="uid://djuv81o1tspjx" path="res://assets/game/troops/plane/blades/blade2.png" id="8_e02jx"]
+[ext_resource type="Texture2D" uid="uid://bhnvhhmukexrk" path="res://assets/game/troops/plane/blades/blade3.png" id="9_ss7gp"]
+[ext_resource type="Texture2D" uid="uid://bptd5lyatdcvl" path="res://assets/game/troops/plane/blades/blade4.png" id="10_qfhob"]
+[ext_resource type="Texture2D" uid="uid://ckb4mfbe0j1fu" path="res://assets/game/troops/plane/blades/blade5.png" id="11_aq0de"]
+[ext_resource type="Texture2D" uid="uid://d4fbyi0ny50tf" path="res://assets/game/troops/plane/blades/blade6.png" id="12_tjmam"]
+[ext_resource type="Texture2D" uid="uid://c57y3apinko8g" path="res://assets/game/troops/plane/blades/blade7.png" id="13_003lb"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a6ygn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_65h02")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_qibsq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_8vjt5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_u6h35")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tftk7")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qqdd0"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("7_xyv82")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_e02jx")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_ss7gp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_qfhob")
+}, {
+"duration": 1.0,
+"texture": ExtResource("11_aq0de")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12_tjmam")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13_003lb")
+}],
+"loop": true,
+"name": &"default",
+"speed": 120.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bkdqa"]
+size = Vector2(17, 14)
+
+[node name="AirEntity" type="RigidBody2D" node_paths=PackedStringArray("animated_sprite", "animated_blades")]
+gravity_scale = 0.1
+script = ExtResource("1_wppph")
+animated_sprite = NodePath("Plane")
+animated_blades = NodePath("Blades")
+
+[node name="Plane" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_a6ygn")
+frame = 4
+frame_progress = 0.0738268
+
+[node name="Blades" type="AnimatedSprite2D" parent="."]
+position = Vector2(8, 0)
+sprite_frames = SubResource("SpriteFrames_qqdd0")
+frame_progress = 0.13472
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_bkdqa")

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://baj8r7nyhkbx2"
-path="res://.godot/imported/medium_boat.png-89531543d5ea948500f4212c5f4fd3e4.ctex"
+uid="uid://djuv81o1tspjx"
+path="res://.godot/imported/blade2.png-dd5e1b56beb0f0a197a939e97309923d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/game/ships/medium_boat.png"
-dest_files=["res://.godot/imported/medium_boat.png-89531543d5ea948500f4212c5f4fd3e4.ctex"]
+source_file="res://assets/game/troops/plane/blades/blade2.png"
+dest_files=["res://.godot/imported/blade2.png-dd5e1b56beb0f0a197a939e97309923d.ctex"]
 
 [params]
 

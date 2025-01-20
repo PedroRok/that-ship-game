@@ -108,4 +108,3 @@ amout_to_spawn = 2
 
 [node name="AirEntity" parent="." instance=ExtResource("15_5jfj3")]
 position = Vector2(241, 215)
-gravity_scale = 1.0

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjkaw48lvdkp0"
-path="res://.godot/imported/missile_base.png-daf0c449c68b735fc12f8e695779e856.ctex"
+uid="uid://bhnvhhmukexrk"
+path="res://.godot/imported/blade3.png-0ea590d214ab88e471c8fbdf9b70a58e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/game/ships/guns/missile_base.png"
-dest_files=["res://.godot/imported/missile_base.png-daf0c449c68b735fc12f8e695779e856.ctex"]
+source_file="res://assets/game/troops/plane/blades/blade3.png"
+dest_files=["res://.godot/imported/blade3.png-0ea590d214ab88e471c8fbdf9b70a58e.ctex"]
 
 [params]
 
