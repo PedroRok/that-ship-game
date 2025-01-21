@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_l3mik"]
 [ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="3_6u4gw"]
 [ext_resource type="Texture2D" uid="uid://dhnydu86k1iwb" path="res://assets/game/misc/screw.png" id="4_vhcu4"]
-[ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/ships/tanker_small_boat.png" id="5_0v5h3"]
+[ext_resource type="Texture2D" uid="uid://dolv8pv63bn6n" path="res://assets/game/troops/tanker_small_boat.png" id="5_0v5h3"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="6_l4ima"]
 [ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="7_pjvt1"]
 [ext_resource type="PackedScene" uid="uid://dj8gm2q4jdoeq" path="res://scenes/ui/bar_values/value_panel.tscn" id="8_ws30j"]

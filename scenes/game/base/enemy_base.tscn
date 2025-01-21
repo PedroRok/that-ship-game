@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cvidy1earqqq0"]
+[gd_scene load_steps=17 format=3 uid="uid://cvidy1earqqq0"]
 
 [ext_resource type="Script" path="res://scenes/game/base/scripts/auto_base.gd" id="1_4mhfs"]
 [ext_resource type="Texture2D" uid="uid://bl3vnauv20fp4" path="res://assets/game/base/base-1.png" id="2_0pxwk"]
@@ -12,7 +12,6 @@
 [ext_resource type="Script" path="res://scenes/game/base/scripts/base_health_component.gd" id="7_0cgtq"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="7_rshfm"]
 [ext_resource type="Shader" path="res://shaders/construct_sprite_shader.gdshader" id="9_hpmn5"]
-[ext_resource type="Texture2D" uid="uid://daer4iyqtrymd" path="res://assets/game/ships/small_boat.png" id="10_ku17v"]
 [ext_resource type="Script" path="res://scenes/game/base/scripts/ship_constructor.gd" id="11_r5i86"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qceai"]
@@ -107,7 +106,6 @@ label = NodePath("../HealthText")
 [node name="ShipBeeingConstruct" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_7dgsd")
 position = Vector2(-101, 361)
-texture = ExtResource("10_ku17v")
 flip_h = true
 script = ExtResource("11_r5i86")
 
