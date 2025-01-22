@@ -8,6 +8,9 @@ var death_deespawn_delay : int = 200;
 @export
 var particle_component : ParticlesComponent
 
+@export
+var hitbox_component : HitboxComponent
+
 var initial_velocity: Vector2
 var initial_angular_velocity: float = 1.0  # Velocidade de rotação inicial (ajuste conforme necessário)
 var decay_rate: float = 0.999  # Taxa de desaceleração (ajuste conforme necessário)
@@ -19,19 +22,18 @@ func enter() -> void:
 	initial_velocity = parent.linear_velocity
 	# Define a velocidade angular inicial
 	parent.angular_velocity = initial_angular_velocity
-	parent.collision_layer = 2
+	parent.collision_layer = 12
+	parent.collision_mask = 12
 	#parent.gravity_scale = parent.gravity_scale *4
 	death_rotation_speed = randf_range(-0.2, 0.2)
 	parent.entity_destroy.emit(parent.global_position, parent.entity_stats, parent.team_stats)
 	print(parent.rotation_degrees)
 	
-	if(parent.rotation_degrees < 0):
-		death_deespawn_delay = 500
-		gravity = 15.0
-		decay_rate = 0.995
-	else:
-		death_deespawn_delay = 100
-	#death_rotation_speed = -death_rotation_speed
+	death_deespawn_delay = 500
+	gravity = 15.0
+	decay_rate = 0.995
+
+	
 	pass
 	
 func process_input(_event: InputEvent) -> void:
@@ -70,8 +72,12 @@ func process_physics(delta: float) -> void:
 	
 	# Atualiza a velocidade do avião
 	parent.linear_velocity = initial_velocity
-
+	
 	var spin_increase : float = abs(initial_velocity.y) * spin_increase_factor
+	if hitbox_component.is_on_water:
+		decay_rate = 0.95
+		initial_angular_velocity = initial_angular_velocity / 2
+	
 	
 	# Mantém o sentido original da rotação enquanto aumenta sua magnitude
 	if initial_angular_velocity != 0:

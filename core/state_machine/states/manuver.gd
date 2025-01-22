@@ -27,7 +27,7 @@ func process_physics(delta: float) -> void:
 		Transitioned.emit(self, "AirDeath")
 		return
 	
-	if distance_warn_component.get_overlapping_bodies().size() < 2 && can_change && !distance_warn_component.is_too_low:
+	if distance_warn_component.enemy_hitbox.size() < 1 && can_change && !distance_warn_component.is_too_low:
 		Transitioned.emit(self, "AirMove")
 		return
 		
@@ -47,10 +47,10 @@ func process_physics(delta: float) -> void:
 		var current_angle : float = parent.rotation
 		parent.angular_velocity = get_rotation_direction(current_angle, target_angle) * 3.0
 		start_timer(3)
-	elif distance_warn_component.get_overlapping_bodies().size() >= 2:
+	elif distance_warn_component.enemy_hitbox.size() >= 1:
 		# Lógica original de manobra para evitar obstáculos
-		var obstacle : Node2D = distance_warn_component.get_overlapping_bodies()[1]
-		var avoid_direction : Vector2 = (parent.global_position - obstacle.global_position).normalized()
+		var obstacle : Node2D = distance_warn_component.enemy_hitbox[0]
+		var avoid_direction : Vector2 = (parent.global_position - obstacle.get_hitbox_parent().get_center_pos()).normalized()
 		var target_angle : float = avoid_direction.angle()
 		var current_angle : float = parent.rotation
 		parent.angular_velocity = get_rotation_direction(current_angle, target_angle) * 3.0

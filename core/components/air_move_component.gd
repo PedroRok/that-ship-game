@@ -20,7 +20,7 @@ func process_physics(delta: float) -> void:
 		Transitioned.emit(self, "AirDeath")
 		return
 		
-	if distance_warn_component.get_overlapping_bodies().size() > 1 || distance_warn_component.is_too_low:
+	if distance_warn_component.enemy_hitbox.size() > 1 || distance_warn_component.is_too_low:
 		Transitioned.emit(self, "manuver")
 		
 	if radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction):

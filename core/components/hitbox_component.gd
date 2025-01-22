@@ -42,3 +42,16 @@ func handle_hit_visual(health : HealthComponent) -> void:
 
 func get_hitbox_parent() -> Node2D:
 	return entity
+
+var is_on_water : bool = false
+
+func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
+	if (area is WaterHitbox):
+		is_on_water = true
+	pass # Replace with function body.
+
+
+func _on_area_shape_exited(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
+	if (area is WaterHitbox):
+		is_on_water = false
+	pass # Replace with function body.
