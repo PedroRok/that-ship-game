@@ -1,7 +1,15 @@
-[gd_scene load_steps=7 format=3 uid="uid://cgpceuu5uri5f"]
+[gd_scene load_steps=9 format=3 uid="uid://cgpceuu5uri5f"]
 
 [ext_resource type="Script" path="res://scenes/entities/bullets/scripts/bullet.gd" id="1_fajo3"]
 [ext_resource type="Script" path="res://scenes/entities/bullets/scripts/damage.gd" id="2_ivhem"]
+[ext_resource type="Script" path="res://core/resources/bullet_stats.gd" id="2_vnoil"]
+
+[sub_resource type="Resource" id="Resource_ntkj0"]
+resource_local_to_scene = true
+script = ExtResource("2_vnoil")
+speed = 6
+piercing = 2
+killTime = 100
 
 [sub_resource type="Resource" id="Resource_high3"]
 script = ExtResource("2_ivhem")
@@ -23,7 +31,7 @@ z_index = -1
 collision_layer = 514
 collision_mask = 514
 script = ExtResource("1_fajo3")
-piercing = 4
+bullet_stats = SubResource("Resource_ntkj0")
 damage = SubResource("Resource_high3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -31,7 +39,7 @@ position = Vector2(1, 0)
 shape = SubResource("RectangleShape2D_eork8")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-self_modulate = Color(1, 0.616667, 0, 1)
+self_modulate = Color(0.56, 0.345333, 0, 1)
 position = Vector2(1, 0)
 scale = Vector2(0.008, 0.75)
 texture = SubResource("CurveTexture_ixq1r")

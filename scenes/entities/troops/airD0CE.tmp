@@ -42,7 +42,7 @@ size = Vector2(5, 5)
 
 [sub_resource type="Resource" id="Resource_by1ws"]
 script = ExtResource("3_myxh7")
-health = 5.0
+health = 2.0
 radar_distance = 500
 speed = 80.0
 name = "PLANE"
@@ -148,9 +148,7 @@ resource_local_to_scene = true
 radius = 500.0
 
 [node name="AirEntity" type="RigidBody2D" node_paths=PackedStringArray("animated_sprite", "animated_blades")]
-collision_mask = 128
 gravity_scale = 0.1
-inertia = 100.0
 script = ExtResource("1_wppph")
 animated_sprite = NodePath("Plane")
 animated_blades = NodePath("Blades")
@@ -192,10 +190,9 @@ health_component = NodePath("../../HealthComponent")
 radar_component = NodePath("../../RadarComponent")
 distance_warn_component = NodePath("../../DistanceWarn")
 
-[node name="Manuver" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component", "distance_warn_component")]
+[node name="Manuver" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "distance_warn_component")]
 script = ExtResource("19_e6oed")
 health_component = NodePath("../../HealthComponent")
-radar_component = NodePath("../../RadarComponent")
 distance_warn_component = NodePath("../../DistanceWarn")
 
 [node name="AirAttack" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component", "distance_warn_component")]
@@ -204,9 +201,8 @@ health_component = NodePath("../../HealthComponent")
 radar_component = NodePath("../../RadarComponent")
 distance_warn_component = NodePath("../../DistanceWarn")
 
-[node name="AirDeath" type="Node" parent="StateMachine" node_paths=PackedStringArray("particle_component")]
+[node name="AirDeath" type="Node" parent="StateMachine"]
 script = ExtResource("23_tud5u")
-particle_component = NodePath("../../ParticlesComponent")
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "entity") instance=ExtResource("18_dg4if")]
 collision_layer = 2

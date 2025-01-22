@@ -1,13 +1,11 @@
-[gd_scene load_steps=40 format=3 uid="uid://dbisvpck6t6q3"]
+[gd_scene load_steps=28 format=3 uid="uid://dbisvpck6t6q3"]
 
 [ext_resource type="Script" path="res://scenes/entities/troops/scripts/air_entity.gd" id="1_wppph"]
 [ext_resource type="Texture2D" uid="uid://bmiew882th7v" path="res://assets/game/troops/plane/plane_1.png" id="2_65h02"]
-[ext_resource type="Resource" uid="uid://wf037tnljxu2" path="res://core/resources/teams/team_left.tres" id="2_cx1gm"]
 [ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="2_s3xu0"]
 [ext_resource type="Script" path="res://core/resources/airplane_stats.gd" id="3_myxh7"]
 [ext_resource type="Texture2D" uid="uid://7fc3ln1vacwd" path="res://assets/game/troops/plane/plane_2.png" id="3_qibsq"]
 [ext_resource type="Texture2D" uid="uid://dmjmaet2fmdum" path="res://assets/game/troops/plane/plane_3.png" id="4_8vjt5"]
-[ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="5_8xk3w"]
 [ext_resource type="Texture2D" uid="uid://l1e7gina5ihc" path="res://assets/game/troops/plane/plane_4.png" id="5_u6h35"]
 [ext_resource type="Texture2D" uid="uid://cen7gq5bh3sl8" path="res://assets/game/troops/plane/plane_5.png" id="6_tftk7"]
 [ext_resource type="Texture2D" uid="uid://b6bxjibky67po" path="res://assets/game/troops/plane/blades/blade1.png" id="7_xyv82"]
@@ -19,70 +17,22 @@
 [ext_resource type="Texture2D" uid="uid://c57y3apinko8g" path="res://assets/game/troops/plane/blades/blade7.png" id="13_003lb"]
 [ext_resource type="PackedScene" uid="uid://bj2wk2h13kw1k" path="res://core/state_machine/state_machine.tscn" id="14_5y48g"]
 [ext_resource type="Script" path="res://core/components/air_move_component.gd" id="15_rvc48"]
-[ext_resource type="Script" path="res://core/components/distance_warn_component.gd" id="16_gtxj2"]
 [ext_resource type="PackedScene" uid="uid://dkruatpb84415" path="res://core/components/hitbox_component.tscn" id="18_dg4if"]
-[ext_resource type="Script" path="res://core/state_machine/states/manuver.gd" id="19_e6oed"]
 [ext_resource type="PackedScene" uid="uid://hcvj4c35uk0o" path="res://core/components/particles_component.tscn" id="19_ft0fg"]
 [ext_resource type="PackedScene" uid="uid://bw5d2h55ply2w" path="res://core/components/health_component.tscn" id="20_nidx0"]
-[ext_resource type="Script" path="res://core/state_machine/states/air_attack.gd" id="22_4hcub"]
-[ext_resource type="PackedScene" uid="uid://chtsijarpkyuk" path="res://core/components/radar_component.tscn" id="23_sy2r5"]
-[ext_resource type="Script" path="res://core/state_machine/states/air_death.gd" id="23_tud5u"]
-
-[sub_resource type="Resource" id="Resource_w3emr"]
-script = ExtResource("2_s3xu0")
-position = Vector2(7, 0)
-allowed_types = Array[int]([0, 1])
-with_base = false
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_o1okf"]
-size = Vector2(15, 8)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_l06cw"]
-size = Vector2(5, 5)
 
 [sub_resource type="Resource" id="Resource_by1ws"]
 script = ExtResource("3_myxh7")
-health = 5.0
-radar_distance = 500
-speed = 80.0
-name = "PLANE"
+health = 10.0
+radar_distance = 100
+speed = 400.0
+name = ""
 price = 5
 produce_cd = 5
 center = Vector2(0, 0)
-gun_slots = Array[ExtResource("2_s3xu0")]([SubResource("Resource_w3emr")])
-hitbox_colision_shape = SubResource("RectangleShape2D_o1okf")
+gun_slots = Array[ExtResource("2_s3xu0")]([])
 hitbox_colision_pos = Vector2(0, 0)
-particles_shape = SubResource("RectangleShape2D_l06cw")
 particles_pos = Vector2(0, 0)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_gx1ce"]
-resource_local_to_scene = true
-noise_type = 5
-frequency = 1.0
-fractal_type = 0
-fractal_octaves = 10
-fractal_lacunarity = 0.0
-fractal_gain = 0.0
-fractal_weighted_strength = 1.0
-domain_warp_type = 1
-domain_warp_amplitude = 48.855
-domain_warp_frequency = 5.0
-domain_warp_fractal_type = 0
-metadata/_preview_in_3d_space_ = true
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fifm0"]
-resource_local_to_scene = true
-width = 16
-height = 16
-seamless_blend_skirt = 0.0
-as_normal_map = true
-bump_strength = 32.0
-noise = SubResource("FastNoiseLite_gx1ce")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_lv2tk"]
-shader = ExtResource("5_8xk3w")
-shader_parameter/dissolve = 1.0
-shader_parameter/Noise = SubResource("NoiseTexture2D_fifm0")
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_a6ygn"]
 animations = [{
@@ -139,26 +89,22 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bkdqa"]
 size = Vector2(17, 14)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wjh32"]
-radius = 30.0
-height = 80.0
+[sub_resource type="CircleShape2D" id="CircleShape2D_wgini"]
+radius = 50.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_cedff"]
-resource_local_to_scene = true
-radius = 500.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_7yj7e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4rhuk"]
+size = Vector2(16, 4)
 
 [node name="AirEntity" type="RigidBody2D" node_paths=PackedStringArray("animated_sprite", "animated_blades")]
-collision_mask = 128
 gravity_scale = 0.1
-inertia = 100.0
 script = ExtResource("1_wppph")
 animated_sprite = NodePath("Plane")
 animated_blades = NodePath("Blades")
-team_stats = ExtResource("2_cx1gm")
 entity_stats = SubResource("Resource_by1ws")
 
 [node name="Plane" type="AnimatedSprite2D" parent="."]
-material = SubResource("ShaderMaterial_lv2tk")
 sprite_frames = SubResource("SpriteFrames_a6ygn")
 frame = 4
 frame_progress = 0.0738268
@@ -172,41 +118,17 @@ frame_progress = 0.13472
 position = Vector2(0.5, 0)
 shape = SubResource("RectangleShape2D_bkdqa")
 
-[node name="DistanceWarn" type="Area2D" parent="." node_paths=PackedStringArray("entity")]
-collision_mask = 515
-script = ExtResource("16_gtxj2")
-entity = NodePath("..")
+[node name="DistanceWarn" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DistanceWarn"]
-position = Vector2(32, 0)
-rotation = 1.5708
-shape = SubResource("CapsuleShape2D_wjh32")
-debug_color = Color(0.92, 1, 0.981333, 0)
+shape = SubResource("CircleShape2D_wgini")
+debug_color = Color(0.57, 0.52611, 0.5073, 0)
 
-[node name="StateMachine" parent="." node_paths=PackedStringArray("starting_state") instance=ExtResource("14_5y48g")]
-starting_state = NodePath("AirMove")
+[node name="StateMachine" parent="." instance=ExtResource("14_5y48g")]
 
-[node name="AirMove" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component", "distance_warn_component")]
+[node name="AirMove" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component")]
 script = ExtResource("15_rvc48")
 health_component = NodePath("../../HealthComponent")
-radar_component = NodePath("../../RadarComponent")
-distance_warn_component = NodePath("../../DistanceWarn")
-
-[node name="Manuver" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component", "distance_warn_component")]
-script = ExtResource("19_e6oed")
-health_component = NodePath("../../HealthComponent")
-radar_component = NodePath("../../RadarComponent")
-distance_warn_component = NodePath("../../DistanceWarn")
-
-[node name="AirAttack" type="Node" parent="StateMachine" node_paths=PackedStringArray("health_component", "radar_component", "distance_warn_component")]
-script = ExtResource("22_4hcub")
-health_component = NodePath("../../HealthComponent")
-radar_component = NodePath("../../RadarComponent")
-distance_warn_component = NodePath("../../DistanceWarn")
-
-[node name="AirDeath" type="Node" parent="StateMachine" node_paths=PackedStringArray("particle_component")]
-script = ExtResource("23_tud5u")
-particle_component = NodePath("../../ParticlesComponent")
 
 [node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component", "particle_component", "entity") instance=ExtResource("18_dg4if")]
 collision_layer = 2
@@ -214,16 +136,15 @@ collision_mask = 0
 health_component = NodePath("../HealthComponent")
 particle_component = NodePath("../ParticlesComponent")
 entity = NodePath("..")
-name_entity = "Plane"
 
 [node name="HitboxShape" type="CollisionShape2D" parent="HitboxComponent"]
 z_index = 1
-shape = SubResource("RectangleShape2D_o1okf")
+shape = SubResource("RectangleShape2D_7yj7e")
 debug_color = Color(0.976049, 0, 0.414808, 0.42)
 
 [node name="ParticlesComponent" parent="." node_paths=PackedStringArray("entity") instance=ExtResource("19_ft0fg")]
 z_index = 1
-shape = SubResource("RectangleShape2D_l06cw")
+shape = SubResource("RectangleShape2D_4rhuk")
 debug_color = Color(0, 0.643738, 0.294445, 0.42)
 entity = NodePath("..")
 
@@ -231,15 +152,3 @@ entity = NodePath("..")
 default_health = 10.0
 entity = NodePath("..")
 metadata/_edit_use_anchors_ = true
-
-[node name="RadarComponent" parent="." node_paths=PackedStringArray("entity") instance=ExtResource("23_sy2r5")]
-z_index = 1
-collision_mask = 514
-entity = NodePath("..")
-
-[node name="RadarShape" type="CollisionShape2D" parent="RadarComponent"]
-shape = SubResource("CircleShape2D_cedff")
-debug_color = Color(0.7, 0, 0.0116665, 0)
-
-[connection signal="area_shape_entered" from="DistanceWarn" to="DistanceWarn" method="_on_area_shape_entered"]
-[connection signal="area_shape_exited" from="DistanceWarn" to="DistanceWarn" method="_on_area_shape_exited"]

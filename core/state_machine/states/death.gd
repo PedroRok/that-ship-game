@@ -1,4 +1,4 @@
-extends State
+extends ShipState
 
 var death_rotation_speed : float
 

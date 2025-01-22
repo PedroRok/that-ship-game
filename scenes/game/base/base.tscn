@@ -71,6 +71,8 @@ collision_mask = 512
 script = ExtResource("5_iw32w")
 base = NodePath("..")
 health_component = NodePath("../BaseHealthComponent")
+name_entity = "Base"
+attack_priority = -5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BaseHitboxComponent"]
 position = Vector2(69.5, 345)

@@ -24,15 +24,16 @@ func handle_hit(damage : Damage, direction : float) -> void:
 		enabled = health_component.handle_hit(damage)
 		entity.enabled = enabled
 		handle_hit_visual(health_component)
-		
-	var final_knockback : float = damage.knockback * (1 - entity.entity_stats.knockback_resistance)
-	entity.linear_velocity.x = direction * 20 * final_knockback
-	entity.rotation = clamp(rotation+(direction/10.) * final_knockback, 0, 10)
+	
+	if (entity.entity_stats is BoatStats):
+		var final_knockback : float = damage.knockback * (1 - entity.entity_stats.knockback_resistance)
+		entity.linear_velocity.x = direction * 20 * final_knockback
+		entity.rotation = clamp(rotation+(direction/10.) * final_knockback, 0, 10)
 	
 func handle_hit_visual(health : HealthComponent) -> void:
 	var health_val : float = health.actual_health / health.default_health
 	var shader_val : float = lerp(0.7, 1.0, health_val)
-	entity.sprite.material.set_shader_parameter("dissolve", shader_val)
+	#entity.sprite.material.set_shader_parameter("dissolve", shader_val)
 	
 	var amout_ratio_val : float = lerp(1,0, health_val)
 	particle_component.fire.amount_ratio = amout_ratio_val

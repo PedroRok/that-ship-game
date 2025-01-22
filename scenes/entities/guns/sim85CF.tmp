@@ -1,15 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://hwtj0e2rrjy8"]
+[gd_scene load_steps=5 format=3 uid="uid://hwtj0e2rrjy8"]
 
 [ext_resource type="Script" path="res://scenes/entities/guns/scripts/simple_gun.gd" id="1_cbkwq"]
 [ext_resource type="Texture2D" uid="uid://dtbow7ublvxey" path="res://assets/game/troops/guns/gun.png" id="2_c0wok"]
-[ext_resource type="PackedScene" uid="uid://cgpceuu5uri5f" path="res://scenes/entities/bullets/bullet.tscn" id="2_nka58"]
 [ext_resource type="AudioStream" uid="uid://c7pjn1utti8eo" path="res://assets/game/sounds/cannon_base.wav" id="3_y3avm"]
 [ext_resource type="Texture2D" uid="uid://ci4jrbsmcku8k" path="res://assets/game/troops/guns/gun_base.png" id="4_o1gki"]
 
 [node name="SimpleGun" type="Node2D" node_paths=PackedStringArray("barrel_texture", "audio", "end_barrel", "base")]
 script = ExtResource("1_cbkwq")
 barrel_texture = NodePath("Barrel")
-bullet = ExtResource("2_nka58")
 audio = NodePath("AudioStreamPlayer2D")
 end_barrel = NodePath("EndBarrel")
 base = NodePath("Base")
@@ -34,6 +32,3 @@ bus = &"Guns"
 [node name="Base" type="Sprite2D" parent="."]
 position = Vector2(-0.5, 0)
 texture = ExtResource("4_o1gki")
-
-[node name="GunLineOfSight" type="RayCast2D" parent="."]
-target_position = Vector2(600, 0)

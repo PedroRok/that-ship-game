@@ -11,15 +11,15 @@ func set_direction(new_direction: Vector2) -> void:
 func _physics_process(delta: float) -> void:
 	if target && target.enabled:
 		var direction_to_target : Vector2 = (target.get_center_pos() - global_position).normalized()
-		direction = direction.lerp(direction_to_target * speed, turn_speed * delta)
-		look_at(direction * speed)
+		direction = direction.lerp(direction_to_target * bullet_stats.speed, turn_speed * delta)
+		look_at(direction * bullet_stats.speed)
 	else:
-		direction = direction.normalized() * speed
+		direction = direction.normalized() * bullet_stats.speed
 	
 	global_position += direction * delta
-	if (killTime <= 0):
+	if (bullet_stats.killTime <= 0):
 		remove_bullet()
-	killTime -= 1
+	bullet_stats.killTime -= 1
 
 func remove_bullet() -> void:
 	var particle : CPUParticles2D = $CPUParticles2D

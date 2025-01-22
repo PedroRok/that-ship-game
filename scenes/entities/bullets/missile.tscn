@@ -1,7 +1,15 @@
-[gd_scene load_steps=9 format=3 uid="uid://cmcis6lmx3463"]
+[gd_scene load_steps=11 format=3 uid="uid://cmcis6lmx3463"]
 
 [ext_resource type="Script" path="res://scenes/entities/bullets/scripts/missile.gd" id="1_ee5i1"]
+[ext_resource type="Script" path="res://core/resources/bullet_stats.gd" id="2_r2unv"]
 [ext_resource type="Script" path="res://scenes/entities/bullets/scripts/damage.gd" id="2_wyh67"]
+
+[sub_resource type="Resource" id="Resource_anf2l"]
+resource_local_to_scene = true
+script = ExtResource("2_r2unv")
+speed = 100
+piercing = 1
+killTime = 150
 
 [sub_resource type="Resource" id="Resource_n25ww"]
 script = ExtResource("2_wyh67")
@@ -30,9 +38,8 @@ curve = SubResource("Curve_64v8q")
 collision_layer = 514
 collision_mask = 514
 script = ExtResource("1_ee5i1")
-speed = 100
+bullet_stats = SubResource("Resource_anf2l")
 damage = SubResource("Resource_n25ww")
-killTime = 200
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1.5, 0)

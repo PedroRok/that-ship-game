@@ -24,12 +24,14 @@ func check_radar(team_id: int, direction: int) -> Node2D:
 
 func _get_nearest_enemy() -> Node:
 	var distance : float = 99999
+	var highest_priority : int = -99999
 	var selected_enemy : Node2D = null
 	for enemy : SimpleHitboxComponent in enemy_hitbox:
 		if (enemy.enabled):
 			var enemy_distance : float = enemy.global_position.distance_to(global_position)
-			if (enemy_distance < distance):
+			if ((enemy_distance < distance && enemy.attack_priority == highest_priority) || enemy.attack_priority > highest_priority):
 				distance = enemy_distance
+				highest_priority = enemy.attack_priority
 				selected_enemy = enemy
 	return selected_enemy
 

@@ -1,11 +1,11 @@
 class_name GunStats
 extends Resource
 
+@export_group("Object Properties")
+@export
+var type: Enums.Guns
 
-enum Gunsss {
-	TEST
-}
-
+@export_group("In Game Properties")
 @export
 var shoot_speed: float
 @export

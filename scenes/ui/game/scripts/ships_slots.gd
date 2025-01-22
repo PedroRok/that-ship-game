@@ -17,7 +17,7 @@ func _ready() -> void:
 	if (!player_stats):
 		return
 	var idx : int = 0
-	for entity : EntityStats in player_stats.owned_ships:
+	for entity : EntityStats in player_stats.unlocked_entities:
 		var ship_button : ShipButton = container.get_child(idx)
 		ship_button.entity_stats = entity
 		ship_button.setup()

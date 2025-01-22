@@ -18,7 +18,8 @@ func _ready() -> void:
 		return
 	if (!entity.entity_stats):
 		return
-	
+	if (!entity.entity_stats.particles_shape):
+		return
 	shape = entity.entity_stats.particles_shape
 	position = entity.entity_stats.particles_pos
 	

@@ -1,4 +1,4 @@
-extends State
+extends ShipState
 
 @export
 var health_component : HealthComponent

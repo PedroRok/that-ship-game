@@ -1,14 +1,16 @@
-[gd_resource type="Resource" script_class="PlayerStats" load_steps=7 format=3 uid="uid://bop3herse3c8d"]
+[gd_resource type="Resource" script_class="PlayerStats" load_steps=8 format=3 uid="uid://bop3herse3c8d"]
 
-[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="1_7d3yo"]
-[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="2_2ubnt"]
-[ext_resource type="Resource" uid="uid://37315asgr84l" path="res://core/resources/boats/tank_boat.tres" id="3_5ibdc"]
+[ext_resource type="Script" path="res://core/resources/gun_stats.gd" id="1_170m2"]
+[ext_resource type="Script" path="res://core/resources/entity_stats.gd" id="3_34oxv"]
 [ext_resource type="Script" path="res://core/resources/player_stats.gd" id="3_ndtyj"]
-[ext_resource type="Resource" uid="uid://d2u8fkngrix6h" path="res://core/resources/boats/mini_boat.tres" id="4_d7uek"]
-[ext_resource type="Resource" uid="uid://csmqewnj718dx" path="res://core/resources/boats/medium_boat.tres" id="5_hrwnl"]
+[ext_resource type="Resource" uid="uid://csmqewnj718dx" path="res://core/resources/boats/medium_boat.tres" id="4_t611a"]
+[ext_resource type="Resource" uid="uid://d2u8fkngrix6h" path="res://core/resources/boats/mini_boat.tres" id="5_ykd3p"]
+[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="6_bllc2"]
+[ext_resource type="Resource" uid="uid://37315asgr84l" path="res://core/resources/boats/tank_boat.tres" id="7_8q748"]
 
 [resource]
 script = ExtResource("3_ndtyj")
 start_screw = 30
 gear = 10
-owned_ships = Array[ExtResource("1_7d3yo")]([ExtResource("2_2ubnt"), ExtResource("3_5ibdc"), ExtResource("4_d7uek"), ExtResource("5_hrwnl")])
+unlocked_entities = Array[ExtResource("3_34oxv")]([ExtResource("4_t611a"), ExtResource("5_ykd3p"), ExtResource("6_bllc2"), ExtResource("7_8q748")])
+gun_upgrades = Array[ExtResource("1_170m2")]([])

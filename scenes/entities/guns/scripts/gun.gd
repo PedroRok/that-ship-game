@@ -7,7 +7,7 @@ var gun_type : Enums.Guns
 @export
 var time_to_shoot : int = 50
 @export 
-var bullet : PackedScene = preload("res://scenes/entities/bullets/bullet.tscn")
+var bullet : PackedScene
 @export
 var audio : AudioStreamPlayer2D
 @export
@@ -29,8 +29,8 @@ var base : Sprite2D
 var show_base: bool = true : 
 	set = _set_show_base_texture 
 	
-func _set_show_base_texture(show_base : bool) -> void:
-	if (show_base):
+func _set_show_base_texture(_show_base : bool) -> void:
+	if (_show_base):
 		base.show()
 	else:
 		base.hide()
