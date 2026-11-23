@@ -6,8 +6,8 @@
 [node name="DepthBombGun" type="Node2D" node_paths=PackedStringArray("end_barrel")]
 script = ExtResource("1")
 gun_type = 11
-time_to_shoot = 90
-damage_scale = 4.0
+time_to_shoot = 22
+damage_scale = 2.8
 bullet = ExtResource("2")
 end_barrel = NodePath("EndBarrel")
 

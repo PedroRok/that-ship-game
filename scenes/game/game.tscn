@@ -156,7 +156,7 @@ offset_right = 1281.0
 offset_bottom = 716.0
 
 [node name="CloudsFront" type="ColorRect" parent="Environment"]
-z_index = 10
+z_index = 1500
 material = SubResource("ShaderMaterial_front")
 offset_right = 1281.0
 offset_bottom = 716.0

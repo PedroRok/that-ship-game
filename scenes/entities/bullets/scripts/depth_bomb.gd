@@ -11,11 +11,35 @@ func _physics_process(delta : float) -> void:
 	if (global_position.y >= WATER_Y):
 		velocity.x = move_toward(velocity.x, 0.0, 240.0 * delta)
 		velocity.y = minf(velocity.y, SINK_SPEED)
-		if (global_position.y >= WATER_Y + MAX_DEPTH):
-			queue_free()
+		if (global_position.y >= WATER_Y + MAX_DEPTH or _at_submarine_depth()):
+			_area_blast()
 			return
 	global_position += velocity * delta
 	rotation = velocity.angle()
+
+func _at_submarine_depth() -> bool:
+	for node : Node in BattleContext.of(self).entities:
+		var entity : Entity = node as Entity
+		if (!entity or !entity.enabled or entity.team_stats.team_id == team or !entity.is_submerged()):
+			continue
+		if (abs(entity.global_position.x - global_position.x) <= radius and global_position.y >= entity.global_position.y):
+			return true
+	return false
+
+func _area_blast() -> void:
+	exploded = true
+	var base_damage : Damage = damage.duplicate()
+	for node : Node in BattleContext.of(self).entities:
+		var entity : Entity = node as Entity
+		if (!entity or !entity.enabled or entity.team_stats.team_id == team or entity.entity_stats is AirPlaneState):
+			continue
+		if (abs(entity.global_position.x - global_position.x) <= radius and abs(entity.global_position.y - global_position.y) <= radius * 1.5):
+			var hit : Damage = base_damage.duplicate()
+			hit.damage *= Global.counter_multiplier(attacker_class, entity.entity_stats.unit_class)
+			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
+			if (hitbox):
+				hitbox.handle_hit(hit, 0.0)
+	_blast()
 
 func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : int, _local_shape_index : int) -> void:
 	if (exploded):
