@@ -4,6 +4,7 @@ extends Path2D
 @export var spline_length : int = 10
 
 @export var width : int = 8
+@export var line_color : Color = Color.AQUA
 
 func straighten(value : float) -> void:
 	if not value: return
@@ -45,4 +46,4 @@ func _get_point(i : int) -> Vector2:
 func _draw() -> void:
 	var points : PackedVector2Array = curve.get_baked_points()
 	if points:
-		draw_polyline(points, Color.AQUA, width, true)
+		draw_polyline(points, line_color, width, true)

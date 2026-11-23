@@ -204,6 +204,9 @@ func _make_water_material() -> ShaderMaterial:
 	mat.set_shader_parameter("speed", 0.1)
 	mat.set_shader_parameter("texture_strength", 0.583)
 	mat.set_shader_parameter("water_tint", Color(0, 0.433333, 1, 0.796078))
+	if (_sea_material):
+		mat.set_shader_parameter("water_tint", _sea_material.get_shader_parameter("water_tint"))
+		mat.set_shader_parameter("deep_amount", _sea_material.get_shader_parameter("deep_amount"))
 	return mat
 
 func _make_shader_material(code : String) -> ShaderMaterial:

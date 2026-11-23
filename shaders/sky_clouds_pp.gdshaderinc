@@ -4,6 +4,7 @@
 uniform float block = 2.0;
 uniform float cloud_fade = 0.6;
 uniform float morph_speed = 0.01;
+uniform vec3 cloud_tint : source_color = vec3(1.0);
 
 const vec3 C_HIGH = vec3(1.0, 1.0, 1.0);
 const vec3 C_LIGHT = vec3(0.90, 0.95, 1.0);
@@ -58,5 +59,5 @@ vec4 cloud_pp(vec2 px, float scroll_i, float seed, float yc0, float scale, float
 	if (low && shade1) { cc = C_DEEP; }
 	if (v < 0.35 && !lit_edge) { cc = (cc == C_DEEP) ? C_DEEP : C_SHADOW; }
 	if (lit_edge && !shade1) { cc = C_HIGH; }
-	return vec4(cc, 1.0);
+	return vec4(cc * cloud_tint, 1.0);
 }
