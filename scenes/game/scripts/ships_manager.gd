@@ -29,7 +29,7 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 			var surface_y : float = base.get_spawn_point().y
 			boat.global_position = Vector2(pos.x, surface_y)
 			(boat as ShipEntity).start_submerged(pos.y - surface_y)
-			boat.begin_entry(base.global_position.x + team_res.direction * 150, false)
+			boat.begin_entry(base.global_position.x + team_res.direction * 150, false, 0, true)
 		elif (base and boss):
 			var behind_x : float = base.global_position.x - team_res.direction * 70
 			var clear_x : float = base.global_position.x + team_res.direction * 150

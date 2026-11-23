@@ -9,6 +9,7 @@ var boat_stats : BoatStats
 var exit_marker : Node2D
 var prefer_submerged_sprite : bool = false
 var floor_y : float = NAN
+var hold_until_released : bool = false
 
 var _bar : BuildBar
 
@@ -61,6 +62,11 @@ func build_ship(boat_stats : BoatStats, time_mult : float = 1.0) -> void:
 	self.boat_stats = boat_stats
 
 func _on_build_complete() -> void:
-	ship_build_finish.emit(boat_stats)
-	texture = null
+	var finished : BoatStats = boat_stats
 	boat_stats = null
+	if (!hold_until_released):
+		texture = null
+	ship_build_finish.emit(finished)
+
+func release_ship() -> void:
+	texture = null

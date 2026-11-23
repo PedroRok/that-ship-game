@@ -73,17 +73,29 @@ func start_build_ship(ship : BoatStats) -> bool:
 	var dock_type : BaseDock.Type = dock_type_of(ship)
 	var constructor : ShipConstructor = constructors[dock_type]
 	if (constructor.is_building()): return false
+	if (docks.has(dock_type) and (docks[dock_type] as BaseDock).busy): return false
 	var time_mult : float = 1.0
 	if (team_stats.team_id == 1):
 		time_mult = Global.modify(Enums.UpgradeTarget.BASE, &"build_time", 1.0)
 	var duration_mult : float = time_mult * build_boost_mult
 	constructor.build_ship(ship, duration_mult)
 	if (docks.has(dock_type)):
-		(docks[dock_type] as BaseDock).schedule_door(ship.produce_cd * duration_mult)
+		(docks[dock_type] as BaseDock).begin_build()
 	return true
 
 func _ship_build_finish(ship : BoatStats, constructor : ShipConstructor) -> void:
+	var dock : BaseDock = null
+	for candidate : BaseDock in docks.values():
+		if (candidate.constructor == constructor):
+			dock = candidate
+	if (dock and dock.has_door()):
+		await dock.open_for_exit()
 	spawn_ship_event.emit(constructor.spawn_position(), ship, team_stats)
+	constructor.release_ship()
+	if (dock):
+		# tempo para o sub atravessar a doca inteira antes de fechar a porta
+		var travel : float = (BaseDock.EXIT_DISTANCE / maxf(ship.speed, 1.0) * 1.8) if ship else BaseDock.EXIT_WAIT
+		dock.close_after_exit(clampf(travel, BaseDock.EXIT_WAIT, 8.0))
 
 func apply_build_boost(mult : float, duration : float) -> void:
 	build_boost_mult = mult

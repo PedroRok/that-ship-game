@@ -42,8 +42,18 @@ var _entry_mask : int = 0
 var _entry_gravity : float = 1.0
 var _entry_y : float = 0.0
 var _entry_hold_y : bool = false
+var _entry_z_raised : bool = false
+var _entry_z_saved : int = 0
+var _entry_forced : bool = false
+var _entry_z_until_x : float = NAN
 
-func begin_entry(until_x : float, hold_y : bool) -> void:
+func begin_entry(until_x : float, hold_y : bool, entry_z : int = 0, force_move : bool = false, z_until_x : float = NAN) -> void:
+	_entry_z_until_x = z_until_x
+	_entry_forced = force_move
+	if (entry_z != 0):
+		_entry_z_saved = z_index
+		_entry_z_raised = true
+		z_index = entry_z
 	entry_x = until_x
 	_entry_mask = collision_mask
 	_entry_gravity = gravity_scale
@@ -59,8 +69,17 @@ func _update_entry() -> void:
 	if (_entry_hold_y):
 		global_position.y = _entry_y
 		linear_velocity.y = 0.0
+	if (_entry_z_raised and !is_nan(_entry_z_until_x)):
+		var left_dock : bool = global_position.x >= _entry_z_until_x if team_stats.direction > 0 else global_position.x <= _entry_z_until_x
+		if (left_dock):
+			z_index = _entry_z_saved
+			_entry_z_raised = false
 	var passed : bool = global_position.x >= entry_x if team_stats.direction > 0 else global_position.x <= entry_x
 	if (passed):
+		if (_entry_z_raised):
+			z_index = _entry_z_saved
+			_entry_z_raised = false
+		_entry_forced = false
 		collision_mask = _entry_mask
 		gravity_scale = _entry_gravity
 		entry_x = NAN
@@ -233,6 +252,10 @@ func _physics_process(delta: float) -> void:
 		_update_entry()
 	if state_machine && !Engine.is_editor_hint():
 		state_machine.process_physics(delta)
+	if (_entry_forced and !is_nan(entry_x) and !Engine.is_editor_hint()):
+		# garante a saída da doca mesmo com inimigo no radar (estado attack para o movimento)
+		var target_x : float = team_stats.direction * entity_stats.speed
+		linear_velocity.x = lerp(linear_velocity.x, target_x, entity_stats.deceleration * delta)
 
 func _process(delta: float) -> void:
 	_sync_outline()

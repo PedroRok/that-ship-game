@@ -4,8 +4,25 @@ extends Node2D
 enum Type { NAVAL, AIR, SUB }
 
 const DOCK_SCALE : int = 2
-const DOOR_LIFT : float = 40.0
-const USE_DOOR : bool = false
+const WATER_Z : int = 268
+const FILL_TIME : float = 1.4
+const DOOR_TIME : float = 0.7
+const EXIT_WAIT : float = 0.9
+const EXIT_DISTANCE : float = 220.0
+const WATER_SHADER : Shader = preload("res://shaders/water_body.gdshader")
+const WATER_TEXTURE : Texture2D = preload("res://assets/game/misc/water.png")
+const DOOR_SHADER_CODE : String = """
+shader_type canvas_item;
+uniform float open : hint_range(0.0, 1.0) = 0.0;
+uniform float door_top = 0.2;
+uniform float door_bottom = 0.75;
+void fragment() {
+	float shift = open * (door_bottom - door_top);
+	if (UV.y > door_bottom) { discard; }
+	COLOR = texture(TEXTURE, vec2(UV.x, UV.y - shift));
+	if (UV.y - shift < 0.0) { COLOR.a = 0.0; }
+}
+"""
 const SHADER : Shader = preload("res://shaders/construct_sprite_shader.gdshader")
 
 const DEFS : Dictionary = {
@@ -38,9 +55,15 @@ var exit_marker : Marker2D
 
 var _background : Sprite2D
 var _overlay : Sprite2D
+var busy : bool = false
+var _hole_rect : Vector4 = Vector4.ZERO
+var _hole_param : String = ""
+var _sea_material : ShaderMaterial
 var _door : Sprite2D
-var _door_closed_y : float = 0.0
-var _door_tween : Tween
+var _water : Sprite2D
+var _water_mat : ShaderMaterial
+var _door_mat : ShaderMaterial
+var _tween : Tween
 var _cutout : Image
 var _visual_sources : Dictionary[Sprite2D, Texture2D] = {}
 
@@ -55,12 +78,12 @@ func setup(dock_type : Type, is_mirrored : bool) -> void:
 	_overlay = _make_sprite(def["overlay"], center, 970)
 	_visual_sources[_background] = _background.texture
 	_visual_sources[_overlay] = _overlay.texture
-	if (USE_DOOR and def["door"] != ""):
-		_door = _make_sprite(def["door"], center, 969)
-		_door_closed_y = center.y
 
 	var cutout_tex : Texture2D = load(def["cutout"])
 	_cutout = cutout_tex.get_image()
+
+	if (def["door"] != ""):
+		_setup_door_and_water(def, center)
 
 	exit_marker = Marker2D.new()
 	exit_marker.position = Vector2((def["exit"] as Vector2).x * sx, (def["exit"] as Vector2).y)
@@ -74,37 +97,152 @@ func setup(dock_type : Type, is_mirrored : bool) -> void:
 	else:
 		constructor.exit_marker = exit_marker
 	constructor.prefer_submerged_sprite = (type == Type.SUB)
+	constructor.hold_until_released = (type == Type.SUB)
 	var mat : ShaderMaterial = ShaderMaterial.new()
 	mat.shader = SHADER
 	mat.set_shader_parameter("build_progress", 0.0)
 	mat.set_shader_parameter("block_size", 3)
 	constructor.material = mat
 	add_child(constructor)
-	constructor.ship_build_finish.connect(_on_build_finish)
 	set_active(false)
 
 func set_active(value : bool) -> void:
 	active = value
 	visible = value
+	if (_sea_material and _hole_param != ""):
+		_sea_material.set_shader_parameter(_hole_param, _hole_rect if value else Vector4.ZERO)
 
-func schedule_door(build_time : float) -> void:
+func _exit_tree() -> void:
+	if (_sea_material and _hole_param != ""):
+		_sea_material.set_shader_parameter(_hole_param, Vector4.ZERO)
+
+func _find_sea_material() -> ShaderMaterial:
+	var polygon : Node = get_tree().root.find_child("Water_Polygon", true, false)
+	if (polygon is Polygon2D):
+		return (polygon as Polygon2D).material as ShaderMaterial
+	return null
+
+func has_door() -> bool:
+	return _door != null
+
+func _setup_door_and_water(def : Dictionary, center : Vector2) -> void:
+	var door : Sprite2D = _make_sprite(def["door"], center, 969)
+	var door_tex : Texture2D = door.texture
+	var door_used : Rect2i = door_tex.get_image().get_used_rect()
+	var w : float = float(_cutout.get_width())
+	var h : float = float(_cutout.get_height())
+
+	# Interior da doca limitado à face interna da porta: depois dela é o mar de verdade.
+	var inner : Image = _cutout.duplicate()
+	inner.convert(Image.FORMAT_RGBA8)
+	for x : int in range(door_used.end.x, inner.get_width()):
+		for y : int in inner.get_height():
+			inner.set_pixel(x, y, Color.TRANSPARENT)
+	var inner_tex : ImageTexture = ImageTexture.create_from_image(inner)
+	var cut_used : Rect2i = inner.get_used_rect()
+
+	# Preenchimento seco sob o fundo da doca (cobre a abertura até a porta).
+	var dry : Sprite2D = _make_sprite_tex(inner_tex, center, -716)
+	dry.modulate = Color(0.07, 0.1, 0.12)
+	_visual_sources[dry] = inner_tex
+
+	# O mar principal (z 200) cobriria a doca: abre um buraco nele sobre o interior da doca.
+	var sx : float = -1.0 if mirrored else 1.0
+	var x_a : float = center.x + (cut_used.position.x - w * 0.5) * DOCK_SCALE * sx
+	var x_b : float = center.x + (cut_used.end.x - w * 0.5) * DOCK_SCALE * sx
+	var y_a : float = center.y + (cut_used.position.y - h * 0.5) * DOCK_SCALE
+	var y_b : float = center.y + (cut_used.end.y - h * 0.5) * DOCK_SCALE
+	var origin : Vector2 = global_position
+	_hole_rect = Vector4(origin.x + minf(x_a, x_b), origin.y + y_a, origin.x + maxf(x_a, x_b), origin.y + y_b)
+	_sea_material = _find_sea_material()
+	if (_sea_material):
+		var used : int = int(_sea_material.get_meta("holes_used", 0))
+		_hole_param = "hole%d" % used
+		_sea_material.set_meta("holes_used", used + 1)
+
+	_water = _make_sprite_tex(inner_tex, center, WATER_Z)
+	_water_mat = _make_water_material()
+	_water_mat.set_shader_parameter("level", 0.0)
+	var visible_rows : Vector2i = _visible_interior_rows(def["overlay"], cut_used)
+	_water_mat.set_shader_parameter("top", visible_rows.x / h)
+	_water_mat.set_shader_parameter("bottom", (visible_rows.y + 1) / h)
+	_water.material = _water_mat
+	_visual_sources[_water] = inner_tex
+
+	_door = door
+	_door_mat = _make_shader_material(DOOR_SHADER_CODE)
+	_door_mat.set_shader_parameter("door_top", door_used.position.y / h)
+	_door_mat.set_shader_parameter("door_bottom", door_used.end.y / h)
+	_door.material = _door_mat
+	_visual_sources[_door] = door_tex
+
+# Linhas do interior que não ficam cobertas pela moldura do overlay (o nível da água usa só elas).
+func _visible_interior_rows(overlay_path : String, cut_used : Rect2i) -> Vector2i:
+	var overlay : Image = (load(overlay_path) as Texture2D).get_image()
+	var column : int = cut_used.position.x + cut_used.size.x / 2
+	var first : int = -1
+	var last : int = -1
+	for y : int in range(cut_used.position.y, cut_used.end.y):
+		if (overlay.get_pixel(column, y).a < 0.1):
+			if (first < 0):
+				first = y
+			last = y
+	if (first < 0):
+		return Vector2i(cut_used.position.y, cut_used.end.y - 1)
+	return Vector2i(first, last)
+
+# Mesmo shader e parâmetros do Water_Body principal (water_body.tscn).
+func _make_water_material() -> ShaderMaterial:
+	var noise : NoiseTexture2D = NoiseTexture2D.new()
+	noise.noise = FastNoiseLite.new()
+	var mat : ShaderMaterial = ShaderMaterial.new()
+	mat.shader = WATER_SHADER
+	mat.set_shader_parameter("refraction_map", noise)
+	mat.set_shader_parameter("ocean_texture", WATER_TEXTURE)
+	mat.set_shader_parameter("refraction_stretch", Vector2(1, 1))
+	mat.set_shader_parameter("refraction_strength", 0.018)
+	mat.set_shader_parameter("speed", 0.1)
+	mat.set_shader_parameter("texture_strength", 0.583)
+	mat.set_shader_parameter("water_tint", Color(0, 0.433333, 1, 0.796078))
+	return mat
+
+func _make_shader_material(code : String) -> ShaderMaterial:
+	var shader : Shader = Shader.new()
+	shader.code = code
+	var mat : ShaderMaterial = ShaderMaterial.new()
+	mat.shader = shader
+	return mat
+
+func _restart_tween() -> Tween:
+	if (_tween):
+		_tween.kill()
+	_tween = create_tween()
+	return _tween
+
+func begin_build() -> void:
 	if (!_door):
 		return
-	if (_door_tween):
-		_door_tween.kill()
-	_door.position.y = _door_closed_y
-	_door_tween = create_tween()
-	_door_tween.tween_interval(build_time * 0.85)
-	_door_tween.tween_property(_door, "position:y", _door_closed_y - DOOR_LIFT, 0.3)
+	busy = false
+	_water_mat.set_shader_parameter("level", 0.0)
+	_door_mat.set_shader_parameter("open", 0.0)
 
-func _on_build_finish(_stats : BoatStats) -> void:
+func open_for_exit() -> void:
 	if (!_door):
 		return
-	if (_door_tween):
-		_door_tween.kill()
-	_door_tween = create_tween()
-	_door_tween.tween_interval(0.6)
-	_door_tween.tween_property(_door, "position:y", _door_closed_y, 0.3)
+	busy = true
+	var tween : Tween = _restart_tween()
+	tween.tween_property(_water_mat, "shader_parameter/level", 1.0, FILL_TIME)
+	tween.tween_property(_door_mat, "shader_parameter/open", 1.0, DOOR_TIME)
+	await tween.finished
+
+func close_after_exit(exit_time : float = EXIT_WAIT) -> void:
+	if (!_door):
+		return
+	var tween : Tween = _restart_tween()
+	tween.tween_interval(exit_time)
+	tween.tween_property(_door_mat, "shader_parameter/open", 0.0, DOOR_TIME)
+	tween.tween_callback(func() -> void: busy = false)
+	tween.tween_property(_water_mat, "shader_parameter/level", 0.0, FILL_TIME)
 
 func cut_into(img : Image, silhouette : Image, base_pos : Vector2, flip : bool) -> void:
 	var base_size : Vector2i = silhouette.get_size()
@@ -138,12 +276,19 @@ func cut_into(img : Image, silhouette : Image, base_pos : Vector2, flip : bool) 
 		sprite.texture = ImageTexture.create_from_image(clipped_layers[sprite])
 		sprite.scale = Vector2.ONE
 
+func _make_sprite_tex(tex : Texture2D, pos : Vector2, z : int) -> Sprite2D:
+	var sprite : Sprite2D = _make_sprite("", pos, z)
+	sprite.texture = tex
+	return sprite
+
 func _make_sprite(path : String, pos : Vector2, z : int) -> Sprite2D:
 	var sprite : Sprite2D = Sprite2D.new()
-	sprite.texture = load(path)
+	if (path != ""):
+		sprite.texture = load(path)
 	sprite.position = pos
 	sprite.scale = Vector2(DOCK_SCALE, DOCK_SCALE)
 	sprite.flip_h = mirrored
 	sprite.z_index = z
 	add_child(sprite)
 	return sprite
+
