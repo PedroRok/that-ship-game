@@ -33,4 +33,4 @@ func set_stats(new_stats : RoundCardStats) -> void:
 
 func _on_button_button_up() -> void:
 	round_button_pressed.emit()
-	pass # Replace with function body.
+	pass

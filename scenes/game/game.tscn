@@ -1,30 +1,35 @@
-[gd_scene load_steps=29 format=3 uid="uid://cld2wbv3iqt05"]
+[gd_scene load_steps=31 format=3 uid="uid://cld2wbv3iqt05"]
 
-[ext_resource type="Script" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
-[ext_resource type="Script" path="res://scenes/game/scripts/game.gd" id="1_lrdil"]
+[ext_resource type="Script" uid="uid://05gds0mfrkdw" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
+[ext_resource type="Script" uid="uid://b8iifhef70040" path="res://scenes/game/scripts/game.gd" id="1_lrdil"]
 [ext_resource type="PackedScene" uid="uid://jnwo22vy1jsj" path="res://scenes/game/base/base.tscn" id="1_q0hc1"]
-[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="5_2ef6v"]
-[ext_resource type="Shader" path="res://shaders/sky.gdshader" id="5_a1aak"]
+[ext_resource type="Script" uid="uid://dla3b4wcymkgr" path="res://core/resources/boat_stats.gd" id="5_2ef6v"]
+[ext_resource type="Shader" uid="uid://d37u5mosxylto" path="res://shaders/sky.gdshader" id="5_a1aak"]
+[ext_resource type="Shader" path="res://shaders/sky_front.gdshader" id="5_front"]
 [ext_resource type="Resource" uid="uid://37315asgr84l" path="res://core/resources/boats/tank_boat.tres" id="6_ok02i"]
 [ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="6_ssnco"]
 [ext_resource type="Resource" uid="uid://csmqewnj718dx" path="res://core/resources/boats/medium_boat.tres" id="7_1j01i"]
 [ext_resource type="Resource" uid="uid://d2u8fkngrix6h" path="res://core/resources/boats/mini_boat.tres" id="8_d4i8v"]
 [ext_resource type="PackedScene" uid="uid://d0sn8sb5ccbob" path="res://scenes/game/misc/water_body.tscn" id="8_fy1hl"]
-[ext_resource type="Script" path="res://scenes/game/misc/debugger.gd" id="8_u3rrj"]
-[ext_resource type="Script" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
+[ext_resource type="Script" uid="uid://cy8kc4up0u15o" path="res://scenes/game/misc/debugger.gd" id="8_u3rrj"]
+[ext_resource type="Script" uid="uid://ciihqbg1vmhxc" path="res://scenes/game/scripts/bullet_manager.gd" id="9_ucfpf"]
 [ext_resource type="PackedScene" uid="uid://cvidy1earqqq0" path="res://scenes/game/base/enemy_base.tscn" id="10_tihlc"]
-[ext_resource type="Script" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
-[ext_resource type="Script" path="res://scenes/game/scripts/item_manager.gd" id="13_thedk"]
+[ext_resource type="Script" uid="uid://dcgbniraaoi4u" path="res://scenes/game/scripts/ships_manager.gd" id="11_wfful"]
+[ext_resource type="Script" uid="uid://bix0vyxu2iphb" path="res://scenes/game/scripts/item_manager.gd" id="13_thedk"]
 [ext_resource type="PackedScene" uid="uid://dbisvpck6t6q3" path="res://scenes/entities/troops/air_entity.tscn" id="15_5jfj3"]
 [ext_resource type="PackedScene" uid="uid://bbxtuwbkfqawl" path="res://scenes/ui/game/game_ui.tscn" id="15_hn43x"]
-[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="18_5g7bt"]
-[ext_resource type="Script" path="res://core/resources/airplane_stats.gd" id="19_dh53e"]
+[ext_resource type="Script" uid="uid://p1nrvm0484od" path="res://core/resources/gun_slot.gd" id="18_5g7bt"]
+[ext_resource type="Script" uid="uid://dbw1ejv2a2c2l" path="res://core/resources/airplane_stats.gd" id="19_dh53e"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_front"]
+shader = ExtResource("5_front")
+shader_parameter/rect_size = Vector2(1281, 716)
+shader_parameter/horizon_y = 367.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o45il"]
 shader = ExtResource("5_a1aak")
-shader_parameter/BackColor = Color(0, 0.4, 0.58, 1)
-shader_parameter/CloudColor = Color(0.611765, 0.854902, 1, 1)
-shader_parameter/speed = 0.5
+shader_parameter/rect_size = Vector2(1281, 716)
+shader_parameter/horizon_y = 367.0
 
 [sub_resource type="Resource" id="Resource_w3emr"]
 script = ExtResource("18_5g7bt")
@@ -150,6 +155,13 @@ material = SubResource("ShaderMaterial_o45il")
 offset_right = 1281.0
 offset_bottom = 716.0
 
+[node name="CloudsFront" type="ColorRect" parent="Environment"]
+z_index = 10
+material = SubResource("ShaderMaterial_front")
+offset_right = 1281.0
+offset_bottom = 716.0
+mouse_filter = 2
+
 [node name="GameCam" type="Camera2D" parent="."]
 position = Vector2(640, 360)
 ignore_rotation = false
@@ -201,33 +213,3 @@ script = ExtResource("13_thedk")
 game_ui = NodePath("../CanvasLayer/GameUI")
 chance_to_spawn = 0.2
 amout_to_spawn = 2
-
-[node name="AirEntity" parent="." instance=ExtResource("15_5jfj3")]
-position = Vector2(175, 259)
-gravity_scale = 0.2
-inertia = 90.0
-entity_stats = SubResource("Resource_8e08t")
-
-[node name="AirEntity2" parent="." instance=ExtResource("15_5jfj3")]
-position = Vector2(97, 180)
-gravity_scale = 0.2
-inertia = 90.0
-entity_stats = SubResource("Resource_5gftr")
-
-[node name="AirEntity3" parent="." instance=ExtResource("15_5jfj3")]
-position = Vector2(121, 203)
-gravity_scale = 0.2
-inertia = 90.0
-entity_stats = SubResource("Resource_0xu6m")
-
-[node name="AirEntity4" parent="." instance=ExtResource("15_5jfj3")]
-position = Vector2(145, 231)
-gravity_scale = 0.2
-inertia = 90.0
-entity_stats = SubResource("Resource_jxpjb")
-
-[node name="AirEntity5" parent="." instance=ExtResource("15_5jfj3")]
-position = Vector2(-83, 48)
-gravity_scale = 0.2
-inertia = 90.0
-entity_stats = SubResource("Resource_4yp16")

@@ -4,3 +4,7 @@
 addons/
 images/
 Demos/
+
+*.tmp
+
+extras/

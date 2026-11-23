@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/depth_bomb.gd" id="1"]
+[ext_resource type="Script" path="res://core/resources/bullet_stats.gd" id="2"]
+[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/damage.gd" id="3"]
+
+[sub_resource type="Resource" id="stats"]
+resource_local_to_scene = true
+script = ExtResource("2")
+speed = 1
+piercing = 1
+killTime = 600
+
+[sub_resource type="Resource" id="dmg"]
+script = ExtResource("3")
+damage = 1
+knockback = 2
+
+[sub_resource type="CircleShape2D" id="shape"]
+radius = 2.5
+
+[node name="DepthBomb" type="Area2D"]
+z_index = 5
+collision_layer = 514
+collision_mask = 514
+script = ExtResource("1")
+bullet_stats = SubResource("stats")
+damage = SubResource("dmg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("shape")
+
+[connection signal="area_shape_entered" from="." to="." method="_on_area_shape_entered"]

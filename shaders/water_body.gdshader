@@ -19,7 +19,6 @@ void vertex(){
 	globalposition = (MODEL_MATRIX * vec4(VERTEX, 0.0, 1.0)).xy;
 }
 
-
 void fragment()
 {
 	vec2 uv = globalposition / 512.0;
@@ -29,14 +28,12 @@ void fragment()
 		vec2(
 			mod(uv.x * refraction_stretch.x + TIME * speed, 1.0), 
 			mod(uv.y * refraction_stretch.y + TIME * speed, 1.0))).xy;
-	// Set values between -0.5 and 0.5 (instead of 0 and 1). Otherwise the reflection will move whith increased refraction_strength
 	refraction_offset -= 0.5; 
 	
 	vec4 ocean_text = texture(ocean_texture, vec2(uv.x * 9. +TIME * speed, uv.y *9. +TIME * speed) + refraction_offset*0.2);
 	
 	float strength = mix(0.0, 0.3, texture_strength);
 	
-	//ocean_text.rgb = ocean_text.rgb * (-uv.y * 0.7);
 	ocean_text.rgba = mix(ocean_text.rgba *2.0, vec4(0.0), SCREEN_UV.y + strength);
 	if (SCREEN_UV.y> 1.0- strength) {
 		ocean_text.rgba *= 0.0;
@@ -44,7 +41,6 @@ void fragment()
 	
 	
 	
-	// Get the screen texture and distort it
 	vec4 refraction = texture(SCREEN_TEXTURE, SCREEN_UV - refraction_offset * refraction_strength);
 	
 	vec4 color = vec4(1.0);

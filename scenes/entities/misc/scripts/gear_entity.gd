@@ -8,6 +8,24 @@ var catch_threshold : float = 10
 
 signal pickup_gear(plus : int)
 
+var target_control : Control
+var _flying : bool = false
+
+func _start_flight() -> void:
+	_flying = true
+	desapier = true
+	gravity_scale = 0
+	linear_velocity = Vector2.ZERO
+	sleeping = true
+	sprite.hide()
+	var from_screen : Vector2 = get_viewport().get_canvas_transform() * global_position
+	var zoom : float = get_viewport().get_canvas_transform().get_scale().x
+	GearFlyer.launch(self, sprite.texture, from_screen, target_control, zoom * scale.x, _arrived)
+
+func _arrived() -> void:
+	pickup_gear.emit(1)
+	queue_free()
+
 func explode() -> void:
 	linear_velocity.y = randf_range(-200, -400)
 	linear_velocity.x = randf_range(-200, 200)
@@ -28,6 +46,9 @@ func _physics_process(_delta: float) -> void:
 		is_glowing = !is_glowing
 	
 	if (get_global_mouse_position().distance_to(global_position) < catch_threshold && !desapier):
+		if (is_instance_valid(target_control)):
+			_start_flight()
+			return
 		desapier = true
 		pickup_gear.emit(1)
 		if randi_range(0,1) == 0:

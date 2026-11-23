@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://bkiqjkde8qkaw"]
 
-[ext_resource type="Script" path="res://scenes/game/scripts/water_spring.gd" id="1_ruct1"]
-[ext_resource type="Script" path="res://scenes/game/scripts/water_area_hitbox.gd" id="2_dpjxb"]
+[ext_resource type="Script" uid="uid://28oljw0uxoq6" path="res://scenes/game/scripts/water_spring.gd" id="1_ruct1"]
+[ext_resource type="Script" uid="uid://4cab0fslo7rh" path="res://scenes/game/scripts/water_area_hitbox.gd" id="2_dpjxb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_11a0y"]
 size = Vector2(30, 10)

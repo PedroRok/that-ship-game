@@ -2,8 +2,8 @@
 
 [ext_resource type="Theme" uid="uid://1a6d0oqf6wrx" path="res://core/resources/ui/game_ui.tres" id="1_dyg2c"]
 [ext_resource type="Texture2D" uid="uid://ceww2312e1rln" path="res://assets/ui/ui-atlas.png" id="2_8n3qq"]
-[ext_resource type="Script" path="res://scenes/ui/game/scripts/win_screen.gd" id="2_khj7n"]
-[ext_resource type="Shader" path="res://shaders/button_carved_ui.gdshader" id="3_3vpf2"]
+[ext_resource type="Script" uid="uid://cpdp68sq1yx31" path="res://scenes/ui/game/scripts/win_screen.gd" id="2_khj7n"]
+[ext_resource type="Shader" uid="uid://cnxncsf7f26rf" path="res://shaders/button_carved_ui.gdshader" id="3_3vpf2"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1xpl8"]
 atlas = ExtResource("2_8n3qq")
@@ -19,7 +19,7 @@ shader_parameter/base_gray = Color(0.388235, 0.388235, 0.388235, 1)
 shader_parameter/shadow_gray = Color(0.160784, 0.160784, 0.160784, 1)
 shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
 shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
-shader_parameter/progress_bar = null
+shader_parameter/progress_bar = 0.0
 shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_mwcd7"]
@@ -40,7 +40,7 @@ shader_parameter/base_gray = Color(0.388235, 0.388235, 0.388235, 1)
 shader_parameter/shadow_gray = Color(0.160784, 0.160784, 0.160784, 1)
 shader_parameter/darker_shadow_gray = Color(0.388235, 0.388235, 0.388235, 1)
 shader_parameter/light_color = Color(0.4825, 0.4825, 0.4825, 1)
-shader_parameter/progress_bar = null
+shader_parameter/progress_bar = 0.0
 shader_parameter/progress_bar_color = Color(0.4825, 0.4825, 0.4825, 1)
 
 [node name="WinScreen" type="Control" node_paths=PackedStringArray("values_container", "final_value_container")]

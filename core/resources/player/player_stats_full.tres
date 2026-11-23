@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="PlayerStats" load_steps=8 format=3 uid="uid://bop3herse3c8d"]
 
-[ext_resource type="Script" path="res://core/resources/gun_stats.gd" id="1_170m2"]
-[ext_resource type="Script" path="res://core/resources/entity_stats.gd" id="3_34oxv"]
-[ext_resource type="Script" path="res://core/resources/player_stats.gd" id="3_ndtyj"]
+[ext_resource type="Script" uid="uid://bs5gbefq45jg0" path="res://core/resources/gun_stats.gd" id="1_170m2"]
+[ext_resource type="Script" uid="uid://dhhjw3es6vhxq" path="res://core/resources/entity_stats.gd" id="3_34oxv"]
+[ext_resource type="Script" uid="uid://bsnt5imwmbfhh" path="res://core/resources/player_stats.gd" id="3_ndtyj"]
 [ext_resource type="Resource" uid="uid://csmqewnj718dx" path="res://core/resources/boats/medium_boat.tres" id="4_t611a"]
 [ext_resource type="Resource" uid="uid://d2u8fkngrix6h" path="res://core/resources/boats/mini_boat.tres" id="5_ykd3p"]
 [ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="6_bllc2"]

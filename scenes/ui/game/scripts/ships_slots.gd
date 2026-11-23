@@ -16,12 +16,16 @@ func _ready() -> void:
 		player_stats = Global.player_stats
 	if (!player_stats):
 		return
-	var idx : int = 0
-	for entity : EntityStats in player_stats.unlocked_entities:
-		var ship_button : ShipButton = container.get_child(idx)
-		ship_button.entity_stats = entity
-		ship_button.setup()
+	for ship_button : ShipButton in container.get_children():
 		ship_button.connect("spawn_entity", Callable(self, "emit_spawn_signal"))
+	refresh()
+
+func refresh() -> void:
+	var entities : Array[EntityStats] = player_stats.loadout_entities() if !Engine.is_editor_hint() else player_stats.unlocked_entities
+	var idx : int = 0
+	for ship_button : ShipButton in container.get_children():
+		ship_button.entity_stats = entities[idx] if idx < entities.size() else null
+		ship_button.setup()
 		idx += 1
 
 func emit_spawn_signal(entity_stats : EntityStats) -> void:

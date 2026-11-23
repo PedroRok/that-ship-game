@@ -58,4 +58,4 @@ func _on_button_down() -> void:
 
 func _on_button_button_up() -> void:
 	price_label.custom_minimum_size.y = 32
-	pass # Replace with function body.
+	pass

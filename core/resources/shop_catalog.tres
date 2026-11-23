@@ -1,0 +1,461 @@
+[gd_resource type="Resource" script_class="ShopCatalog" load_steps=35 format=3]
+
+[ext_resource type="Script" path="res://core/resources/shop_catalog.gd" id="s_cat"]
+[ext_resource type="Script" path="res://core/resources/upgrade_stats.gd" id="s_up"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="s_boat"]
+[ext_resource type="Resource" uid="uid://d2u8fkngrix6h" path="res://core/resources/boats/mini_boat.tres" id="b_mini"]
+[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="b_small"]
+[ext_resource type="Resource" uid="uid://csmqewnj718dx" path="res://core/resources/boats/medium_boat.tres" id="b_medium"]
+[ext_resource type="Resource" path="res://core/resources/boats/plane.tres" id="b_plane"]
+[ext_resource type="Resource" path="res://core/resources/boats/torpedo_boat.tres" id="b_torpedo"]
+[ext_resource type="Resource" path="res://core/resources/boats/destroyer.tres" id="b_destroyer"]
+[ext_resource type="Resource" path="res://core/resources/boats/missile_frigate.tres" id="b_frigate"]
+[ext_resource type="Resource" path="res://core/resources/boats/cruiser.tres" id="b_cruiser"]
+[ext_resource type="Resource" path="res://core/resources/boats/bomber.tres" id="b_bomber"]
+[ext_resource type="Resource" path="res://core/resources/boats/submarine.tres" id="b_sub"]
+[ext_resource type="Resource" path="res://core/resources/boats/flak_boat.tres" id="b_flak"]
+[ext_resource type="Resource" uid="uid://37315asgr84l" path="res://core/resources/boats/tank_boat.tres" id="b_tank"]
+
+[sub_resource type="Resource" id="up_start_screw"]
+script = ExtResource("s_up")
+id = &"start_screw"
+name_key = "Start Screws"
+description_key = "+5 screws at the start of a run"
+target = 0
+stat = &"start_screw"
+op = 0
+value_per_level = 5
+max_level = 5
+gear_cost = Array[int]([10, 20, 30, 45, 60])
+
+[sub_resource type="Resource" id="up_base_health"]
+script = ExtResource("s_up")
+id = &"base_health"
+name_key = "Base Armor"
+description_key = "+15 base health"
+target = 0
+stat = &"base_health"
+op = 0
+value_per_level = 15
+max_level = 5
+gear_cost = Array[int]([12, 24, 36, 50, 70])
+
+[sub_resource type="Resource" id="up_screw_income"]
+script = ExtResource("s_up")
+id = &"screw_income"
+name_key = "Screw Press"
+description_key = "Screws are produced 10% faster"
+target = 0
+stat = &"screw_income_time"
+op = 1
+value_per_level = -0.1
+max_level = 5
+gear_cost = Array[int]([15, 30, 45, 65, 90])
+
+[sub_resource type="Resource" id="up_build_speed"]
+script = ExtResource("s_up")
+id = &"build_speed"
+name_key = "Fast Dock"
+description_key = "Units are built 10% faster"
+target = 0
+stat = &"build_time"
+op = 1
+value_per_level = -0.1
+max_level = 5
+gear_cost = Array[int]([15, 30, 45, 65, 90])
+
+[sub_resource type="Resource" id="up_unit_health"]
+script = ExtResource("s_up")
+id = &"unit_health"
+name_key = "Reinforced Hulls"
+description_key = "+10% health for all your units"
+target = 1
+stat = &"health"
+op = 1
+value_per_level = 0.1
+max_level = 5
+gear_cost = Array[int]([15, 30, 45, 65, 90])
+
+[sub_resource type="Resource" id="up_gun_damage"]
+script = ExtResource("s_up")
+id = &"gun_damage"
+name_key = "Heavy Shells"
+description_key = "+1 damage for all guns"
+target = 2
+stat = &"damage"
+op = 0
+value_per_level = 1
+max_level = 3
+gear_cost = Array[int]([30, 60, 100])
+
+[sub_resource type="Resource" id="up_gun_rate"]
+script = ExtResource("s_up")
+id = &"gun_rate"
+name_key = "Quick Loaders"
+description_key = "Guns fire 8% faster"
+target = 2
+stat = &"shoot_interval"
+op = 1
+value_per_level = -0.08
+max_level = 5
+gear_cost = Array[int]([20, 35, 55, 80, 110])
+
+[sub_resource type="Resource" id="r_eco1"]
+script = ExtResource("s_up")
+id = &"r_eco1"
+name_key = "Efficient Mining"
+description_key = "Screws are produced 8% faster"
+target = 0
+stat = &"screw_income_time"
+op = 1
+value_per_level = -0.08
+max_level = 3
+gear_cost = Array[int]([20, 35, 55])
+tree_position = Vector2(0, 0)
+
+[sub_resource type="Resource" id="r_eco5"]
+script = ExtResource("s_up")
+id = &"r_eco5"
+name_key = "War Bonds"
+description_key = "+0.5 gears for each wave reached"
+target = 0
+stat = &"gears_per_wave"
+op = 0
+value_per_level = 0.5
+max_level = 4
+gear_cost = Array[int]([40, 60, 90, 130])
+requires = Array[ExtResource("s_up")]([SubResource("r_eco1")])
+tree_position = Vector2(1, 0)
+
+[sub_resource type="Resource" id="r_eco2"]
+script = ExtResource("s_up")
+id = &"r_eco2"
+name_key = "Scrap Recycling"
+description_key = "+15% gears from leftover screws"
+target = 0
+stat = &"leftover_gear_mult"
+op = 1
+value_per_level = 0.15
+max_level = 3
+gear_cost = Array[int]([30, 50, 75])
+requires = Array[ExtResource("s_up")]([SubResource("r_eco1")])
+tree_position = Vector2(0, 1)
+
+[sub_resource type="Resource" id="r_eco3"]
+script = ExtResource("s_up")
+id = &"r_eco3"
+name_key = "Salvage Crews"
+description_key = "+5% chance that kills drop gears"
+target = 0
+stat = &"gear_drop_chance"
+op = 0
+value_per_level = 0.05
+max_level = 4
+gear_cost = Array[int]([25, 40, 60, 85])
+requires = Array[ExtResource("s_up")]([SubResource("r_eco1")])
+tree_position = Vector2(1, 1)
+
+[sub_resource type="Resource" id="r_eco4"]
+script = ExtResource("s_up")
+id = &"r_eco4"
+name_key = "Treasury"
+description_key = "+8 start screws"
+target = 0
+stat = &"start_screw"
+op = 0
+value_per_level = 8
+max_level = 3
+gear_cost = Array[int]([40, 70, 110])
+boss_coin_cost = Array[int]([0, 0, 1])
+requires = Array[ExtResource("s_up")]([SubResource("r_eco2")])
+tree_position = Vector2(0, 2)
+
+[sub_resource type="Resource" id="r_base1"]
+script = ExtResource("s_up")
+id = &"r_base1"
+name_key = "Steel Plating"
+description_key = "+25 base health"
+target = 0
+stat = &"base_health"
+op = 0
+value_per_level = 25
+max_level = 4
+gear_cost = Array[int]([30, 50, 75, 100])
+tree_position = Vector2(2, 0)
+
+[sub_resource type="Resource" id="r_base2"]
+script = ExtResource("s_up")
+id = &"r_base2"
+name_key = "Dock Cranes"
+description_key = "Units are built 8% faster"
+target = 0
+stat = &"build_time"
+op = 1
+value_per_level = -0.08
+max_level = 4
+gear_cost = Array[int]([30, 50, 75, 100])
+requires = Array[ExtResource("s_up")]([SubResource("r_base1")])
+tree_position = Vector2(2, 1)
+
+[sub_resource type="Resource" id="r_base3"]
+script = ExtResource("s_up")
+id = &"r_base3"
+name_key = "Bulkheads"
+description_key = "+50 base health"
+target = 0
+stat = &"base_health"
+op = 0
+value_per_level = 50
+max_level = 2
+gear_cost = Array[int]([90, 140])
+boss_coin_cost = Array[int]([1, 2])
+requires = Array[ExtResource("s_up")]([SubResource("r_base2")])
+tree_position = Vector2(2, 2)
+
+[sub_resource type="Resource" id="r_unit1"]
+script = ExtResource("s_up")
+id = &"r_unit1"
+name_key = "Engine Tuning"
+description_key = "+6% unit speed"
+target = 1
+stat = &"speed"
+op = 1
+value_per_level = 0.06
+max_level = 4
+gear_cost = Array[int]([25, 40, 60, 85])
+tree_position = Vector2(3, 0)
+
+[sub_resource type="Resource" id="r_unit2"]
+script = ExtResource("s_up")
+id = &"r_unit2"
+name_key = "Radar Upgrade"
+description_key = "+8% unit radar range"
+target = 1
+stat = &"radar_distance"
+op = 1
+value_per_level = 0.08
+max_level = 4
+gear_cost = Array[int]([25, 40, 60, 85])
+tree_position = Vector2(4, 0)
+
+[sub_resource type="Resource" id="r_unit3"]
+script = ExtResource("s_up")
+id = &"r_unit3"
+name_key = "Hardened Hulls"
+description_key = "+8% health for all units"
+target = 1
+stat = &"health"
+op = 1
+value_per_level = 0.08
+max_level = 5
+gear_cost = Array[int]([35, 55, 80, 110, 150])
+requires = Array[ExtResource("s_up")]([SubResource("r_unit1")])
+tree_position = Vector2(3, 1)
+
+[sub_resource type="Resource" id="r_unit4"]
+script = ExtResource("s_up")
+id = &"r_unit4"
+name_key = "Swarm Doctrine"
+description_key = "+15% health for Mini boats"
+target = 1
+stat = &"health"
+op = 1
+value_per_level = 0.15
+max_level = 4
+gear_cost = Array[int]([20, 35, 55, 80])
+only_for = Array[String](["mini"])
+requires = Array[ExtResource("s_up")]([SubResource("r_unit1")])
+tree_position = Vector2(4, 1)
+
+[sub_resource type="Resource" id="r_unit5"]
+script = ExtResource("s_up")
+id = &"r_unit5"
+name_key = "Heavy Armor"
+description_key = "+20% health for Tank boats"
+target = 1
+stat = &"health"
+op = 1
+value_per_level = 0.2
+max_level = 3
+gear_cost = Array[int]([60, 100, 150])
+boss_coin_cost = Array[int]([0, 1, 1])
+only_for = Array[String](["tank"])
+requires = Array[ExtResource("s_up")]([SubResource("r_unit3")])
+tree_position = Vector2(3, 2)
+
+[sub_resource type="Resource" id="r_unit6"]
+script = ExtResource("s_up")
+id = &"r_unit6"
+name_key = "Frigate Refit"
+description_key = "+12% health for Small and Medium boats"
+target = 1
+stat = &"health"
+op = 1
+value_per_level = 0.12
+max_level = 3
+gear_cost = Array[int]([40, 65, 100])
+only_for = Array[String](["small", "medium"])
+requires = Array[ExtResource("s_up")]([SubResource("r_unit3")])
+tree_position = Vector2(4, 2)
+
+[sub_resource type="Resource" id="r_unit7"]
+script = ExtResource("s_up")
+id = &"r_unit7"
+name_key = "Reactive Armor"
+description_key = "+10% health for all units"
+target = 1
+stat = &"health"
+op = 1
+value_per_level = 0.1
+max_level = 3
+gear_cost = Array[int]([80, 120, 180])
+boss_coin_cost = Array[int]([1, 1, 2])
+requires = Array[ExtResource("s_up")]([SubResource("r_unit5")])
+tree_position = Vector2(3, 3)
+
+[sub_resource type="Resource" id="r_unit8"]
+script = ExtResource("s_up")
+id = &"r_unit8"
+name_key = "Long Range Sonar"
+description_key = "+10% unit radar range"
+target = 1
+stat = &"radar_distance"
+op = 1
+value_per_level = 0.1
+max_level = 3
+gear_cost = Array[int]([40, 65, 100])
+requires = Array[ExtResource("s_up")]([SubResource("r_unit2")])
+tree_position = Vector2(4, 3)
+
+[sub_resource type="Resource" id="r_gun1"]
+script = ExtResource("s_up")
+id = &"r_gun1"
+name_key = "Gunpowder Mix"
+description_key = "+1 damage for all guns"
+target = 2
+stat = &"damage"
+op = 0
+value_per_level = 1
+max_level = 2
+gear_cost = Array[int]([60, 120])
+boss_coin_cost = Array[int]([0, 1])
+tree_position = Vector2(5, 0)
+
+[sub_resource type="Resource" id="r_gun2"]
+script = ExtResource("s_up")
+id = &"r_gun2"
+name_key = "Autoloader"
+description_key = "Guns fire 7% faster"
+target = 2
+stat = &"shoot_interval"
+op = 1
+value_per_level = -0.07
+max_level = 5
+gear_cost = Array[int]([30, 45, 65, 90, 120])
+tree_position = Vector2(6, 0)
+
+[sub_resource type="Resource" id="r_gun4"]
+script = ExtResource("s_up")
+id = &"r_gun4"
+name_key = "Heavy Shells II"
+description_key = "+1 damage for all guns"
+target = 2
+stat = &"damage"
+op = 0
+value_per_level = 1
+max_level = 1
+gear_cost = Array[int]([150])
+boss_coin_cost = Array[int]([2])
+requires = Array[ExtResource("s_up")]([SubResource("r_gun1")])
+tree_position = Vector2(5, 1)
+
+[sub_resource type="Resource" id="r_gun3"]
+script = ExtResource("s_up")
+id = &"r_gun3"
+name_key = "Rapid Fire II"
+description_key = "Guns fire 5% faster"
+target = 2
+stat = &"shoot_interval"
+op = 1
+value_per_level = -0.05
+max_level = 3
+gear_cost = Array[int]([100, 150, 220])
+boss_coin_cost = Array[int]([1, 1, 2])
+requires = Array[ExtResource("s_up")]([SubResource("r_gun2")])
+tree_position = Vector2(6, 1)
+
+[sub_resource type="Resource" id="r_skill1"]
+script = ExtResource("s_up")
+id = &"r_skill1"
+name_key = "Heavier Bombs"
+description_key = "+2 bomb damage"
+target = 3
+stat = &"bomb_damage"
+op = 0
+value_per_level = 2
+max_level = 3
+gear_cost = Array[int]([40, 70, 110])
+tree_position = Vector2(7, 0)
+
+[sub_resource type="Resource" id="r_skill2"]
+script = ExtResource("s_up")
+id = &"r_skill2"
+name_key = "Carpet Bombing"
+description_key = "+2 bombs per drop"
+target = 3
+stat = &"bomb_count"
+op = 0
+value_per_level = 2
+max_level = 3
+gear_cost = Array[int]([50, 80, 120])
+requires = Array[ExtResource("s_up")]([SubResource("r_skill1")])
+tree_position = Vector2(7, 1)
+
+[sub_resource type="Resource" id="r_skill3"]
+script = ExtResource("s_up")
+id = &"r_skill3"
+name_key = "Quick Dispatch"
+description_key = "Bombing recharges 10% faster"
+target = 3
+stat = &"bomb_cooldown"
+op = 1
+value_per_level = -0.1
+max_level = 4
+gear_cost = Array[int]([40, 60, 85, 120])
+requires = Array[ExtResource("s_up")]([SubResource("r_skill1")])
+tree_position = Vector2(8, 1)
+
+[sub_resource type="Resource" id="r_skill4"]
+script = ExtResource("s_up")
+id = &"r_skill4"
+name_key = "Overclock"
+description_key = "+2s of Boost duration"
+target = 3
+stat = &"boost_duration"
+op = 0
+value_per_level = 2
+max_level = 3
+gear_cost = Array[int]([40, 70, 110])
+tree_position = Vector2(8, 0)
+
+[sub_resource type="Resource" id="r_wpn_depth"]
+script = ExtResource("s_up")
+id = &"r_wpn_depth"
+name_key = "Depth Bombs"
+description_key = "Bomber can use depth bombs (hit ships and submarines)"
+target = 4
+stat = &"weapon_unlock"
+op = 0
+value_per_level = 1
+only_for = Array[String](["bomber"])
+unlocks_gun = 11
+max_level = 1
+gear_cost = Array[int]([120])
+requires = Array[ExtResource("s_up")]([SubResource("r_gun1")])
+tree_position = Vector2(5, 2)
+
+[resource]
+script = ExtResource("s_cat")
+units = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_tank"), ExtResource("b_torpedo"), ExtResource("b_flak"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_plane"), ExtResource("b_cruiser"), ExtResource("b_bomber"), ExtResource("b_sub")])
+upgrades = Array[ExtResource("s_up")]([SubResource("up_start_screw"), SubResource("up_base_health"), SubResource("up_screw_income"), SubResource("up_build_speed"), SubResource("up_unit_health"), SubResource("up_gun_damage"), SubResource("up_gun_rate")])
+research = Array[ExtResource("s_up")]([SubResource("r_eco1"), SubResource("r_eco5"), SubResource("r_eco2"), SubResource("r_eco3"), SubResource("r_eco4"), SubResource("r_base1"), SubResource("r_base2"), SubResource("r_base3"), SubResource("r_unit1"), SubResource("r_unit2"), SubResource("r_unit3"), SubResource("r_unit4"), SubResource("r_unit5"), SubResource("r_unit6"), SubResource("r_unit7"), SubResource("r_unit8"), SubResource("r_gun1"), SubResource("r_gun2"), SubResource("r_gun4"), SubResource("r_gun3"), SubResource("r_skill1"), SubResource("r_skill2"), SubResource("r_skill3"), SubResource("r_skill4"), SubResource("r_wpn_depth")])

@@ -24,7 +24,6 @@ func water_update(spring_constant : float, dampening : float) -> void:
 	
 	var loss : float = - dampening * velocity
 	
-	# lei de Hooke
 	force = -spring_constant * x + loss
 	
 	velocity += force
@@ -51,4 +50,4 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 		if (bd.linear_velocity.x > 0.2 || bd.linear_velocity.x < -0.2 ): 
 			var speed : float = 10 * motion_factor
 			emit_signal("splash", index, -speed)
-		pass # Replace with function body.
+		pass

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="RoundCardStats" load_steps=2 format=3 uid="uid://dvgg872nt8de8"]
 
-[ext_resource type="Script" path="res://core/resources/ui/round_button_stats.gd" id="1_82vxr"]
+[ext_resource type="Script" uid="uid://p8pgslk24rus" path="res://core/resources/ui/round_button_stats.gd" id="1_82vxr"]
 
 [resource]
 script = ExtResource("1_82vxr")

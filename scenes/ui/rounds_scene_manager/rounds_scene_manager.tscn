@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=3 uid="uid://cunue2ob1vdcg"]
 
-[ext_resource type="Script" path="res://scenes/ui/rounds_scene_manager/scripts/rounds_scene_manager.gd" id="1_8rofq"]
-[ext_resource type="Resource" uid="uid://bop3herse3c8d" path="res://core/resources/player/player_stats_full.tres" id="2_o2pjj"]
+[ext_resource type="Script" uid="uid://cm2hsnatpa3if" path="res://scenes/ui/naval_hud/naval_preview.gd" id="1_8rofq"]
+[ext_resource type="Resource" uid="uid://bhoo8y2apd6cl" path="res://core/resources/player/player_stats.tres" id="2_o2pjj"]
 
 [node name="RoundsSceneManager" type="Node2D"]
 script = ExtResource("1_8rofq")
-start_scene = 2
+start_scene = 0
 player_stats = ExtResource("2_o2pjj")

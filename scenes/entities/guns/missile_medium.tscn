@@ -1,0 +1,33 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scenes/entities/guns/scripts/fixed_angle_gun.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/entities/bullets/missile.tscn" id="2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/guns/missile_medium_barrel.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/guns/missile_medium_base.png" id="4"]
+[ext_resource type="AudioStream" path="res://assets/game/sounds/cannon_base.wav" id="5"]
+
+[node name="Gun" type="Node2D" node_paths=PackedStringArray("end_barrel", "base")]
+script = ExtResource("1")
+direction = Vector2(0, -1)
+gun_type = 4
+time_to_shoot = 120
+damage_scale = 3.0
+bullet_speed_scale = 1.5
+bullet = ExtResource("2")
+end_barrel = NodePath("EndBarrel")
+base = NodePath("Base")
+
+[node name="Launcher" type="Sprite2D" parent="."]
+show_behind_parent = true
+position = Vector2(0, -2.5)
+rotation = -1.5708
+texture = ExtResource("3")
+offset = Vector2(1, -1)
+
+[node name="EndBarrel" type="Marker2D" parent="."]
+position = Vector2(0, -7.5)
+gizmo_extents = 0.0
+
+[node name="Base" type="Sprite2D" parent="."]
+position = Vector2(1, -1)
+texture = ExtResource("4")

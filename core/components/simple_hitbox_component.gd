@@ -3,6 +3,8 @@ extends Area2D
 
 var enabled : bool = true
 
+var submerged : bool = false
+
 @export
 var name_entity : String
 

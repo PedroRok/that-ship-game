@@ -1,0 +1,176 @@
+[gd_resource type="Resource" script_class="WaveTable" load_steps=28 format=3]
+
+[ext_resource type="Script" path="res://core/resources/waves/wave_table.gd" id="s_table"]
+[ext_resource type="Script" path="res://core/resources/waves/wave_data.gd" id="s_wave"]
+[ext_resource type="Script" path="res://core/resources/waves/base_tier.gd" id="s_tier"]
+[ext_resource type="Texture2D" path="res://assets/game/base/base-2.png" id="t_base2"]
+[ext_resource type="Texture2D" path="res://assets/game/base/base-3.png" id="t_base3"]
+[ext_resource type="Texture2D" path="res://assets/game/base/base-4.png" id="t_base4"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="s_boat"]
+[ext_resource type="Resource" path="res://core/resources/boats/plane.tres" id="b_plane"]
+[ext_resource type="Resource" path="res://core/resources/boats/torpedo_boat.tres" id="b_torpedo"]
+[ext_resource type="Resource" path="res://core/resources/boats/destroyer.tres" id="b_destroyer"]
+[ext_resource type="Resource" path="res://core/resources/boats/missile_frigate.tres" id="b_frigate"]
+[ext_resource type="Resource" path="res://core/resources/boats/cruiser.tres" id="b_cruiser"]
+[ext_resource type="Resource" path="res://core/resources/boats/bomber.tres" id="b_bomber"]
+[ext_resource type="Resource" path="res://core/resources/boats/boss_dreadnought.tres" id="b_boss1"]
+[ext_resource type="Resource" path="res://core/resources/boats/boss_heavy_bomber.tres" id="b_boss2"]
+[ext_resource type="Resource" path="res://core/resources/boats/boss_leviathan.tres" id="b_boss3"]
+[ext_resource type="Resource" path="res://core/resources/boats/submarine.tres" id="b_sub"]
+[ext_resource type="Resource" uid="uid://d2u8fkngrix6h" path="res://core/resources/boats/mini_boat.tres" id="b_mini"]
+[ext_resource type="Resource" uid="uid://erbspqhlwv8t" path="res://core/resources/boats/small_boat.tres" id="b_small"]
+[ext_resource type="Resource" uid="uid://csmqewnj718dx" path="res://core/resources/boats/medium_boat.tres" id="b_medium"]
+[ext_resource type="Resource" uid="uid://37315asgr84l" path="res://core/resources/boats/tank_boat.tres" id="b_tank"]
+
+[sub_resource type="Resource" id="tier_1"]
+script = ExtResource("s_tier")
+base_health = 40
+production_interval_mult = 1.0
+turret_count = 0
+
+[sub_resource type="Resource" id="tier_4"]
+script = ExtResource("s_tier")
+base_health = 70
+production_interval_mult = 0.85
+turret_count = 1
+sprite = ExtResource("t_base2")
+turret_offsets = Array[Vector2]([Vector2(0, -50)])
+
+[sub_resource type="Resource" id="tier_8"]
+script = ExtResource("s_tier")
+base_health = 110
+production_interval_mult = 0.7
+turret_count = 2
+sprite = ExtResource("t_base3")
+turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50)])
+
+[sub_resource type="Resource" id="tier_12"]
+script = ExtResource("s_tier")
+base_health = 160
+production_interval_mult = 0.55
+turret_count = 3
+sprite = ExtResource("t_base4")
+turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50), Vector2(-12, -19)])
+
+[sub_resource type="Resource" id="wave_1"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small")])
+spawn_interval = 5.0
+duration = 30.0
+stat_mult = 1.0
+base_tier = SubResource("tier_1")
+
+[sub_resource type="Resource" id="wave_2"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small")])
+spawn_interval = 4.8
+duration = 30.0
+stat_mult = 1.08
+
+[sub_resource type="Resource" id="wave_3"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_small"), ExtResource("b_medium")])
+spawn_interval = 4.6
+duration = 30.0
+stat_mult = 1.16
+
+[sub_resource type="Resource" id="wave_4"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_plane")])
+spawn_interval = 4.4
+duration = 30.0
+stat_mult = 1.24
+base_tier = SubResource("tier_4")
+
+[sub_resource type="Resource" id="wave_5"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_plane"), ExtResource("b_torpedo")])
+spawn_interval = 4.2
+duration = 30.0
+stat_mult = 1.32
+boss = ExtResource("b_boss1")
+boss_health_mult = 4.0
+boss_coin_reward = 1
+
+[sub_resource type="Resource" id="wave_6"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 4.0
+duration = 30.0
+stat_mult = 1.4
+
+[sub_resource type="Resource" id="wave_7"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 3.8
+duration = 30.0
+stat_mult = 1.48
+
+[sub_resource type="Resource" id="wave_8"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 3.6
+duration = 30.0
+stat_mult = 1.56
+base_tier = SubResource("tier_8")
+
+[sub_resource type="Resource" id="wave_9"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 3.4
+duration = 30.0
+stat_mult = 1.64
+
+[sub_resource type="Resource" id="wave_10"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_tank"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 3.2
+duration = 30.0
+stat_mult = 1.72
+boss = ExtResource("b_boss2")
+boss_health_mult = 6.0
+boss_coin_reward = 1
+
+[sub_resource type="Resource" id="wave_11"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_tank"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 3.0
+duration = 30.0
+stat_mult = 1.8
+
+[sub_resource type="Resource" id="wave_12"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_tank"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 2.8
+duration = 30.0
+stat_mult = 1.88
+base_tier = SubResource("tier_12")
+
+[sub_resource type="Resource" id="wave_13"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_cruiser"), ExtResource("b_tank"), ExtResource("b_bomber"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 2.6
+duration = 30.0
+stat_mult = 1.96
+
+[sub_resource type="Resource" id="wave_14"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_cruiser"), ExtResource("b_tank"), ExtResource("b_bomber"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 2.4
+duration = 30.0
+stat_mult = 2.04
+
+[sub_resource type="Resource" id="wave_15"]
+script = ExtResource("s_wave")
+ships = Array[ExtResource("s_boat")]([ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_cruiser"), ExtResource("b_tank"), ExtResource("b_bomber"), ExtResource("b_plane"), ExtResource("b_sub")])
+spawn_interval = 2.2
+duration = 30.0
+stat_mult = 2.12
+boss = ExtResource("b_boss3")
+boss_health_mult = 8.0
+boss_coin_reward = 2
+
+[resource]
+script = ExtResource("s_table")
+waves = Array[ExtResource("s_wave")]([SubResource("wave_1"), SubResource("wave_2"), SubResource("wave_3"), SubResource("wave_4"), SubResource("wave_5"), SubResource("wave_6"), SubResource("wave_7"), SubResource("wave_8"), SubResource("wave_9"), SubResource("wave_10"), SubResource("wave_11"), SubResource("wave_12"), SubResource("wave_13"), SubResource("wave_14"), SubResource("wave_15")])
+endless_boss_every = 5

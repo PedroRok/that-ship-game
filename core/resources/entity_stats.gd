@@ -17,6 +17,12 @@ var name: String
 var price: int = 5
 @export
 var produce_cd: int = 5
+@export
+var unlock_cost : int = 10
+@export
+var unit_class : Enums.UnitClass = Enums.UnitClass.COASTAL
+var is_boss : bool = false
+var boss_coin_reward : int = 0
 
 @export_category("Entity Object")
 @export

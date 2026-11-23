@@ -1,8 +1,8 @@
 [gd_scene load_steps=9 format=3 uid="uid://cgpceuu5uri5f"]
 
-[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/bullet.gd" id="1_fajo3"]
-[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/damage.gd" id="2_ivhem"]
-[ext_resource type="Script" path="res://core/resources/bullet_stats.gd" id="2_vnoil"]
+[ext_resource type="Script" uid="uid://lcm2mlh364jn" path="res://scenes/entities/bullets/scripts/bullet.gd" id="1_fajo3"]
+[ext_resource type="Script" uid="uid://beaq6qqhoc2eb" path="res://scenes/entities/bullets/scripts/damage.gd" id="2_ivhem"]
+[ext_resource type="Script" uid="uid://b4afhyhkkhdc8" path="res://core/resources/bullet_stats.gd" id="2_vnoil"]
 
 [sub_resource type="Resource" id="Resource_ntkj0"]
 resource_local_to_scene = true

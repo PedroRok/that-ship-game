@@ -9,6 +9,16 @@ var max_tilt_angle: float = 0.2
 @export_range(0, 1)
 var knockback_resistance: float = 0
 
+@export_group("Submarine")
+@export
+var can_submerge : bool = false
+@export
+var submerged_sprite : Texture2D
+@export
+var dive_distance : float = 110.0
+@export
+var hide_guns : bool = false
+
 @export_group("Rect Properties")
 @export_subgroup("Water Colision Shape")
 @export

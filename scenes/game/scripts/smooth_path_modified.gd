@@ -20,6 +20,17 @@ func smooth(value : bool) -> void:
 		curve.set_point_in(i, -spline)
 		curve.set_point_out(i, spline)
 
+func set_smooth_points(points : PackedVector2Array) -> void:
+	if curve == null:
+		curve = Curve2D.new()
+	curve.clear_points()
+	var count : int = points.size()
+	for i in range(count):
+		var last_point : Vector2 = points[wrapi(i - 1, 0, count - 1)]
+		var next_point : Vector2 = points[wrapi(i + 1, 0, count - 1)]
+		var spline : Vector2 = last_point.direction_to(next_point) * spline_length
+		curve.add_point(points[i], -spline, spline)
+
 func _get_spline(i : int) -> Vector2:
 	var last_point : Vector2 = _get_point(i - 1)
 	var next_point : Vector2 = _get_point(i + 1)

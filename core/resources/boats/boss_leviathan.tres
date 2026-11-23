@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="BoatStats" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="s_boat"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/bosses/boss_leviathan.png" id="t_sprite"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(-21.5, -2)
+allowed_types = Array[int]([5, 4, 1])
+with_base = true
+max_size = 2
+
+[sub_resource type="Resource" id="slot_1"]
+script = ExtResource("s_slot")
+position = Vector2(-7.5, -2)
+allowed_types = Array[int]([5, 4, 1])
+with_base = true
+max_size = 2
+
+[sub_resource type="Resource" id="slot_2"]
+script = ExtResource("s_slot")
+position = Vector2(50, 3.5)
+allowed_types = Array[int]([9, 8])
+with_base = false
+max_size = 1
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(94, 22)
+
+[sub_resource type="RectangleShape2D" id="water"]
+size = Vector2(90, 10)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(90, 8)
+
+[resource]
+script = ExtResource("s_boat")
+name = "boss_leviathan"
+speed = 190.0
+price = 0
+health = 50.0
+unit_class = 4
+unlock_cost = 0
+deceleration = 0.7
+max_tilt_angle = 0.05
+water_colision_shape = SubResource("water")
+water_colision_pos = Vector2(0, 0.0)
+radar_distance = 340
+produce_cd = 8
+sprite = ExtResource("t_sprite")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0"), SubResource("slot_1"), SubResource("slot_2")])
+hitbox_colision_shape = SubResource("hit")
+hitbox_colision_pos = Vector2(1, 2)
+particles_shape = SubResource("part")
+can_submerge = true
+submerged_sprite = ExtResource("t_sprite")
+dive_distance = 140.0
+hide_guns = true

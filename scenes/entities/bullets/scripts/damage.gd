@@ -3,6 +3,6 @@ extends Resource
 
 
 @export
-var damage : int = 1
+var damage : float = 1.0
 @export
 var knockback : int = 1

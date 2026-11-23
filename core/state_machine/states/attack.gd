@@ -32,7 +32,6 @@ func process_physics(delta: float) -> void:
 		Transitioned.emit(self, 'death')
 		return
 		
-	# Enemy verification
 	var enemy_in_radar : Node2D = radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)
 	if (!enemy_in_radar):
 		Transitioned.emit(self, 'move')

@@ -6,7 +6,6 @@ func _ready() -> void:
 	if (!entity.entity_stats):
 		return
 	var collision_shape : CollisionShape2D = get_child(0)
-	#collision_shape.shape.radius = entity.entity_stats.
 	pass
 
 var is_too_low : bool = false

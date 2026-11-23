@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://c2xgcl17l1i8i"]
 
-[ext_resource type="Script" path="res://scenes/ui/game/win_screen/scripts/value_show.gd" id="1_sfikd"]
+[ext_resource type="Script" uid="uid://cn6v4l0nf2gyi" path="res://scenes/ui/game/win_screen/scripts/value_show.gd" id="1_sfikd"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="2_xx6fh"]
-[ext_resource type="Shader" path="res://shaders/fill_rect.gdshader" id="3_nuw2v"]
+[ext_resource type="Shader" uid="uid://dcgqf1nxjxeoq" path="res://shaders/fill_rect.gdshader" id="3_nuw2v"]
 [ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="4_74ucg"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_yg30u"]

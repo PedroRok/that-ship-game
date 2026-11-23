@@ -13,8 +13,6 @@ func init(pos : Vector2, _shape : Shape2D, rect : Rect2) -> void:
 	position.x = pos.x
 	position.y = pos.y + (rect.size.y / 2)
 	amount_ratio = 0
-	#var material = particle.process_material as ParticleProcessMaterial
-	#material.gravity.x = -team_stats.direction * 90
 	pass
 
 func flip(to_right : bool) -> void:

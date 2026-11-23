@@ -12,19 +12,16 @@ var particle_component : ParticlesComponent
 var hitbox_component : HitboxComponent
 
 var initial_velocity: Vector2
-var initial_angular_velocity: float = 1.0  # Velocidade de rotação inicial (ajuste conforme necessário)
-var decay_rate: float = 0.999  # Taxa de desaceleração (ajuste conforme necessário)
-var gravity: float = 10.0    # Força da gravidade (ajuste conforme necessário)
+var initial_angular_velocity: float = 1.0
+var decay_rate: float = 0.999
+var gravity: float = 10.0
 var spin_increase_factor: float = 0.005
 
 func enter() -> void:
-	# Captura a velocidade inicial quando entra no estado de morte
 	initial_velocity = parent.linear_velocity
-	# Define a velocidade angular inicial
 	parent.angular_velocity = initial_angular_velocity
 	parent.collision_layer = 12
 	parent.collision_mask = 12
-	#parent.gravity_scale = parent.gravity_scale *4
 	death_rotation_speed = randf_range(-0.2, 0.2)
 	parent.entity_destroy.emit(parent.global_position, parent.entity_stats, parent.team_stats)
 	print(parent.rotation_degrees)
@@ -40,7 +37,6 @@ func process_input(_event: InputEvent) -> void:
 	return
 
 func process_physics(delta: float) -> void:
-	#prints(parent.gravity_scale)
 	death_deespawn_delay -= 1;
 	if death_deespawn_delay == 0:
 		parent.is_dead = true
@@ -67,10 +63,8 @@ func process_physics(delta: float) -> void:
 	
 	initial_velocity *= decay_rate
 	
-	# Aplica a gravidade
 	initial_velocity.y += gravity * delta
 	
-	# Atualiza a velocidade do avião
 	parent.linear_velocity = initial_velocity
 	
 	var spin_increase : float = abs(initial_velocity.y) * spin_increase_factor
@@ -79,10 +73,8 @@ func process_physics(delta: float) -> void:
 		initial_angular_velocity = initial_angular_velocity / 2
 	
 	
-	# Mantém o sentido original da rotação enquanto aumenta sua magnitude
 	if initial_angular_velocity != 0:
 		var rotation_direction : float = sign(initial_angular_velocity)
 		parent.angular_velocity = (abs(initial_angular_velocity) + spin_increase) * rotation_direction
 	else:
-		# Se não havia rotação inicial, não adiciona rotação
 		parent.angular_velocity = 0

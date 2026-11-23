@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="BoatStats" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="s_boat"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/destroyer.png" id="t_sprite"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(8.5, 1)
+allowed_types = Array[int]([2, 0])
+with_base = true
+max_size = 1
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(45, 10)
+
+[sub_resource type="RectangleShape2D" id="water"]
+size = Vector2(40, 8)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(40, 8)
+
+[resource]
+script = ExtResource("s_boat")
+name = "destroyer"
+speed = 380.0
+price = 11
+health = 30.0
+unit_class = 1
+unlock_cost = 45
+deceleration = 0.5
+max_tilt_angle = 0.25
+water_colision_shape = SubResource("water")
+water_colision_pos = Vector2(-1, 1.0)
+radar_distance = 250
+produce_cd = 3
+sprite = ExtResource("t_sprite")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0")])
+hitbox_colision_shape = SubResource("hit")
+hitbox_colision_pos = Vector2(0, 2)
+particles_shape = SubResource("part")

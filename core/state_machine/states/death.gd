@@ -10,20 +10,16 @@ var particle_component : ParticlesComponent
 
 func enter() -> void:
 	parent.collision_layer = 2
-	#parent.gravity_scale = parent.gravity_scale *4
 	death_rotation_speed = randf_range(-0.2, 0.2)
 	parent.rotation = death_rotation_speed/20
 	parent.entity_destroy.emit(parent.global_position, parent.entity_stats, parent.team_stats)
-	#death_rotation_speed = -death_rotation_speed
 	pass
 	
 func process_input(_event: InputEvent) -> void:
 	return
 
 func process_physics(delta: float) -> void:
-	#super(delta)
 	parent.rotation = lerp(parent.rotation, parent.rotation +death_rotation_speed, delta)
-	#prints(parent.gravity_scale)
 	death_deespawn_delay -= 1;
 	if death_deespawn_delay == 0:
 		var particle : ParticleProcessMaterial = particle_component.hit.process_material

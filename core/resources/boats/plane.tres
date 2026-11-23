@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="AirPlaneState" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="1_slot"]
+[ext_resource type="Script" uid="uid://dbw1ejv2a2c2l" path="res://core/resources/airplane_stats.gd" id="2_air"]
+[ext_resource type="Texture2D" uid="uid://dmjmaet2fmdum" path="res://assets/game/troops/plane/plane_3.png" id="3_sprite"]
+
+[sub_resource type="Resource" id="slot_1"]
+script = ExtResource("1_slot")
+position = Vector2(7, 0)
+allowed_types = Array[int]([0])
+with_base = false
+
+[sub_resource type="RectangleShape2D" id="hitbox"]
+size = Vector2(15, 8)
+
+[sub_resource type="RectangleShape2D" id="particles"]
+size = Vector2(5, 5)
+
+[resource]
+script = ExtResource("2_air")
+name = "plane"
+health = 6.0
+speed = 110.0
+radar_distance = 500
+price = 8
+produce_cd = 3
+unit_class = 2
+unlock_cost = 50
+sprite = ExtResource("3_sprite")
+gun_slots = Array[ExtResource("1_slot")]([SubResource("slot_1")])
+hitbox_colision_shape = SubResource("hitbox")
+particles_shape = SubResource("particles")

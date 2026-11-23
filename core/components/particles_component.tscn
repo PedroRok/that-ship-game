@@ -1,9 +1,9 @@
 [gd_scene load_steps=22 format=3 uid="uid://hcvj4c35uk0o"]
 
-[ext_resource type="Script" path="res://core/components/particles_component.gd" id="1_hd7pq"]
-[ext_resource type="Script" path="res://core/components/particles/trail_particle.gd" id="2_jslqo"]
-[ext_resource type="Script" path="res://core/components/particles/fire_particle.gd" id="3_jxc27"]
-[ext_resource type="Script" path="res://core/components/particles/hit_particle.gd" id="4_fcvn6"]
+[ext_resource type="Script" uid="uid://c5pfqad5x0cin" path="res://core/components/particles_component.gd" id="1_hd7pq"]
+[ext_resource type="Script" uid="uid://d1qajuj64nv2r" path="res://core/components/particles/trail_particle.gd" id="2_jslqo"]
+[ext_resource type="Script" uid="uid://ca5ewd2pf82jo" path="res://core/components/particles/fire_particle.gd" id="3_jxc27"]
+[ext_resource type="Script" uid="uid://3leeo1whwcwi" path="res://core/components/particles/hit_particle.gd" id="4_fcvn6"]
 
 [sub_resource type="Curve" id="Curve_7mjkd"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -76,7 +76,7 @@ colors = PackedColorArray(0, 0.686, 0.98, 1, 1, 1, 1, 1)
 gradient = SubResource("Gradient_c4a3p")
 
 [sub_resource type="Curve" id="Curve_xg273"]
-min_value = -1.0
+_limits = [-1.0, 1.0, 0.0, 1.0]
 _data = [Vector2(0, -1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 

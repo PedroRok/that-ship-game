@@ -6,12 +6,14 @@ var barrel_texture : Sprite2D
 
 @export
 var fixed_angle : bool = false
+@export
+var needs_line_of_sight : bool = true
 
 @onready 
 var gun_line_of_sight: RayCast2D = $GunLineOfSight
 
 func shoot_gun(direction: Vector2) -> void:
-	if (gun_line_of_sight.is_colliding()):
+	if (!needs_line_of_sight or gun_line_of_sight.is_colliding()):
 		super.shoot_gun(direction)
 
 func _physics_process(_delta: float) -> void:

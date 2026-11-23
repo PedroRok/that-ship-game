@@ -15,6 +15,10 @@ func _ready() -> void:
 	if entity:
 		default_health = entity.entity_stats.health
 		actual_health = entity.entity_stats.health
+		if (!Engine.is_editor_hint()):
+			var bar : HealthBar = HealthBar.new()
+			entity.add_child.call_deferred(bar)
+			bar.setup.call_deferred(entity, self)
 	else:
 		actual_health = default_health
 	
@@ -22,10 +26,10 @@ func handle_hit(damage: Damage) -> bool:
 	actual_health -= damage.damage
 	if actual_health <= 0:
 		death_event.emit()
-		clear() # Removes the health text
+		clear()
 		return false
 	else:
-		text = str(actual_health)
+		text = ""
 		return true
 
 func get_health() -> float:

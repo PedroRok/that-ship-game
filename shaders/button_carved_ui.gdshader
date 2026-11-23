@@ -3,7 +3,7 @@ shader_type canvas_item;
 group_uniforms Properties;
 uniform bool enabled : instance_index(0) = true;
 uniform sampler2D reference_texture;
-uniform float shadow_size: hint_range(0.001, 0.15) = 0.01; // Tamanho fixo da sombra
+uniform float shadow_size: hint_range(0.001, 0.15) = 0.01;
 uniform bool down_light = true;
 uniform bool invert_top_to_bottom = false;
 group_uniforms Colors;
@@ -11,14 +11,14 @@ uniform vec4 base_gray: source_color = vec4(0.7, 0.7, 0.7, 1.0);
 uniform vec4 shadow_gray: source_color = vec4(0.4, 0.4, 0.4, 1.0);
 uniform vec4 darker_shadow_gray: source_color = vec4(0.33, 0.33, 0.33, 1.0);
 uniform vec4 light_color: source_color = vec4(0.4825, 0.4825, 0.4825, 1.0);
-// Progress bar module
 group_uniforms ProgressBar;
 uniform float progress_bar : hint_range(0.0, 1.0);
 uniform vec4 progress_bar_color : source_color = vec4(0.4825, 0.4825, 0.4825, 1.0);
+uniform bool progress_matched_only = false;
 
 vec4 manage_progress_bar(vec2 uv, vec4 color) {
 	if (uv.y > (1.0 - progress_bar)) {
-		return mix(color, progress_bar_color, progress_bar_color.a);
+		return vec4(mix(color.rgb, progress_bar_color.rgb, progress_bar_color.a), color.a);
 	}
 	return color;
 }
@@ -26,7 +26,6 @@ vec4 manage_progress_bar(vec2 uv, vec4 color) {
 void fragment() {
 	if (enabled) {
 	    vec2 uv = UV;
-	    // Usando um valor fixo em vez de TEXTURE_PIXEL_SIZE
 		float final_shadow_size = shadow_size;
 		if (invert_top_to_bottom) {
 			final_shadow_size = shadow_size * -1.;
@@ -44,7 +43,6 @@ void fragment() {
 	    vec4 color_above_2 = texture(TEXTURE, uv_above_2);
 	    vec4 color_below = texture(TEXTURE, uv_below);
 	    
-	    // Só processa se o pixel de referência não for transparente
 	    if (reference_color.a > 0.1) {
 	        float threshold = 0.5;
 	        bool matches_reference = 
@@ -73,7 +71,9 @@ void fragment() {
 	                COLOR = vec4(light_color.rgb, current_color.a);
 	            }
 	        }
-			COLOR = manage_progress_bar(uv, COLOR);
+			if (!progress_matched_only || matches_reference) {
+				COLOR = manage_progress_bar(uv, COLOR);
+			}
 	    }
 	}
 }

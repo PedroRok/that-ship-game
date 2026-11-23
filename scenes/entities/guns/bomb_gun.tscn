@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/entities/guns/scripts/bomb_gun.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/entities/bullets/bomb.tscn" id="2"]
+
+[node name="BombGun" type="Node2D" node_paths=PackedStringArray("end_barrel")]
+script = ExtResource("1")
+gun_type = 10
+time_to_shoot = 90
+damage_scale = 4.0
+bullet = ExtResource("2")
+end_barrel = NodePath("EndBarrel")
+
+[node name="EndBarrel" type="Marker2D" parent="."]
+position = Vector2(0, 3)
+gizmo_extents = 0.0

@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="BoatStats" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="s_boat"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/missile_frigate.png" id="t_sprite"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(-20, -2)
+allowed_types = Array[int]([1, 0])
+with_base = true
+max_size = 0
+
+[sub_resource type="Resource" id="slot_1"]
+script = ExtResource("s_slot")
+position = Vector2(-12, -2)
+allowed_types = Array[int]([1, 0])
+with_base = true
+max_size = 0
+
+[sub_resource type="Resource" id="slot_2"]
+script = ExtResource("s_slot")
+position = Vector2(-4, -2)
+allowed_types = Array[int]([1, 0])
+with_base = true
+max_size = 0
+
+[sub_resource type="Resource" id="slot_3"]
+script = ExtResource("s_slot")
+position = Vector2(20, 0)
+allowed_types = Array[int]([4, 2, 0])
+with_base = true
+max_size = 1
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(48, 15)
+
+[sub_resource type="RectangleShape2D" id="water"]
+size = Vector2(44, 8)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(44, 10)
+
+[resource]
+script = ExtResource("s_boat")
+name = "frigate"
+speed = 300.0
+price = 14
+health = 38.0
+unit_class = 1
+unlock_cost = 60
+deceleration = 0.6
+max_tilt_angle = 0.2
+water_colision_shape = SubResource("water")
+water_colision_pos = Vector2(-1, 2.0)
+radar_distance = 280
+produce_cd = 4
+sprite = ExtResource("t_sprite")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0"), SubResource("slot_1"), SubResource("slot_2"), SubResource("slot_3")])
+hitbox_colision_shape = SubResource("hit")
+hitbox_colision_pos = Vector2(0, 2)
+particles_shape = SubResource("part")

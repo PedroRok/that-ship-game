@@ -17,6 +17,9 @@ func enter() -> void:
 	timer_started = false
 	pass
 	
+func exit() -> void:
+	parent.angular_velocity = 0
+
 func can_change_to() -> void:
 	can_change = true
 
@@ -27,6 +30,8 @@ func process_physics(delta: float) -> void:
 		Transitioned.emit(self, "AirDeath")
 		return
 	
+	if (avoid_base_climb()):
+		return
 	if distance_warn_component.enemy_hitbox.size() < 1 && can_change && !distance_warn_component.is_too_low:
 		Transitioned.emit(self, "AirMove")
 		return
@@ -37,28 +42,25 @@ func process_physics(delta: float) -> void:
 		set_guns_enemy(target)
 	
 	for gun in parent.get_guns():
-		gun.shoot_gun(Vector2(parent.team_stats.direction, 0))
+		gun.shoot_gun(Vector2(1, 0))
 		gun.projectile_rotation_spawn = parent.rotation
 		
 		
-	# Lógica de manobra evasiva
 	if distance_warn_component.is_too_low:
-		var target_angle : float = -PI/4  # 45 graus para cima
-		var current_angle : float = parent.rotation
-		parent.angular_velocity = get_rotation_direction(current_angle, target_angle) * 3.0
+		var target_angle : float = -PI/4
+		var current_angle : float = to_heading(parent.rotation)
+		parent.angular_velocity = get_rotation_direction(current_angle, target_angle) * 3.0 * mirror_sign()
 		start_timer(3)
 	elif distance_warn_component.enemy_hitbox.size() >= 1:
-		# Lógica original de manobra para evitar obstáculos
 		var obstacle : Node2D = distance_warn_component.enemy_hitbox[0]
 		var avoid_direction : Vector2 = (parent.global_position - obstacle.get_hitbox_parent().get_center_pos()).normalized()
-		var target_angle : float = avoid_direction.angle()
-		var current_angle : float = parent.rotation
-		parent.angular_velocity = get_rotation_direction(current_angle, target_angle) * 3.0
+		var target_angle : float = to_heading(avoid_direction.angle())
+		var current_angle : float = to_heading(parent.rotation)
+		parent.angular_velocity = get_rotation_direction(current_angle, target_angle) * 3.0 * mirror_sign()
 		start_timer(2)
 	else:
 		start_timer(1)
 	
-	# Mantém movimento constante
 	var direction : Vector2 = Vector2(cos(parent.rotation), sin(parent.rotation))
 	parent.linear_velocity = direction * parent.entity_stats.speed
 	

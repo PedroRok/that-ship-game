@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://chtsijarpkyuk"]
 
-[ext_resource type="Script" path="res://core/components/radar_component.gd" id="1_pr4jj"]
+[ext_resource type="Script" uid="uid://cjqypad2pnmlp" path="res://core/components/radar_component.gd" id="1_pr4jj"]
 
 [node name="RadarComponent" type="Area2D"]
 script = ExtResource("1_pr4jj")

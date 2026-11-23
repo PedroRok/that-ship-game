@@ -11,6 +11,11 @@ var direction : Vector2 = Vector2.ZERO
 
 var team : int = -1
 
+var attacker_class : Enums.UnitClass = Enums.UnitClass.STRUCTURE
+
+var hits_air : bool = true
+var hits_submerged : bool = false
+
 var already_hit : Array[Area2D]
 
 var target : Node2D
@@ -34,10 +39,16 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 		return 
 	if (area is HitboxComponent):
 		var ship : Entity = area.entity
+		if (ship.is_submerged() and !hits_submerged):
+			return
+		if (ship.entity_stats is AirPlaneState and !hits_air):
+			return
 		if (ship.team_stats.team_id != team):
 			if (area.enabled):
 				already_hit.append(area)
-				area.handle_hit(damage, direction.x)
+				var scaled : Damage = damage.duplicate()
+				scaled.damage *= Global.counter_multiplier(attacker_class, ship.entity_stats.unit_class)
+				area.handle_hit(scaled, direction.x)
 				if (bullet_stats.piercing <= already_hit.size()):
 					remove_bullet()
 	if (area is BaseHitboxComponent):
@@ -47,7 +58,7 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 			area.handle_hit(damage, direction.x)
 			if (bullet_stats.piercing <= already_hit.size()):
 				remove_bullet()
-	pass # Replace with function body.
+	pass
 
 func remove_bullet() -> void:
 	queue_free()

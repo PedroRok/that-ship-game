@@ -25,15 +25,23 @@ func handle_hit(damage : Damage, direction : float) -> void:
 		entity.enabled = enabled
 		handle_hit_visual(health_component)
 	
-	if (entity.entity_stats is BoatStats):
-		var final_knockback : float = damage.knockback * (1 - entity.entity_stats.knockback_resistance)
+	if (entity.entity_stats is BoatStats and !(entity.entity_stats is AirPlaneState)):
+		var width : float = entity.entity_stats.sprite.get_width() if entity.entity_stats.sprite else 30.0
+		var size_factor : float = clampf(28.0 / width, 0.15, 1.0) * 0.2
+		var final_knockback : float = damage.knockback * (1 - entity.entity_stats.knockback_resistance) * size_factor
 		entity.linear_velocity.x = direction * 20 * final_knockback
 		entity.rotation = clamp(rotation+(direction/10.) * final_knockback, 0, 10)
 	
 func handle_hit_visual(health : HealthComponent) -> void:
 	var health_val : float = health.actual_health / health.default_health
 	var shader_val : float = lerp(0.7, 1.0, health_val)
-	#entity.sprite.material.set_shader_parameter("dissolve", shader_val)
+	var body_sprite : CanvasItem = null
+	if (entity is ShipEntity):
+		body_sprite = (entity as ShipEntity).sprite
+	elif (entity is AirEntity):
+		body_sprite = (entity as AirEntity).animated_sprite
+	if (body_sprite and body_sprite.material is ShaderMaterial):
+		(body_sprite.material as ShaderMaterial).set_shader_parameter("dissolve", shader_val)
 	
 	var amout_ratio_val : float = lerp(1,0, health_val)
 	particle_component.fire.amount_ratio = amout_ratio_val
@@ -48,10 +56,10 @@ var is_on_water : bool = false
 func _on_area_shape_entered(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
 	if (area is WaterHitbox):
 		is_on_water = true
-	pass # Replace with function body.
+	pass
 
 
 func _on_area_shape_exited(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int) -> void:
 	if (area is WaterHitbox):
 		is_on_water = false
-	pass # Replace with function body.
+	pass

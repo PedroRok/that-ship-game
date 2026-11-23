@@ -1,7 +1,3 @@
-/* License CC BY-NC-SA 4.0 Deed */
-/* https://creativecommons.org/licenses/by-nc-sa/4.0/ */
-/* Fork of Ryk's VCR distortion shader */
-/* https://www.shadertoy.com/view/ldjGzV */
 
 shader_type canvas_item;
 

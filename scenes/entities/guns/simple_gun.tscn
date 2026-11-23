@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://hwtj0e2rrjy8"]
 
-[ext_resource type="Script" path="res://scenes/entities/guns/scripts/simple_gun.gd" id="1_cbkwq"]
+[ext_resource type="Script" uid="uid://6ffvlckh1fcl" path="res://scenes/entities/guns/scripts/simple_gun.gd" id="1_cbkwq"]
 [ext_resource type="Texture2D" uid="uid://dtbow7ublvxey" path="res://assets/game/troops/guns/gun.png" id="2_c0wok"]
 [ext_resource type="PackedScene" uid="uid://cgpceuu5uri5f" path="res://scenes/entities/bullets/bullet.tscn" id="2_nka58"]
 [ext_resource type="AudioStream" uid="uid://c7pjn1utti8eo" path="res://assets/game/sounds/cannon_base.wav" id="3_y3avm"]

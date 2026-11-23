@@ -16,19 +16,19 @@ vec4 apply_outline_if_needed(sampler2D texture, vec2 uv, vec2 pixel_size, vec2 p
 
 void fragment() {
 	vec4 color = COLOR;
-    if (enable) 
+    if (enable)
     {
         float pixel_size_x = 1.0 / float(textureSize(TEXTURE, 0).x);
         float pixel_size_y = 1.0 / float(textureSize(TEXTURE, 0).y);
         vec2 pixel_size = vec2(pixel_size_x, pixel_size_y);
-        
+
         if (texture(TEXTURE, UV).a == 0.0)
-        { 
+        {
             for (int x = -1; x <= 1; x++)
             {
                 for (int y = -1; y <= 1; y++)
                 {
-					
+
 					vec4 outline_result;
 					if (bold) {
                     	vec2 pixel_offset = vec2(float(x), float(y));
@@ -40,7 +40,7 @@ void fragment() {
 						vec4 outline_result_2 = apply_outline_if_needed(TEXTURE, UV, pixel_size, pixel_offset_2);
 						outline_result = outline_result + outline_result_2;
 					}
-                    
+
                     if (outline_result.a > 0.0) {
                         COLOR = outline_result;
                     }

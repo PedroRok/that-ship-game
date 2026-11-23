@@ -1,8 +1,8 @@
 [gd_scene load_steps=11 format=3 uid="uid://cmcis6lmx3463"]
 
-[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/missile.gd" id="1_ee5i1"]
-[ext_resource type="Script" path="res://core/resources/bullet_stats.gd" id="2_r2unv"]
-[ext_resource type="Script" path="res://scenes/entities/bullets/scripts/damage.gd" id="2_wyh67"]
+[ext_resource type="Script" uid="uid://canqlu7v0tkyt" path="res://scenes/entities/bullets/scripts/missile.gd" id="1_ee5i1"]
+[ext_resource type="Script" uid="uid://b4afhyhkkhdc8" path="res://core/resources/bullet_stats.gd" id="2_r2unv"]
+[ext_resource type="Script" uid="uid://beaq6qqhoc2eb" path="res://scenes/entities/bullets/scripts/damage.gd" id="2_wyh67"]
 
 [sub_resource type="Resource" id="Resource_anf2l"]
 resource_local_to_scene = true
