@@ -13,7 +13,8 @@ func _ready() -> void:
 	var legacy: GameUI = $CanvasLayer/GameUI
 	legacy.hide()
 	$CanvasLayer/Debugger.hide()
-	wave_label.hide()
+	if wave_label:
+		wave_label.hide()
 	ally_base.health_component.label.hide()
 	enemy_base.health_component.label.hide()
 	hud = HUD.new()
@@ -21,7 +22,10 @@ func _ready() -> void:
 	hud.legacy = legacy
 	hud.open_menu.connect(open_pause)
 	canvas_layer.add_child(hud)
-	if wave_manager.current_wave_number() == 1:
+	if campaign:
+		ally_max_hp = float(Global.run.base_max_hp)
+		enemy_max_hp = campaign.enemy_hp_max
+	elif wave_manager.current_wave_number() == 1:
 		ally_max_hp = ally_base.health_component.health
 
 	var skill_buttons: HBoxContainer = skill_manager.bomb_button.get_parent()
@@ -30,7 +34,7 @@ func _ready() -> void:
 	skill_buttons.offset_right = 200.0
 	skill_buttons.offset_top = 40.0
 	skill_buttons.offset_bottom = 80.0
-	skill_manager.hint_label.position.y = 86.0
+	skill_manager.hint_label.position.y = 106.0
 	skill_manager.set_process_input(false)
 	camera.set_process_input(false)
 

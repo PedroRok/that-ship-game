@@ -44,6 +44,7 @@ var stat_buttons: Dictionary = {}
 var last_reasons: Array[String]
 var bottom_panel: PanelContainer
 var top_panel: PanelContainer
+var minimap: BattleMinimap
 var hover_stat: StringName
 var focused_stat: StringName
 
@@ -151,6 +152,14 @@ func _make_header() -> void:
 	row.add_child(wave_caption)
 	enemy_hp = _hp_bar(row, Color("#eb6862"))
 	enemy_caption = enemy_hp.get_meta("caption")
+	minimap = BattleMinimap.new()
+	minimap.round_scene = round_scene
+	add_child(minimap)
+	minimap.set_anchors_preset(PRESET_CENTER_TOP)
+	minimap.offset_left = -250.0
+	minimap.offset_right = 250.0
+	minimap.offset_top = 84.0
+	minimap.offset_bottom = 100.0
 
 func _hp_bar(row: HBoxContainer, color: Color) -> ProgressBar:
 	var column := _column(row, 4)
@@ -553,7 +562,10 @@ func _process(_delta: float) -> void:
 	var enemy_max: float = float(round_scene.get("enemy_max_hp"))
 	_update_hp(ally_hp, ally_caption, "BASE HP", round_scene.ally_base.health_component.health, ally_max)
 	_update_hp(enemy_hp, enemy_caption, "ENEMY HP", round_scene.enemy_base.health_component.health, enemy_max)
-	wave_caption.text = "WAVE %02d" % round_scene.wave_manager.current_wave_number()
+	if round_scene.wave_manager:
+		wave_caption.text = "WAVE %02d" % round_scene.wave_manager.current_wave_number()
+	elif Global.run:
+		wave_caption.text = "FLOOR %02d" % (int(Global.run.map.get_node(Global.run.pending_node)["col"]) + 1)
 	if int(round_scene.get("boss_notice_until")) > Time.get_ticks_msec():
 		wave_caption.text += "  BOSS"
 	for kind: int in dock_status:
@@ -600,5 +612,5 @@ func _update_dock(kind: int) -> void:
 	status.text = caption
 
 func covers_point(point: Vector2) -> bool:
-	return top_panel.get_global_rect().has_point(point) or bottom_panel.get_global_rect().has_point(point)
+	return top_panel.get_global_rect().has_point(point) or bottom_panel.get_global_rect().has_point(point) or minimap.get_global_rect().has_point(point)
 

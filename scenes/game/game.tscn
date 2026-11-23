@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://05gds0mfrkdw" path="res://scenes/camera/camera_controller.gd" id="1_kwyac"]
 [ext_resource type="Script" uid="uid://b8iifhef70040" path="res://scenes/game/scripts/game.gd" id="1_lrdil"]
+[ext_resource type="Script" path="res://scenes/game/scripts/sky_parallax.gd" id="sky_parallax"]
 [ext_resource type="PackedScene" uid="uid://jnwo22vy1jsj" path="res://scenes/game/base/base.tscn" id="1_q0hc1"]
 [ext_resource type="Script" uid="uid://dla3b4wcymkgr" path="res://core/resources/boat_stats.gd" id="5_2ef6v"]
 [ext_resource type="Shader" uid="uid://d37u5mosxylto" path="res://shaders/sky.gdshader" id="5_a1aak"]
@@ -154,6 +155,7 @@ z_index = -1800
 material = SubResource("ShaderMaterial_o45il")
 offset_right = 1281.0
 offset_bottom = 716.0
+script = ExtResource("sky_parallax")
 
 [node name="CloudsFront" type="ColorRect" parent="Environment"]
 z_index = 1500
