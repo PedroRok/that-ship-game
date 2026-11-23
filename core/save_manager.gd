@@ -60,3 +60,28 @@ static func load_into(stats : PlayerStats, catalog : ShopCatalog) -> bool:
 static func delete_save() -> void:
 	if (FileAccess.file_exists(SAVE_PATH)):
 		DirAccess.remove_absolute(SAVE_PATH)
+
+const RUN_PATH : String = "user://run.json"
+
+static func has_run() -> bool:
+	return FileAccess.file_exists(RUN_PATH)
+
+static func save_run(run : RunState) -> void:
+	var file : FileAccess = FileAccess.open(RUN_PATH, FileAccess.WRITE)
+	if (!file):
+		push_error("Could not write run save: %s" % error_string(FileAccess.get_open_error()))
+		return
+	file.store_string(JSON.stringify(run.to_dict()))
+
+static func load_run() -> RunState:
+	if (!FileAccess.file_exists(RUN_PATH)):
+		return null
+	var parsed : Variant = JSON.parse_string(FileAccess.get_file_as_string(RUN_PATH))
+	if (typeof(parsed) != TYPE_DICTIONARY):
+		push_warning("Run save corrupted, ignoring.")
+		return null
+	return RunState.from_dict(parsed)
+
+static func delete_run() -> void:
+	if (FileAccess.file_exists(RUN_PATH)):
+		DirAccess.remove_absolute(RUN_PATH)

@@ -24,6 +24,12 @@ signal change_to_scene(name : Menu)
 
 var player_stats : PlayerStats = preload("res://core/resources/player/player_stats.tres")
 
+enum StartMode { NONE, CAMPAIGN, CLASSIC }
+var start_mode : StartMode = StartMode.NONE
+var start_new_campaign : bool = true
+
+var run : RunState
+
 const CATALOG : ShopCatalog = preload("res://core/resources/shop_catalog.tres")
 
 func modify(target : Enums.UpgradeTarget, stat : StringName, base_value : float, entity_name : String = "") -> float:
@@ -35,6 +41,8 @@ func modify(target : Enums.UpgradeTarget, stat : StringName, base_value : float,
 		if (target == Enums.UpgradeTarget.ENTITY and !upgrade.affects(entity_name)):
 			continue
 		value = upgrade.apply(value, player_stats.get_upgrade_level(upgrade))
+	if (run and run.stage == RunData.Stage.BATTLE):
+		value = run.modify(target, stat, value, entity_name)
 	return value
 
 func upgraded_entity(stats : EntityStats) -> EntityStats:
@@ -69,14 +77,30 @@ enum Menu {
 	SHOP,
 	SELECT,
 	GAME,
-	RESEARCH
+	RESEARCH,
+	RUN_MAP,
+	RUN_BRIEFING,
+	RUN_NODE_DONE,
+	RUN_RELIC,
+	RUN_EVENT,
+	RUN_SHIPYARD,
+	RUN_END,
+	CAMPAIGN_SELECT
 }
 
 const menus : Dictionary = {
 	Menu.SHOP : preload("res://scenes/ui/shop/shop_menu.tscn"),
 	Menu.SELECT : preload("res://scenes/ui/rounds/rounds_menu.tscn"),
-	Menu.GAME : preload("res://scenes/game/game.tscn"),
-	Menu.RESEARCH : preload("res://scenes/ui/research/research_menu.tscn")
+	Menu.GAME : preload("res://scenes/ui/naval_hud/naval_round.tscn"),
+	Menu.RESEARCH : preload("res://scenes/ui/research/research_menu.tscn"),
+	Menu.RUN_MAP : preload("res://scenes/ui/run/run_map_screen.tscn"),
+	Menu.RUN_BRIEFING : preload("res://scenes/ui/run/briefing_screen.tscn"),
+	Menu.RUN_NODE_DONE : preload("res://scenes/ui/run/node_done_screen.tscn"),
+	Menu.RUN_RELIC : preload("res://scenes/ui/run/relic_choice_screen.tscn"),
+	Menu.RUN_EVENT : preload("res://scenes/ui/run/event_screen.tscn"),
+	Menu.RUN_SHIPYARD : preload("res://scenes/ui/run/shipyard_screen.tscn"),
+	Menu.RUN_END : preload("res://scenes/ui/run/run_end_screen.tscn"),
+	Menu.CAMPAIGN_SELECT : preload("res://scenes/ui/run/campaign_select_screen.tscn")
 }
 
 func change_scene(name : Menu) -> void:

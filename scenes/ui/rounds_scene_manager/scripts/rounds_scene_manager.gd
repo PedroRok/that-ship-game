@@ -17,7 +17,8 @@ func _ready() -> void:
 		Global.player_stats.gear = maxi(Global.player_stats.gear, 20000)
 		Global.player_stats.boss_coin = maxi(Global.player_stats.boss_coin, 50)
 	Global.change_to_scene.connect(Callable(self, "change_to_menu"))
-	var node : Node = get_node_by_scene(start_scene)
+	var first_scene : Global.Menu = Global.Menu.CAMPAIGN_SELECT if start_scene == Global.Menu.SHOP else start_scene
+	var node : Node = get_node_by_scene(first_scene)
 	menu_scene = node
 	pass
 

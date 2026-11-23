@@ -260,4 +260,7 @@ func _on_options_closed() -> void:
 func _abandon() -> void:
 	get_tree().paused = false
 	queue_free()
+	if (Global.run):
+		RunFlow.abandon()
+		return
 	Global.change_scene(Global.Menu.SHOP)

@@ -2,6 +2,7 @@ class_name ShipManager
 extends Node
 
 signal boss_defeated(entity_stats : EntityStats)
+signal unit_destroyed(entity_stats : EntityStats, team_stats : TeamStats)
 
 @export
 var bases : Array[Base]
@@ -57,6 +58,7 @@ func _base_of(team_res : TeamStats) -> Base:
 	return null
 
 func handle_ship_destroy(pos : Vector2, _entity_stats : EntityStats, team_stats : TeamStats) -> void:
+	unit_destroyed.emit(_entity_stats, team_stats)
 	if (team_stats.team_id == 1):
 		return
 	if (_entity_stats.is_boss):

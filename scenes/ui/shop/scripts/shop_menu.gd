@@ -226,6 +226,7 @@ func _build_header() -> PanelContainer:
 	row.add_child(start)
 	row.add_child(_spacer())
 	for entry : Dictionary in [
+			{"text": "CHANGE MODE", "width": 150, "action": func() -> void: Global.change_scene(Global.Menu.CAMPAIGN_SELECT)},
 			{"text": "RESEARCH", "width": 130, "action": func() -> void: Global.change_scene(Global.Menu.RESEARCH)},
 			{"text": "OPTIONS", "width": 130, "action": Global.open_options}]:
 		var button : Button = Button.new()
@@ -306,11 +307,11 @@ func _build_loadout() -> PanelContainer:
 	slots_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(slots_row)
 	var start : Button = Button.new()
-	start.text = "START RUN"
-	start.custom_minimum_size = Vector2(132, 40)
+	start.text = _start_text()
+	start.custom_minimum_size = Vector2(190, 40)
 	start.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_skin(start, CYAN, Color("#1f4448"))
-	start.pressed.connect(_on_button_button_down)
+	start.pressed.connect(_on_start_pressed)
 	row.add_child(start)
 	return panel
 
@@ -604,6 +605,20 @@ func _toggle_loadout(unit : EntityStats) -> void:
 	if (stats.toggle_loadout(unit.name)):
 		Global.save_game()
 	_refresh_all()
+
+func _start_text() -> String:
+	if (Global.start_mode == Global.StartMode.CAMPAIGN):
+		return "CONTINUE CAMPAIGN" if !Global.start_new_campaign else "START CAMPAIGN"
+	return "START ENDLESS"
+
+func _on_start_pressed() -> void:
+	if (Global.start_mode == Global.StartMode.CAMPAIGN):
+		if (Global.start_new_campaign):
+			RunFlow.start_new_run()
+		else:
+			RunFlow.continue_run()
+		return
+	Global.change_scene(Global.Menu.GAME)
 
 func _on_button_button_down() -> void:
 	Global.change_scene(Global.Menu.GAME)
