@@ -10,7 +10,7 @@ func requires_run() -> bool:
 	return false
 
 func screen_title() -> String:
-	return "Main menu"
+	return "MAIN MENU"
 
 func screen_subtitle() -> String:
 	return "CHOOSE A SAVE"
