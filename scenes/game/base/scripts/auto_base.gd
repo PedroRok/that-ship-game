@@ -23,6 +23,8 @@ var timer : Timer = $Timer
 var dock_timers : Dictionary = {}
 
 var production_mult : float = 1.0
+var director_interval_mult : float = 1.0
+var director_skip_chance : float = 0.0
 var stat_mult : float = 1.0
 var spawn_interval : float = 5.0
 var pending_boss : BoatStats
@@ -66,16 +68,26 @@ func apply_tier(tier : BaseTier) -> void:
 	health_component.label.text = str(tier.base_health)
 	_set_turrets(tier.turret_count)
 
+func set_director(interval_mult : float, skip_chance : float) -> void:
+	director_interval_mult = interval_mult
+	director_skip_chance = skip_chance
+	for dock_type : int in dock_timers:
+		var dock_timer : Timer = dock_timers[dock_type]
+		if (!dock_timer.is_stopped()):
+			dock_timer.wait_time = maxf(_dock_interval(dock_type), 0.1)
+
 func stop() -> void:
 	active = false
 	for dock_timer : Timer in dock_timers.values():
 		dock_timer.stop()
 
 func _dock_interval(dock_type : int) -> float:
-	return spawn_interval * production_mult * float(dock_interval_mult.get(dock_type, 1.0))
+	return spawn_interval * production_mult * director_interval_mult * float(dock_interval_mult.get(dock_type, 1.0))
 
 func _on_dock_timer(dock_type : int) -> void:
 	if (!active or ships.is_empty()):
+		return
+	if (director_skip_chance > 0.0 and pending_boss == null and randf() < director_skip_chance):
 		return
 	if (pending_boss and dock_type_of(pending_boss) == dock_type):
 		if (start_build_ship(pending_boss)):

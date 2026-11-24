@@ -8,6 +8,7 @@ const SEGMENTS : int = 20
 var icon : TextureRect
 var title_label : Label
 var detail_label : Label
+var debug_label : Label
 var time_label : Label
 var bar : HBoxContainer
 var full : Texture2D
@@ -51,20 +52,27 @@ func setup(objective : int) -> void:
 		bar.add_child(segment)
 	detail_label = _label("", PIXEL_FONT, 10, Color("#a3bec8"))
 	box.add_child(detail_label)
+	if (OS.is_debug_build()):
+		debug_label = _label("", PIXEL_FONT, 8, Color("#7795a1"))
+		box.add_child(debug_label)
 
 func _label(text : String, font : Font, size : int, color : Color) -> Label:
 	var label : Label = Label.new()
-	label.text = text
+	label.text = PixelText.fit(text, size)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.add_theme_font_override("font", font)
-	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_font_size_override("font_size", PixelText.snap(size))
 	label.add_theme_color_override("font_color", color)
 	return label
+
+func set_debug_text(text : String) -> void:
+	if (debug_label):
+		debug_label.text = PixelText.fit(text, 8)
 
 func update_state(headline : String, fraction : float, detail : String, time_left : float, warn : bool = false) -> void:
 	title_label.text = headline
 	title_label.add_theme_color_override("font_color", Color("#ecc078") if warn else Color("#eaf3f5"))
-	detail_label.text = detail
+	detail_label.text = PixelText.fit(detail, 8)
 	time_label.text = "" if time_left < 0.0 else "%d:%02d" % [int(time_left) / 60, int(time_left) % 60]
 	var filled : int = clampi(int(round(fraction * SEGMENTS)), 0, SEGMENTS)
 	if (filled == _last_filled):

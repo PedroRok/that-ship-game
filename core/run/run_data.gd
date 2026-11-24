@@ -33,12 +33,19 @@ const RELIC_OFFER_SIZE : int = 3
 
 const GEARS_PER_NODE : int = 6
 const GEARS_VICTORY_BONUS : int = 60
-const GEARS_PER_LEFTOVER_SCREWS : int = 10
 const BOSS_COINS_ON_VICTORY : int = 2
 
 const ENEMY_SPAWN_INTERVAL : Array[float] = [7.0, 6.0, 5.2, 4.5, 4.0]
 const ENEMY_HEALTH_MULT : Array[float] = [0.8, 1.0, 1.2, 1.4, 1.6]
 const ELITE_HEALTH_MULT : float = 1.35
+const DIRECTOR_W_UNITS : float = 0.50
+const DIRECTOR_W_PROGRESS : float = 0.35
+const DIRECTOR_W_BASE_HP : float = 0.15
+const DIRECTOR_RANGE : float = 0.30
+const DIRECTOR_MAX_SKIP : float = 0.25
+const DIRECTOR_SMOOTH_SECONDS : float = 10.0
+const DIRECTOR_SAMPLE_SECONDS : float = 0.5
+const DIRECTOR_MIN_UNITS : int = 4
 const WAVE_RAMP_HEALTH : float = 1.06
 const WAVE_RAMP_INTERVAL : float = 0.96
 const WAVE_DURATION : float = 40.0

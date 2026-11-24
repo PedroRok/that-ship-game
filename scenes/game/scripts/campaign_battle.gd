@@ -16,6 +16,8 @@ var markers : ObjectiveMarkers
 var weather_layer : WeatherLayer
 var defense_point : DefensePoint
 var escort : Entity
+var director : ThreatDirector = ThreatDirector.new()
+var _director_clock : float = 0.0
 
 var done : bool = false
 var boss_defeated : bool = false
@@ -105,6 +107,7 @@ func _process(delta : float) -> void:
 	if (done):
 		return
 	elapsed += delta
+	_process_director(delta)
 	match objective:
 		RunData.Objective.DEFEND:
 			_process_defend(delta)
@@ -125,6 +128,31 @@ func _process(delta : float) -> void:
 		return
 	if (time_limit > 0.0 and elapsed >= time_limit):
 		_finish(false)
+
+func _process_director(delta : float) -> void:
+	_director_clock += delta
+	if (_director_clock < RunData.DIRECTOR_SAMPLE_SECONDS):
+		return
+	var step : float = _director_clock
+	_director_clock = 0.0
+	var allies : int = 0
+	var enemies : int = 0
+	var context : BattleContext = BattleContext.of(self)
+	if (context):
+		for unit : Entity in context.entities:
+			if (!is_instance_valid(unit) or unit.is_queued_for_deletion()):
+				continue
+			if (unit.team_stats.team_id == 1):
+				if (unit.entity_stats == null or unit.entity_stats.name != "escort"):
+					allies += 1
+			else:
+				enemies += 1
+	var ally_fraction : float = clampf(ally_base.health_component.health / maxf(float(run.base_max_hp), 1.0), 0.0, 1.0)
+	var enemy_fraction : float = clampf(enemy_base.health_component.health / enemy_hp_max, 0.0, 1.0)
+	director.update(step, allies, enemies, ally_fraction, enemy_fraction)
+	enemy_base.set_director(director.interval_mult, director.skip_chance)
+	hud.set_debug_text("THREAT %d  pace x%.2f  skip %d%%  units %d v %d" % [int(director.threat), director.interval_mult,
+			int(director.skip_chance * 100.0), allies, enemies])
 
 func _process_defend(delta : float) -> void:
 	contested = _enemy_in_zone()
