@@ -26,16 +26,49 @@ var gun_upgrades: Array[GunStats]
 const MAX_LOADOUT : int = 9
 var loadout : Array[String] = []
 
+func slot_limit() -> int:
+	return MAX_LOADOUT
+
 func in_loadout(unit_name : String) -> bool:
-	return loadout.has(unit_name)
+	return unit_name != "" and loadout.has(unit_name)
+
+func loadout_count() -> int:
+	var count : int = 0
+	for unit_name : String in loadout:
+		if (unit_name != ""):
+			count += 1
+	return count
+
+func _trim_loadout() -> void:
+	while (!loadout.is_empty() and loadout[loadout.size() - 1] == ""):
+		loadout.pop_back()
+
+func _pad_loadout() -> void:
+	while (loadout.size() < slot_limit()):
+		loadout.append("")
 
 func toggle_loadout(unit_name : String) -> bool:
-	if (loadout.has(unit_name)):
-		loadout.erase(unit_name)
+	if (in_loadout(unit_name)):
+		loadout[loadout.find(unit_name)] = ""
+		_trim_loadout()
 		return true
-	if (loadout.size() >= MAX_LOADOUT or !has_boat(unit_name)):
+	if (loadout_count() >= slot_limit() or !has_boat(unit_name)):
 		return false
-	loadout.append(unit_name)
+	_pad_loadout()
+	loadout[loadout.find("")] = unit_name
+	_trim_loadout()
+	return true
+
+func place_in_loadout(unit_name : String, index : int, limit : int) -> bool:
+	if (!has_boat(unit_name) or index < 0 or index >= limit):
+		return false
+	_pad_loadout()
+	var existing : int = loadout.find(unit_name)
+	var other : String = loadout[index]
+	if (existing >= 0):
+		loadout[existing] = other
+	loadout[index] = unit_name
+	_trim_loadout()
 	return true
 
 var gun_choices : Dictionary = {}
@@ -75,22 +108,43 @@ func set_gun_choice(unit_name : String, slot_index : int, gun_type : int) -> voi
 func loadout_entities() -> Array[EntityStats]:
 	var result : Array[EntityStats] = []
 	for unit_name : String in loadout:
+		if (unit_name == ""):
+			continue
 		for stats : EntityStats in unlocked_entities:
 			if (stats.name == unit_name):
 				result.append(stats)
 				break
 	return result
 
+func loadout_slots(count : int) -> Array[EntityStats]:
+	var result : Array[EntityStats] = []
+	for index : int in range(count):
+		var found : EntityStats = null
+		var unit_name : String = loadout[index] if index < loadout.size() else ""
+		if (unit_name != ""):
+			for stats : EntityStats in unlocked_entities:
+				if (stats.name == unit_name):
+					found = stats
+					break
+		result.append(found)
+	return result
+
 func sanitize_loadout() -> void:
 	var clean : Array[String] = []
 	for unit_name : String in loadout:
-		if (has_boat(unit_name) and !clean.has(unit_name) and clean.size() < MAX_LOADOUT):
+		if (clean.size() >= slot_limit()):
+			break
+		if (unit_name == "" or (has_boat(unit_name) and !clean.has(unit_name))):
 			clean.append(unit_name)
-	if (clean.is_empty()):
-		for stats : EntityStats in unlocked_entities:
-			if (clean.size() < MAX_LOADOUT):
-				clean.append(stats.name)
+		else:
+			clean.append("")
 	loadout = clean
+	if (loadout_count() == 0):
+		loadout = []
+		for stats : EntityStats in unlocked_entities:
+			if (loadout.size() < slot_limit()):
+				loadout.append(stats.name)
+	_trim_loadout()
 
 func has_boat(boat_name : String) -> bool:
 	for stats : EntityStats in unlocked_entities:
@@ -127,8 +181,8 @@ func buy_upgrade(upgrade : UpgradeStats) -> bool:
 
 func add_entity(entity : EntityStats) -> void:
 	unlocked_entities.append(entity)
-	if (loadout.size() < MAX_LOADOUT and !loadout.has(entity.name)):
-		loadout.append(entity.name)
+	if (loadout_count() < slot_limit() and !loadout.has(entity.name)):
+		toggle_loadout(entity.name)
 
 func buy(gear_needed : int, boat : BoatStats) -> bool:
 	if (has_boat(boat.name)):

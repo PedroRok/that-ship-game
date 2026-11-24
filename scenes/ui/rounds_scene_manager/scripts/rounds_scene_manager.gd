@@ -8,16 +8,11 @@ var menu_scene : Node
 var player_stats : PlayerStats
 
 func _ready() -> void:
-	Global.player_stats = player_stats.duplicate()
-	SaveManager.load_into(Global.player_stats, Global.CATALOG)
-	for starter : String in ["mini", "small"]:
-		if (!Global.player_stats.has_boat(starter)):
-			Global.player_stats.add_entity(Global.CATALOG.find_unit(starter))
-	if (Global.test_grant_gears):
-		Global.player_stats.gear = maxi(Global.player_stats.gear, 20000)
-		Global.player_stats.boss_coin = maxi(Global.player_stats.boss_coin, 50)
+	Global.stats_template = player_stats
+	SaveManager.migrate_legacy()
+	Global.load_slot(SaveManager.slot)
 	Global.change_to_scene.connect(Callable(self, "change_to_menu"))
-	var first_scene : Global.Menu = Global.Menu.CAMPAIGN_SELECT if start_scene == Global.Menu.SHOP else start_scene
+	var first_scene : Global.Menu = Global.Menu.MAIN_MENU if start_scene == Global.Menu.SHOP else start_scene
 	var node : Node = get_node_by_scene(first_scene)
 	menu_scene = node
 	pass

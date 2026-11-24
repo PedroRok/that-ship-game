@@ -1,8 +1,48 @@
 class_name SaveManager
 extends RefCounted
 
-const SAVE_PATH : String = "user://save.json"
+const LEGACY_SAVE_PATH : String = "user://save.json"
+const LEGACY_RUN_PATH : String = "user://run.json"
 const VERSION : int = 1
+const SLOT_COUNT : int = 3
+
+static var slot : int = 1
+
+static func save_path(index : int = slot) -> String:
+	return "user://save_%d.json" % index
+
+static func run_path(index : int = slot) -> String:
+	return "user://run_%d.json" % index
+
+static func migrate_legacy() -> void:
+	if (FileAccess.file_exists(LEGACY_SAVE_PATH) and !FileAccess.file_exists(save_path(1))):
+		DirAccess.rename_absolute(LEGACY_SAVE_PATH, save_path(1))
+	if (FileAccess.file_exists(LEGACY_RUN_PATH) and !FileAccess.file_exists(run_path(1))):
+		DirAccess.rename_absolute(LEGACY_RUN_PATH, run_path(1))
+
+static func slot_exists(index : int) -> bool:
+	return FileAccess.file_exists(save_path(index)) or FileAccess.file_exists(run_path(index))
+
+static func slot_summary(index : int) -> Dictionary:
+	var summary : Dictionary = {"exists": slot_exists(index), "gear": 0, "boss_coin": 0, "units": 0, "best_wave": 0, "run": null}
+	if (FileAccess.file_exists(save_path(index))):
+		var parsed : Variant = JSON.parse_string(FileAccess.get_file_as_string(save_path(index)))
+		if (typeof(parsed) == TYPE_DICTIONARY):
+			var data : Dictionary = parsed
+			summary["gear"] = int(data.get("gear", 0))
+			summary["boss_coin"] = int(data.get("boss_coin", 0))
+			summary["best_wave"] = int(data.get("best_wave", 0))
+			summary["units"] = (data.get("unlocked_entities", []) as Array).size()
+	if (FileAccess.file_exists(run_path(index))):
+		var run_data : Variant = JSON.parse_string(FileAccess.get_file_as_string(run_path(index)))
+		if (typeof(run_data) == TYPE_DICTIONARY):
+			summary["run"] = RunState.from_dict(run_data)
+	return summary
+
+static func delete_slot(index : int) -> void:
+	for path : String in [save_path(index), run_path(index)]:
+		if (FileAccess.file_exists(path)):
+			DirAccess.remove_absolute(path)
 
 static func save(stats : PlayerStats) -> void:
 	var names : Array[String] = []
@@ -18,16 +58,16 @@ static func save(stats : PlayerStats) -> void:
 		"loadout": stats.loadout,
 		"gun_choices": stats.gun_choices,
 	}
-	var file : FileAccess = FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	var file : FileAccess = FileAccess.open(save_path(), FileAccess.WRITE)
 	if (!file):
 		push_error("Could not write save: %s" % error_string(FileAccess.get_open_error()))
 		return
 	file.store_string(JSON.stringify(data, "\t"))
 
 static func load_into(stats : PlayerStats, catalog : ShopCatalog) -> bool:
-	if (!FileAccess.file_exists(SAVE_PATH)):
+	if (!FileAccess.file_exists(save_path())):
 		return false
-	var parsed : Variant = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
+	var parsed : Variant = JSON.parse_string(FileAccess.get_file_as_string(save_path()))
 	if (typeof(parsed) != TYPE_DICTIONARY):
 		push_warning("Save corrompido, ignorando.")
 		return false
@@ -58,30 +98,28 @@ static func load_into(stats : PlayerStats, catalog : ShopCatalog) -> bool:
 	return true
 
 static func delete_save() -> void:
-	if (FileAccess.file_exists(SAVE_PATH)):
-		DirAccess.remove_absolute(SAVE_PATH)
-
-const RUN_PATH : String = "user://run.json"
+	if (FileAccess.file_exists(save_path())):
+		DirAccess.remove_absolute(save_path())
 
 static func has_run() -> bool:
-	return FileAccess.file_exists(RUN_PATH)
+	return FileAccess.file_exists(run_path())
 
 static func save_run(run : RunState) -> void:
-	var file : FileAccess = FileAccess.open(RUN_PATH, FileAccess.WRITE)
+	var file : FileAccess = FileAccess.open(run_path(), FileAccess.WRITE)
 	if (!file):
 		push_error("Could not write run save: %s" % error_string(FileAccess.get_open_error()))
 		return
 	file.store_string(JSON.stringify(run.to_dict()))
 
 static func load_run() -> RunState:
-	if (!FileAccess.file_exists(RUN_PATH)):
+	if (!FileAccess.file_exists(run_path())):
 		return null
-	var parsed : Variant = JSON.parse_string(FileAccess.get_file_as_string(RUN_PATH))
+	var parsed : Variant = JSON.parse_string(FileAccess.get_file_as_string(run_path()))
 	if (typeof(parsed) != TYPE_DICTIONARY):
 		push_warning("Run save corrupted, ignoring.")
 		return null
 	return RunState.from_dict(parsed)
 
 static func delete_run() -> void:
-	if (FileAccess.file_exists(RUN_PATH)):
-		DirAccess.remove_absolute(RUN_PATH)
+	if (FileAccess.file_exists(run_path())):
+		DirAccess.remove_absolute(run_path())

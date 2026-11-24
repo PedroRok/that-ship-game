@@ -3,13 +3,28 @@ extends Node
 var center_camera_pos : Vector2
 
 var test_enemy_all_units : bool = true
-var test_grant_gears : bool = true
+var dev_mode : bool = false
+var test_grant_gears : bool = false
 
-var test_unlock_all_weapons : bool = true
+var test_unlock_all_weapons : bool:
+	get:
+		return dev_mode
 
-func _ready() -> void:
-	GameSettings.load_settings()
-	GameSettings.apply(get_window(), true)
+var stats_template : PlayerStats
+
+func load_slot(index : int) -> void:
+	SaveManager.slot = index
+	player_stats = stats_template.duplicate()
+	SaveManager.load_into(player_stats, CATALOG)
+	for starter : String in ["mini", "small"]:
+		if (!player_stats.has_boat(starter)):
+			player_stats.add_entity(CATALOG.find_unit(starter))
+	if (dev_mode):
+		player_stats.gear = maxi(player_stats.gear, 99999)
+		for item : Variant in CATALOG.units:
+			var unit : EntityStats = item
+			if (!player_stats.has_boat(unit.name)):
+				player_stats.add_entity(unit)
 
 func open_options() -> void:
 	if (get_tree().root.has_node("OptionsMenu")):
@@ -71,6 +86,8 @@ func counter_multiplier(attacker : Enums.UnitClass, target : Enums.UnitClass) ->
 	return COUNTERS.get(Vector2i(attacker, target), 1.0)
 
 func save_game() -> void:
+	if (dev_mode):
+		return
 	SaveManager.save(player_stats)
 
 enum Menu {
@@ -85,7 +102,8 @@ enum Menu {
 	RUN_EVENT,
 	RUN_SHIPYARD,
 	RUN_END,
-	CAMPAIGN_SELECT
+	CAMPAIGN_SELECT,
+	MAIN_MENU
 }
 
 const menus : Dictionary = {
@@ -100,7 +118,8 @@ const menus : Dictionary = {
 	Menu.RUN_EVENT : preload("res://scenes/ui/run/event_screen.tscn"),
 	Menu.RUN_SHIPYARD : preload("res://scenes/ui/run/shipyard_screen.tscn"),
 	Menu.RUN_END : preload("res://scenes/ui/run/run_end_screen.tscn"),
-	Menu.CAMPAIGN_SELECT : preload("res://scenes/ui/run/campaign_select_screen.tscn")
+	Menu.CAMPAIGN_SELECT : preload("res://scenes/ui/run/campaign_select_screen.tscn"),
+	Menu.MAIN_MENU : preload("res://scenes/ui/run/main_menu.tscn")
 }
 
 func change_scene(name : Menu) -> void:

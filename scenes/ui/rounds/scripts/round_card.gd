@@ -27,8 +27,8 @@ func set_stats(new_stats : RoundCardStats) -> void:
 	if (!card_stats):
 		push_error("Trying to start a card without a stats")
 		return
-	title_label.text = title
-	card_desc.text = desc
+	title_label.text = title.to_upper()
+	card_desc.text = desc.to_upper()
 	new_stats.apply_card(self)
 
 func _on_button_button_up() -> void:

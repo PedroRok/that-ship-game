@@ -426,7 +426,7 @@ func pay_rewards() -> void:
 	if (rewards_paid):
 		return
 	rewards_paid = true
-	var gears : int = history.size() * RunData.GEARS_PER_NODE + screws / RunData.GEARS_PER_LEFTOVER_SCREWS
+	var gears : int = history.size() * RunData.GEARS_PER_NODE
 	var coins : int = boss_coins
 	if (result == RunData.Result.WON):
 		gears += RunData.GEARS_VICTORY_BONUS
