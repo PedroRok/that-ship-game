@@ -12,6 +12,10 @@ var test_unlock_all_weapons : bool:
 
 var stats_template : PlayerStats
 
+func _ready() -> void:
+	GameSettings.load_settings()
+	GameSettings.apply(get_window())
+
 func load_slot(index : int) -> void:
 	SaveManager.slot = index
 	player_stats = stats_template.duplicate()
