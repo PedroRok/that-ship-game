@@ -64,11 +64,11 @@ static func of(node : Node) -> BattleAudio:
 		return null
 	return battle.audio
 
-static func play_at(node : Node, event : StringName, at : Vector2, emitter : Object = null) -> SfxHandle:
+static func play_at(node : Node, event : StringName, at : Vector2, emitter : Object = null, underwater : bool = false) -> SfxHandle:
 	var audio : BattleAudio = of(node)
 	if (!audio):
 		return null
-	return audio.play(event, at, emitter)
+	return audio.play(event, at, emitter, underwater)
 
 static func start_build(constructor : Node2D) -> void:
 	var audio : BattleAudio = of(constructor)
@@ -141,7 +141,7 @@ func listener_position() -> Vector2:
 	var viewport : Viewport = get_viewport()
 	return viewport.get_visible_rect().size * 0.5 if viewport else Vector2.ZERO
 
-func play(event : StringName, at : Vector2, emitter : Object = null) -> SfxHandle:
+func play(event : StringName, at : Vector2, emitter : Object = null, underwater : bool = false) -> SfxHandle:
 	if (!context or !context.audio_enabled or !SfxCatalog.has_event(event)):
 		return null
 	_update_zoom()
@@ -160,7 +160,7 @@ func play(event : StringName, at : Vector2, emitter : Object = null) -> SfxHandl
 	var take : int = _pick_take(event, emitter, streams.size())
 	var pitch : float = pow(2.0, randf_range(-PITCH_SEMITONES, PITCH_SEMITONES) / 12.0)
 	var level_db : float = SfxCatalog.trim_of(event) + randf_range(-LEVEL_JITTER_DB, LEVEL_JITTER_DB)
-	voice.start(streams[take], pitch, level_db, event, SfxVoice.Kind.ONE_SHOT, here, at)
+	voice.start(streams[take], pitch, level_db, event, SfxVoice.Kind.ONE_SHOT, here, at, null, 1.0, underwater)
 	_remember(event, at)
 	sound_started.emit(event, at)
 	return SfxHandle.new(voice)

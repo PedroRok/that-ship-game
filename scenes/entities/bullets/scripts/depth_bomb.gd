@@ -47,7 +47,7 @@ func _area_blast() -> void:
 				hitbox.handle_hit(hit, 0.0)
 				struck = true
 	if (struck):
-		play_impact_sfx()
+		play_impact_sfx(true)
 	_blast()
 
 func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : int, _local_shape_index : int) -> void:
@@ -68,7 +68,7 @@ func _hit_target(ship : Entity) -> void:
 	var hitbox : HitboxComponent = ship.get_node_or_null("HitboxComponent") as HitboxComponent
 	if (hitbox):
 		hitbox.handle_hit(hit, 0.0)
-	play_impact_sfx()
+	play_impact_sfx(true)
 	_blast()
 
 func _hit_base(base : Base) -> void:

@@ -9,6 +9,8 @@ const PANNING : float = 0.6
 const DISTANCE_EXPONENT : float = 1.5
 
 const FAR_MUFFLE : float = 0.55
+const UNDERWATER_MUFFLE : float = 0.93
+const UNDERWATER_GAIN : float = 0.7
 const MAX_ZOOM : float = 2.0
 
 static var view_zoom : float = 1.0
@@ -19,6 +21,7 @@ var priority : int = 0
 var serial : int = 0
 var level : float = 1.0
 var gain : float = 1.0
+var min_muffle : float = 0.0
 var audible : float = 0.0
 var follow : Node2D
 var busy : bool = false
@@ -45,8 +48,9 @@ func _make_player(bus : StringName) -> AudioStreamPlayer2D:
 	add_child(player)
 	return player
 
-func start(stream : AudioStream, pitch : float, level_db : float, voice_event : StringName, voice_kind : Kind, listener : Vector2, at : Vector2, target : Node2D = null, initial_gain : float = 1.0) -> void:
+func start(stream : AudioStream, pitch : float, level_db : float, voice_event : StringName, voice_kind : Kind, listener : Vector2, at : Vector2, target : Node2D = null, initial_gain : float = 1.0, underwater : bool = false) -> void:
 	serial += 1
+	min_muffle = UNDERWATER_MUFFLE if underwater else 0.0
 	busy = true
 	kind = voice_kind
 	event = voice_event
@@ -54,7 +58,7 @@ func start(stream : AudioStream, pitch : float, level_db : float, voice_event : 
 	_range = SfxCatalog.range_of(voice_event)
 	_looping = SfxCatalog.is_loop(voice_event)
 	level = db_to_linear(level_db)
-	gain = initial_gain
+	gain = initial_gain * (UNDERWATER_GAIN if underwater else 1.0)
 	follow = target
 	global_position = at
 	_fade_left = -1.0
@@ -121,7 +125,7 @@ func update_mix(listener : Vector2, delta : float, instant : bool = false) -> vo
 		fade = _fade_left / _fade_time
 	var distance : float = global_position.distance_to(listener)
 	var zoom : float = clampf(view_zoom, 1.0, MAX_ZOOM)
-	var muffle : float = clampf(smoothstep(_range.x, _range.y, distance / zoom) + FAR_MUFFLE * (MAX_ZOOM - zoom) / (MAX_ZOOM - 1.0), 0.0, 1.0)
+	var muffle : float = clampf(smoothstep(_range.x, _range.y, distance / zoom) + FAR_MUFFLE * (MAX_ZOOM - zoom) / (MAX_ZOOM - 1.0), min_muffle, 1.0)
 	var total : float = level * gain * distance_gain(distance)
 	var dry_target : float = total * cos(muffle * PI * 0.5)
 	var wet_target : float = total * sin(muffle * PI * 0.5)

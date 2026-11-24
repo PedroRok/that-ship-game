@@ -55,7 +55,7 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 				var scaled : Damage = damage.duplicate()
 				scaled.damage *= Global.counter_multiplier(attacker_class, ship.entity_stats.unit_class)
 				area.handle_hit(scaled, direction.x)
-				play_impact_sfx()
+				play_impact_sfx(ship.is_submerged())
 				if (bullet_stats.piercing <= already_hit.size()):
 					remove_bullet()
 	if (area is BaseHitboxComponent):
@@ -67,8 +67,8 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 				remove_bullet()
 	pass
 
-func play_impact_sfx() -> void:
-	BattleAudio.play_at(self, &"hull_impact", global_position)
+func play_impact_sfx(underwater : bool = false) -> void:
+	BattleAudio.play_at(self, &"hull_impact", global_position, null, underwater)
 
 func remove_bullet() -> void:
 	queue_free()
