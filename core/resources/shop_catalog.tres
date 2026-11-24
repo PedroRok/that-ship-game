@@ -236,6 +236,7 @@ op = 1
 value_per_level = 0.08
 max_level = 4
 gear_cost = Array[int]([25, 40, 60, 85])
+boss_coin_cost = Array[int]([0, 0, 0, 1])
 tree_position = Vector2(4, 0)
 
 [sub_resource type="Resource" id="r_unit3"]
@@ -408,6 +409,7 @@ op = 0
 value_per_level = 2
 max_level = 3
 gear_cost = Array[int]([50, 80, 120])
+boss_coin_cost = Array[int]([0, 0, 1])
 requires = Array[ExtResource("s_up")]([SubResource("r_skill1")])
 tree_position = Vector2(7, 1)
 
@@ -436,6 +438,7 @@ op = 0
 value_per_level = 2
 max_level = 3
 gear_cost = Array[int]([40, 70, 110])
+boss_coin_cost = Array[int]([0, 0, 1])
 tree_position = Vector2(8, 0)
 
 [sub_resource type="Resource" id="r_wpn_depth"]
@@ -478,6 +481,7 @@ op = 0
 value_per_level = 1
 max_level = 3
 gear_cost = Array[int]([40, 80, 140])
+boss_coin_cost = Array[int]([0, 0, 1])
 tree_position = Vector2(1, 3)
 
 [sub_resource type="Resource" id="r_queue_air"]
@@ -491,6 +495,7 @@ op = 0
 value_per_level = 1
 max_level = 3
 gear_cost = Array[int]([40, 80, 140])
+boss_coin_cost = Array[int]([0, 0, 1])
 tree_position = Vector2(2, 3)
 
 [resource]

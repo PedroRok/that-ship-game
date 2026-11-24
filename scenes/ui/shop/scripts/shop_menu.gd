@@ -228,6 +228,26 @@ func _build() -> void:
 	main.add_child(_build_detail())
 	page.add_child(_build_loadout())
 
+func _currency_display(icon : Texture2D, factor : int, color : Color, value : Label) -> PanelContainer:
+	var plate : PanelContainer = _panel(Color("#090f16"), STEEL)
+	var screen : ColorRect = ColorRect.new()
+	screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var screen_material : ShaderMaterial = ShaderMaterial.new()
+	screen_material.shader = DISPLAY_SHADER
+	screen_material.set_shader_parameter("line_color", color)
+	screen.material = screen_material
+	screen.resized.connect(func() -> void: screen_material.set_shader_parameter("rect_size", screen.size))
+	plate.add_child(screen)
+	var row : HBoxContainer = HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	value.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	value.custom_minimum_size.x = 56
+	row.add_child(_silhouette(icon, color, factor))
+	row.add_child(value)
+	_margin(plate, 6).add_child(row)
+	return plate
+
 func _build_header() -> PanelContainer:
 	var panel : PanelContainer = _framed_panel()
 	var row : HBoxContainer = HBoxContainer.new()
@@ -237,25 +257,17 @@ func _build_header() -> PanelContainer:
 	title.add_theme_font_override("font", PIXEL_FONT)
 	row.add_child(title)
 	row.add_child(VSeparator.new())
-	var gears : VBoxContainer = VBoxContainer.new()
-	gears.add_theme_constant_override("separation", 4)
-	gears.add_child(_label("run.gears", DIM))
-	var gear_row : HBoxContainer = HBoxContainer.new()
-	gear_row.add_theme_constant_override("separation", 6)
-	gear_label = _label("", TEXT, 16)
-	gear_row.add_child(_silhouette(GEAR_ICON, EDGE, 2))
-	gear_row.add_child(gear_label)
-	gears.add_child(gear_row)
-	row.add_child(gears)
+	var gear_box : VBoxContainer = VBoxContainer.new()
+	gear_box.add_theme_constant_override("separation", 4)
+	gear_box.add_child(_label("run.gears", DIM))
+	gear_label = _label("", Color("#ffe3a8"), 16)
+	gear_box.add_child(_currency_display(GEAR_ICON, 2, AMBER, gear_label))
+	row.add_child(gear_box)
 	var start : VBoxContainer = VBoxContainer.new()
 	start.add_theme_constant_override("separation", 4)
-	var start_title : HBoxContainer = HBoxContainer.new()
-	start_title.add_theme_constant_override("separation", 4)
-	start_title.add_child(_label("shop.starting", DIM))
-	start_title.add_child(_silhouette(SCREW_ICON, DIM, 1))
-	start.add_child(start_title)
-	screw_label = _label("", TEXT, 16)
-	start.add_child(screw_label)
+	start.add_child(_label("shop.starting", DIM))
+	screw_label = _label("", DISPLAY_LIGHT, 16)
+	start.add_child(_currency_display(SCREW_ICON, 2, DISPLAY_REST, screw_label))
 	row.add_child(start)
 	row.add_child(_spacer())
 	for entry : Dictionary in [
@@ -378,6 +390,8 @@ func _make_portrait(unit : EntityStats, available : bool, min_height : float, ma
 	var screen_material : ShaderMaterial = ShaderMaterial.new()
 	screen_material.shader = DISPLAY_SHADER
 	screen.material = screen_material
+	var pal : DisplayPalette = DisplayPalette.of_unit(unit)
+	pal.apply_screen(screen_material)
 	screen.resized.connect(func() -> void: screen_material.set_shader_parameter("rect_size", screen.size))
 	if (!available or unit == null):
 		screen_material.set_shader_parameter("band_strength", 0.0)
@@ -392,12 +406,12 @@ func _make_portrait(unit : EntityStats, available : bool, min_height : float, ma
 		art.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var art_material : ShaderMaterial = ShaderMaterial.new()
 		art_material.shader = ART_TINT_SHADER
-		art_material.set_shader_parameter("tint", DISPLAY_REST if available else DISPLAY_UNLOADED)
+		art_material.set_shader_parameter("tint", pal.rest if available else pal.unloaded)
 		art.material = art_material
 		stage.add_child(art)
 		stage.resized.connect(_fit_art.bind(art, stage, max_factor))
 	if (show_header and unit != null):
-		var header_color : Color = DISPLAY_TEXT if available else DISPLAY_TEXT.darkened(0.55)
+		var header_color : Color = pal.text if available else pal.text.darkened(0.55)
 		var header : HBoxContainer = HBoxContainer.new()
 		header.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		header.add_theme_constant_override("separation", 0)
@@ -430,7 +444,7 @@ func _make_portrait(unit : EntityStats, available : bool, min_height : float, ma
 			corner_label.offset_top = -11.0
 			corner_label.offset_bottom = 2.0
 	if (caption != ""):
-		var tag : Label = _label(caption, DISPLAY_LIGHT)
+		var tag : Label = _label(caption, pal.light)
 		tag.position = Vector2(8, 6)
 		stage.add_child(tag)
 	return well
@@ -517,6 +531,10 @@ func _refresh_detail() -> void:
 		return
 	var stats : PlayerStats = Global.player_stats
 	var upgraded : EntityStats = Global.upgraded_entity(selected)
+	var sim_pal : DisplayPalette = DisplayPalette.of_unit(selected)
+	sim_tag.add_theme_color_override("font_color", sim_pal.light)
+	if (sim_overlay):
+		sim_pal.apply_overlay(sim_overlay.material as ShaderMaterial)
 	sim_tag.text = Loc.t("shop.unit") % Loc.t(_dock_of(selected))
 	sim_well.modulate = Color.WHITE if _is_available(selected) else Color(0.72, 0.74, 0.78)
 	if (sim_overlay):

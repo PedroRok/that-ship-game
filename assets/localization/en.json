@@ -131,6 +131,8 @@
 		"research.economy": "ECONOMY",
 		"research.gears": "%d GEARS",
 		"research.gears_boss_coins": "GEARS: %d    BOSS COINS: %d",
+		"research.locked": "LOCKED",
+		"research.next": "COST:",
 		"research.max": "MAX",
 		"research.research": "RESEARCH",
 		"research.skills": "SKILLS",

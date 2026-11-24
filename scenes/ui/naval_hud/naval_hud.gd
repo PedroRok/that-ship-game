@@ -302,7 +302,7 @@ func _make_queues(col: VBoxContainer) -> void:
 		rows.add_child(panel)
 		var inner := _column(_margin(panel, 3), 2)
 		var title_row := _row(inner, 3)
-		title_row.add_child(_tinted_icon(DOCK_ICONS_8[kind], Vector2.ZERO, CYAN))
+		title_row.add_child(_tinted_icon(DOCK_ICONS_8[kind], Vector2.ZERO, DisplayPalette.of_dock(kind).rest))
 		var title := _label(QUEUE_TITLES[kind])
 		title_row.add_child(title)
 		var strip := HFlowContainer.new()
@@ -329,6 +329,7 @@ func _make_queues(col: VBoxContainer) -> void:
 			var screen_material := ShaderMaterial.new()
 			screen_material.shader = DISPLAY_SHADER
 			screen_material.set_shader_parameter("band_strength", 0.0)
+			DisplayPalette.of_dock(kind).apply_screen(screen_material)
 			screen.material = screen_material
 			screen.resized.connect(func() -> void: screen_material.set_shader_parameter("rect_size", screen.size))
 			well.add_child(screen)
@@ -339,14 +340,14 @@ func _make_queues(col: VBoxContainer) -> void:
 			art.mouse_filter = MOUSE_FILTER_IGNORE
 			var art_material := ShaderMaterial.new()
 			art_material.shader = ART_TINT_SHADER
-			art_material.set_shader_parameter("tint", DISPLAY_REST)
+			art_material.set_shader_parameter("tint", DisplayPalette.of_dock(kind).rest)
 			art.material = art_material
 			well.add_child(art)
 			var percent := _label("", true)
 			percent.mouse_filter = MOUSE_FILTER_IGNORE
 			percent.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 			percent.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			percent.add_theme_color_override("font_color", DISPLAY_LIGHT)
+			percent.add_theme_color_override("font_color", DisplayPalette.of_dock(kind).light)
 			percent.add_theme_color_override("font_outline_color", Color("#06181a"))
 			percent.add_theme_constant_override("outline_size", 4)
 			percent.visible = false
@@ -426,6 +427,8 @@ func _make_catalog(col: VBoxContainer) -> void:
 		var screen_material := ShaderMaterial.new()
 		screen_material.shader = DISPLAY_SHADER
 		screen.material = screen_material
+		var pal: DisplayPalette = DisplayPalette.of_unit(unit)
+		pal.apply_screen(screen_material)
 		screen.resized.connect(func() -> void: screen_material.set_shader_parameter("rect_size", screen.size))
 		if unit == null:
 			screen_material.set_shader_parameter("band_strength", 0.0)
@@ -472,21 +475,21 @@ func _make_catalog(col: VBoxContainer) -> void:
 		footer.add_child(status)
 		card_status.append(status)
 		if unit != null:
-			header.add_child(_tinted_icon(DOCK_ICONS_12[Base.dock_type_of(unit)], Vector2.ZERO, DISPLAY_TEXT))
+			header.add_child(_tinted_icon(DOCK_ICONS_12[Base.dock_type_of(unit)], Vector2.ZERO, pal.text))
 			var header_gap := Control.new()
 			header_gap.mouse_filter = MOUSE_FILTER_IGNORE
 			header_gap.size_flags_horizontal = SIZE_EXPAND_FILL
 			header.add_child(header_gap)
 			var price := _label(str(unit.price))
 			price.add_theme_font_size_override("font_size", 12)
-			price.add_theme_color_override("font_color", DISPLAY_TEXT)
+			price.add_theme_color_override("font_color", pal.text)
 			price.size_flags_vertical = SIZE_SHRINK_CENTER
 			header.add_child(price)
 			var price_gap := Control.new()
 			price_gap.mouse_filter = MOUSE_FILTER_IGNORE
 			price_gap.custom_minimum_size.x = 2
 			header.add_child(price_gap)
-			header.add_child(_tinted_icon(SCREW_ICON, Vector2(18, 18), DISPLAY_TEXT))
+			header.add_child(_tinted_icon(SCREW_ICON, Vector2(18, 18), pal.text))
 		last_reasons.append("#")
 
 func _tinted_icon(texture: Texture2D, size: Vector2, tint: Color) -> TextureRect:
@@ -665,17 +668,18 @@ func _refresh_catalog() -> void:
 			continue
 		last_reasons[index] = reason
 		card_status[index].text = reason
-		var color: Color = DISPLAY_TEXT if reason == "hud.ready" else DIM
+		var pal: DisplayPalette = DisplayPalette.of_unit(roster[index] if index < roster.size() else null)
+		var color: Color = pal.text if reason == "hud.ready" else DIM
 		if reason == "hud.low_screws":
 			color = PINK
 		elif reason == "hud.queue_full":
 			color = AMBER
 		elif reason == "hud.empty":
-			color = DISPLAY_UNLOADED
+			color = pal.unloaded
 		card_status[index].add_theme_color_override("font_color", color)
 		_skin_card(cards[index], reason == "hud.ready", selected == index)
 		card_wells[index].add_theme_stylebox_override("panel", _style(Color("#4d6069") if reason == "hud.ready" else Color("#2f3c43"), Color("#172127")))
-		card_art_materials[index].set_shader_parameter("tint", DISPLAY_REST if reason == "hud.ready" else DISPLAY_UNLOADED)
+		card_art_materials[index].set_shader_parameter("tint", pal.rest if reason == "hud.ready" else pal.unloaded)
 		card_screen_materials[index].set_shader_parameter("band_strength", 1.0 if reason == "hud.ready" else 0.0)
 		card_wells[index].modulate = Color.WHITE if reason == "hud.ready" else Color(0.72, 0.74, 0.78)
 		card_titles[index].modulate = Color.WHITE if reason == "hud.ready" else Color(0.65, 0.68, 0.7)
