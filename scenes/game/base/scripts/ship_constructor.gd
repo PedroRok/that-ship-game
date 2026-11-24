@@ -12,6 +12,7 @@ var floor_y : float = NAN
 var hold_until_released : bool = false
 
 var _bar : BuildBar
+var _tween : Tween
 
 func _ready() -> void:
 	if (Engine.is_editor_hint()):
@@ -51,7 +52,8 @@ func build_ship(boat_stats : BoatStats, time_mult : float = 1.0) -> void:
 	if (_bar):
 		_bar.setup_for(boat_stats)
 	material.set_shader_parameter("build_progress", 0.0)
-	var tween : Tween = create_tween()
+	_tween = create_tween()
+	var tween : Tween = _tween
 	tween.tween_property(
 			material,
 			"shader_parameter/build_progress",
@@ -60,8 +62,27 @@ func build_ship(boat_stats : BoatStats, time_mult : float = 1.0) -> void:
 		)
 	tween.finished.connect(Callable(self, "_on_build_complete"))
 	self.boat_stats = boat_stats
+	if (!boat_stats.is_boss):
+		BattleAudio.start_build(self)
+
+func cancel_build() -> BoatStats:
+	if (boat_stats == null):
+		return null
+	var cancelled : BoatStats = boat_stats
+	if (_tween):
+		_tween.kill()
+		_tween = null
+	boat_stats = null
+	texture = null
+	material.set_shader_parameter("build_progress", 0.0)
+	BattleAudio.stop_build(self)
+	return cancelled
+
+func _exit_tree() -> void:
+	BattleAudio.stop_build(self)
 
 func _on_build_complete() -> void:
+	BattleAudio.stop_build(self)
 	var finished : BoatStats = boat_stats
 	boat_stats = null
 	if (!hold_until_released):

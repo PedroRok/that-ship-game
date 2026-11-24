@@ -4,11 +4,16 @@ extends BulletBomb
 const SINK_SPEED : float = 60.0
 const MAX_DEPTH : float = 90.0
 
+var _entered_water : bool = false
+
 func _physics_process(delta : float) -> void:
 	if (exploded):
 		return
 	velocity.y += GRAVITY * delta
 	if (global_position.y >= WATER_Y):
+		if (!_entered_water):
+			_entered_water = true
+			BattleAudio.play_at(self, &"water_impact", Vector2(global_position.x, WATER_Y))
 		velocity.x = move_toward(velocity.x, 0.0, 240.0 * delta)
 		velocity.y = minf(velocity.y, SINK_SPEED)
 		if (global_position.y >= WATER_Y + MAX_DEPTH or _at_submarine_depth()):
@@ -28,6 +33,7 @@ func _at_submarine_depth() -> bool:
 
 func _area_blast() -> void:
 	exploded = true
+	var struck : bool = false
 	var base_damage : Damage = damage.duplicate()
 	for node : Node in BattleContext.of(self).entities:
 		var entity : Entity = node as Entity
@@ -39,6 +45,9 @@ func _area_blast() -> void:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
+				struck = true
+	if (struck):
+		play_impact_sfx()
 	_blast()
 
 func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : int, _local_shape_index : int) -> void:
@@ -59,11 +68,13 @@ func _hit_target(ship : Entity) -> void:
 	var hitbox : HitboxComponent = ship.get_node_or_null("HitboxComponent") as HitboxComponent
 	if (hitbox):
 		hitbox.handle_hit(hit, 0.0)
+	play_impact_sfx()
 	_blast()
 
 func _hit_base(base : Base) -> void:
 	exploded = true
 	base.health_component.handle_hit(damage.duplicate())
+	play_impact_sfx()
 	_blast()
 
 func _blast() -> void:

@@ -20,11 +20,17 @@ var already_hit : Array[Area2D]
 
 var target : Node2D
 
+var _splashed : bool = false
+
 func _physics_process(_delta: float) -> void:
 	if direction != Vector2.ZERO:
 		var velocity : Vector2 = direction * bullet_stats.speed
+		var was_above : bool = global_position.y < ShipEntity.WATER_LEVEL
 		global_position += velocity
-		
+		if (!_splashed and was_above and velocity.y > 0.0 and global_position.y >= ShipEntity.WATER_LEVEL):
+			_splashed = true
+			BattleAudio.play_at(self, &"water_impact", Vector2(global_position.x, ShipEntity.WATER_LEVEL))
+
 	if (bullet_stats.killTime <= 0):
 		queue_free()
 	bullet_stats.killTime -= 1
@@ -49,6 +55,7 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 				var scaled : Damage = damage.duplicate()
 				scaled.damage *= Global.counter_multiplier(attacker_class, ship.entity_stats.unit_class)
 				area.handle_hit(scaled, direction.x)
+				play_impact_sfx()
 				if (bullet_stats.piercing <= already_hit.size()):
 					remove_bullet()
 	if (area is BaseHitboxComponent):
@@ -59,6 +66,9 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 			if (bullet_stats.piercing <= already_hit.size()):
 				remove_bullet()
 	pass
+
+func play_impact_sfx() -> void:
+	BattleAudio.play_at(self, &"hull_impact", global_position)
 
 func remove_bullet() -> void:
 	queue_free()

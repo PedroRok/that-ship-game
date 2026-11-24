@@ -7,6 +7,7 @@ var entities: Array[Entity] = []
 var bases: Array[Base] = []
 var bullets: BulletManager
 var audio_enabled: bool = true
+var audio: BattleAudio
 
 static func of(node: Node) -> BattleContext:
 	var viewport: Viewport = node.get_viewport()

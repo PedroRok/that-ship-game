@@ -58,10 +58,14 @@ func _base_of(team_res : TeamStats) -> Base:
 	return null
 
 func handle_ship_destroy(pos : Vector2, _entity_stats : EntityStats, team_stats : TeamStats) -> void:
+	var cue : StringName = SfxCatalog.destruction_event(_entity_stats)
+	if (cue != &""):
+		BattleAudio.play_at(self, cue, pos)
 	unit_destroyed.emit(_entity_stats, team_stats)
 	if (team_stats.team_id == 1):
 		return
 	if (_entity_stats.is_boss):
 		boss_defeated.emit(_entity_stats)
+	item_manager.award_kill_screws(_entity_stats, pos)
 	item_manager.handle_random_spawn(pos, true)
 	pass

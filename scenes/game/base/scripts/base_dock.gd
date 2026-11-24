@@ -9,6 +9,7 @@ const FILL_TIME : float = 1.4
 const DOOR_TIME : float = 0.7
 const EXIT_WAIT : float = 0.9
 const EXIT_DISTANCE : float = 220.0
+const WATER_SFX_FADE : float = 0.35
 const WATER_SHADER : Shader = preload("res://shaders/water_body.gdshader")
 const WATER_TEXTURE : Texture2D = preload("res://assets/game/misc/water.png")
 const DOOR_SHADER_CODE : String = """
@@ -64,6 +65,7 @@ var _water : Sprite2D
 var _water_mat : ShaderMaterial
 var _door_mat : ShaderMaterial
 var _tween : Tween
+var _water_sfx : SfxHandle
 var _cutout : Image
 var _visual_sources : Dictionary[Sprite2D, Texture2D] = {}
 
@@ -113,6 +115,7 @@ func set_active(value : bool) -> void:
 		_sea_material.set_shader_parameter(_hole_param, _hole_rect if value else Vector4.ZERO)
 
 func _exit_tree() -> void:
+	_fade_water_sfx(WATER_SFX_FADE)
 	if (_sea_material and _hole_param != ""):
 		_sea_material.set_shader_parameter(_hole_param, Vector4.ZERO)
 
@@ -132,7 +135,6 @@ func _setup_door_and_water(def : Dictionary, center : Vector2) -> void:
 	var w : float = float(_cutout.get_width())
 	var h : float = float(_cutout.get_height())
 
-	# Interior da doca limitado à face interna da porta: depois dela é o mar de verdade.
 	var inner : Image = _cutout.duplicate()
 	inner.convert(Image.FORMAT_RGBA8)
 	for x : int in range(door_used.end.x, inner.get_width()):
@@ -141,12 +143,10 @@ func _setup_door_and_water(def : Dictionary, center : Vector2) -> void:
 	var inner_tex : ImageTexture = ImageTexture.create_from_image(inner)
 	var cut_used : Rect2i = inner.get_used_rect()
 
-	# Preenchimento seco sob o fundo da doca (cobre a abertura até a porta).
 	var dry : Sprite2D = _make_sprite_tex(inner_tex, center, -716)
 	dry.modulate = Color(0.07, 0.1, 0.12)
 	_visual_sources[dry] = inner_tex
 
-	# O mar principal (z 200) cobriria a doca: abre um buraco nele sobre o interior da doca.
 	var sx : float = -1.0 if mirrored else 1.0
 	var x_a : float = center.x + (cut_used.position.x - w * 0.5) * DOCK_SCALE * sx
 	var x_b : float = center.x + (cut_used.end.x - w * 0.5) * DOCK_SCALE * sx
@@ -176,7 +176,6 @@ func _setup_door_and_water(def : Dictionary, center : Vector2) -> void:
 	_door.material = _door_mat
 	_visual_sources[_door] = door_tex
 
-# Linhas do interior que não ficam cobertas pela moldura do overlay (o nível da água usa só elas).
 func _visible_interior_rows(overlay_path : String, cut_used : Rect2i) -> Vector2i:
 	var overlay : Image = (load(overlay_path) as Texture2D).get_image()
 	var column : int = cut_used.position.x + cut_used.size.x / 2
@@ -191,7 +190,6 @@ func _visible_interior_rows(overlay_path : String, cut_used : Rect2i) -> Vector2
 		return Vector2i(cut_used.position.y, cut_used.end.y - 1)
 	return Vector2i(first, last)
 
-# Mesmo shader e parâmetros do Water_Body principal (water_body.tscn).
 func _make_water_material() -> ShaderMaterial:
 	var noise : NoiseTexture2D = NoiseTexture2D.new()
 	noise.noise = FastNoiseLite.new()
@@ -226,6 +224,7 @@ func begin_build() -> void:
 	if (!_door):
 		return
 	busy = false
+	_fade_water_sfx(WATER_SFX_FADE)
 	_water_mat.set_shader_parameter("level", 0.0)
 	_door_mat.set_shader_parameter("open", 0.0)
 
@@ -234,7 +233,9 @@ func open_for_exit() -> void:
 		return
 	busy = true
 	var tween : Tween = _restart_tween()
+	tween.tween_callback(_play_water_sfx.bind(&"sub_dock_fill"))
 	tween.tween_property(_water_mat, "shader_parameter/level", 1.0, FILL_TIME)
+	tween.tween_callback(func() -> void: BattleAudio.play_at(self, &"dock_release", _door.global_position, self))
 	tween.tween_property(_door_mat, "shader_parameter/open", 1.0, DOOR_TIME)
 	await tween.finished
 
@@ -245,7 +246,17 @@ func close_after_exit(exit_time : float = EXIT_WAIT) -> void:
 	tween.tween_interval(exit_time)
 	tween.tween_property(_door_mat, "shader_parameter/open", 0.0, DOOR_TIME)
 	tween.tween_callback(func() -> void: busy = false)
+	tween.tween_callback(_play_water_sfx.bind(&"sub_dock_drain"))
 	tween.tween_property(_water_mat, "shader_parameter/level", 0.0, FILL_TIME)
+
+func _play_water_sfx(event : StringName) -> void:
+	_fade_water_sfx(WATER_SFX_FADE)
+	_water_sfx = BattleAudio.play_at(self, event, _water.global_position, self)
+
+func _fade_water_sfx(time : float) -> void:
+	if (_water_sfx):
+		_water_sfx.fade(time)
+		_water_sfx = null
 
 func cut_into(img : Image, silhouette : Image, base_pos : Vector2, flip : bool) -> void:
 	var base_size : Vector2i = silhouette.get_size()

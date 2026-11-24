@@ -36,6 +36,7 @@ func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : 
 
 func _explode() -> void:
 	exploded = true
+	var struck : bool = false
 	var base_damage : Damage = damage.duplicate()
 	for node : Node in BattleContext.of(self).entities:
 		var entity : Entity = node as Entity
@@ -49,10 +50,16 @@ func _explode() -> void:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
+				struck = true
 	for base_node : Node in BattleContext.of(self).bases:
 		var base : Base = base_node as Base
 		if (base and base.team_stats.team_id != team and abs(base.get_center_pos().x - global_position.x) <= radius * 1.5):
 			base.health_component.handle_hit(base_damage)
+			struck = true
+	if (struck):
+		play_impact_sfx()
+	elif (global_position.y >= WATER_Y):
+		BattleAudio.play_at(self, &"water_impact", global_position)
 	var flash : BombBlast = BombBlast.new()
 	flash.radius = radius
 	flash.global_position = global_position

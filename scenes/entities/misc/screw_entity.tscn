@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" uid="uid://clyqg6idb2ms6" path="res://scenes/entities/misc/scripts/gear_entity.gd" id="1_f0mxr"]
+[ext_resource type="Shader" uid="uid://bf707n5kqej1e" path="res://shaders/outline.gdshader" id="2_24i1t"]
+[ext_resource type="Texture2D" path="res://assets/game/misc/screw.png" id="3_g8w21"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_64kt7"]
+resource_local_to_scene = true
+shader = ExtResource("2_24i1t")
+shader_parameter/enable = false
+shader_parameter/bold = false
+shader_parameter/outline_color = Color(1, 1, 1, 1)
+shader_parameter/opacity = 100.0
+
+[node name="Screw" type="RigidBody2D"]
+self_modulate = Color(1, 1, 1, 0.423529)
+z_index = 10
+collision_layer = 3
+collision_mask = 0
+input_pickable = true
+gravity_scale = 0.01
+inertia = 2.25
+linear_damp = 3.0
+angular_damp = 1.0
+script = ExtResource("1_f0mxr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_64kt7")
+texture = ExtResource("3_g8w21")

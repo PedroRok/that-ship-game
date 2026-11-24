@@ -9,6 +9,7 @@ var catch_threshold : float = 10
 signal pickup_gear(plus : int)
 
 var target_control : Control
+var amount : int = 1
 var _flying : bool = false
 
 func _start_flight() -> void:
@@ -23,7 +24,7 @@ func _start_flight() -> void:
 	GearFlyer.launch(self, sprite.texture, from_screen, target_control, zoom * scale.x, _arrived)
 
 func _arrived() -> void:
-	pickup_gear.emit(1)
+	pickup_gear.emit(amount)
 	queue_free()
 
 func explode() -> void:
@@ -50,7 +51,7 @@ func _physics_process(_delta: float) -> void:
 			_start_flight()
 			return
 		desapier = true
-		pickup_gear.emit(1)
+		pickup_gear.emit(amount)
 		if randi_range(0,1) == 0:
 			angular_velocity = -80
 		else:

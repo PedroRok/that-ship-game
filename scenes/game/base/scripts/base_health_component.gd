@@ -17,6 +17,7 @@ func handle_hit(damage : Damage) -> void:
 			emit_signal("death_event")
 			is_dead = true
 		return
+	BattleAudio.base_damaged(get_parent() as Node2D)
 	health -= damage.damage * _damage_taken_mult()
 	if health < 0:
 		health = 0

@@ -1,11 +1,10 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scenes/entities/guns/scripts/fixed_angle_gun.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/entities/bullets/missile.tscn" id="2"]
 [ext_resource type="Texture2D" path="res://assets/game/troops/guns/missile_large_barrel.png" id="3"]
 [ext_resource type="Texture2D" path="res://assets/game/troops/guns/missile_large_base.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/game/troops/guns/projectiles/missile_large_projectile.png" id="6"]
-[ext_resource type="AudioStream" path="res://assets/game/sounds/cannon_base.wav" id="5"]
 
 [node name="Gun" type="Node2D" node_paths=PackedStringArray("end_barrel", "base")]
 script = ExtResource("1")

@@ -7,22 +7,34 @@ const MAX_DEPTH_Y : float = 480.0
 
 var dir_x : float = 1.0
 
+const TURN_RATE : float = 0.07
+
+var heading : float = 0.0
+
 func set_direction(new_direction : Vector2) -> void:
 	dir_x = 1.0 if new_direction.x >= 0.0 else -1.0
-	direction = Vector2(dir_x * bullet_stats.speed, 0.0)
-	rotation = direction.angle()
+	heading = 0.0 if dir_x > 0.0 else PI
+	direction = Vector2.from_angle(heading) * bullet_stats.speed
+	rotation = heading
 
 func _physics_process(_delta : float) -> void:
 	var speed : float = bullet_stats.speed
-	var wanted_y : float = clampf(global_position.y, MIN_DEPTH_Y, MAX_DEPTH_Y)
+	var wanted : Vector2 = Vector2.from_angle(heading)
 	if (is_instance_valid(target) and target.has_method("get_center_pos")):
-		wanted_y = clampf(target.get_center_pos().y, MIN_DEPTH_Y, MAX_DEPTH_Y)
-	var vy : float = clampf((wanted_y - global_position.y) * 0.1, -1.0, 1.0)
+		var goal : Vector2 = target.get_center_pos()
+		goal.y = clampf(goal.y, MIN_DEPTH_Y, MAX_DEPTH_Y)
+		wanted = goal - global_position
+	else:
+		wanted = Vector2(dir_x, 0.0)
+	var wanted_angle : float = wanted.angle()
 	if (global_position.y < WATER_Y + 1.0):
-		vy = maxf(vy, 1.6)
-	direction = Vector2(dir_x * speed, vy)
+		wanted_angle = Vector2(cos(heading), 1.6).angle()
+	elif (global_position.y > MAX_DEPTH_Y and sin(heading) > 0.0):
+		wanted_angle = Vector2(cos(heading), 0.0).angle()
+	heading += clampf(angle_difference(heading, wanted_angle), -TURN_RATE, TURN_RATE)
+	direction = Vector2.from_angle(heading) * speed
 	global_position += direction
-	rotation = direction.angle() if dir_x > 0.0 else direction.angle()
+	rotation = heading
 	if (bullet_stats.killTime <= 0):
 		queue_free()
 	bullet_stats.killTime -= 1

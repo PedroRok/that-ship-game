@@ -29,9 +29,8 @@ func _ready() -> void:
 func in_range(target : Node2D) -> bool:
 	if (guns.is_empty()):
 		return true
-	var point : Vector2 = target.get_center_pos() if target.has_method("get_center_pos") else target.global_position
 	for gun : Gun in guns:
-		if (gun.can_target(target) and gun.global_position.distance_to(point) <= gun.effective_range()):
+		if (gun.can_target(target) and gun.target_distance(target) <= gun.effective_range()):
 			return true
 	return false
 
@@ -66,6 +65,8 @@ func _keep_afloat(delta : float) -> void:
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
 	if (Engine.is_editor_hint()):
+		return
+	if (!is_instance_valid(self) or is_queued_for_deletion()):
 		return
 	_keep_afloat(delta)
 	if (submerged):

@@ -32,6 +32,7 @@ func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : 
 
 func _burst() -> void:
 	exploded = true
+	var struck : bool = false
 	for node : Node in BattleContext.of(self).entities:
 		var entity : Entity = node as Entity
 		if (!entity or !entity.enabled or entity.team_stats.team_id == team):
@@ -45,6 +46,9 @@ func _burst() -> void:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
+				struck = true
+	if (struck):
+		play_impact_sfx()
 	var puff : FlakPuff = FlakPuff.new()
 	puff.radius = burst_radius
 	puff.global_position = global_position

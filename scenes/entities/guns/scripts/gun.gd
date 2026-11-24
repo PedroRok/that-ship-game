@@ -23,7 +23,7 @@ var bullet_speed_scale : float = 1.0
 @export 
 var bullet : PackedScene
 @export
-var audio : AudioStreamPlayer2D
+var sfx_event : StringName = &""
 @export
 var end_barrel : Marker2D
 
@@ -73,6 +73,13 @@ func effective_range() -> float:
 	_range_cache = reach * 0.9
 	return _range_cache
 
+func target_distance(target : Node2D) -> float:
+	if (target is Base):
+		return (target as Base).distance_from(global_position)
+	if (target.has_method("get_center_pos")):
+		return global_position.distance_to(target.get_center_pos())
+	return global_position.distance_to(target.global_position)
+
 func can_target(target : Node2D) -> bool:
 	var entity : Entity = target as Entity
 	if (!entity):
@@ -86,7 +93,7 @@ func can_target(target : Node2D) -> bool:
 func shoot_gun(direction: Vector2) -> void:
 	if (enemy and !can_target(enemy)):
 		return
-	if (enemy and enemy.has_method("get_center_pos") and global_position.distance_to(enemy.get_center_pos()) > effective_range()):
+	if (enemy and target_distance(enemy) > effective_range()):
 		return
 	if !end_barrel:
 		push_error("Trying to shoot without a gun barrel")
@@ -130,11 +137,8 @@ func _apply_projectile_texture(bullet_instance : Bullet) -> void:
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 func play_effects() -> void:
-	var context : BattleContext = BattleContext.of(self)
-	if audio and (!context or context.audio_enabled):
-		audio.pitch_scale = randf_range(0.8, 1.2)
-		var distance_based_on_zoom : float = (end_barrel.global_position.distance_to(Global.center_camera_pos)/ 1000)
-		audio.play(distance_based_on_zoom/ (Global.camera_zoom))
+	if (sfx_event != &""):
+		BattleAudio.play_at(self, sfx_event, end_barrel.global_position, self)
 
 func flip() -> void:
 	rotate(PI)

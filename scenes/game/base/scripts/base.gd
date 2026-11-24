@@ -18,13 +18,22 @@ var ship_constructor : ShipConstructor
 
 var enabled : bool = true
 
+const QUEUE_BASE_SIZE : int = 3
+const QUEUE_STATS : Dictionary = {
+	BaseDock.Type.NAVAL: &"queue_naval",
+	BaseDock.Type.SUB: &"queue_sub",
+	BaseDock.Type.AIR: &"queue_air",
+}
+
 var constructors : Dictionary = {}
 var docks : Dictionary = {}
+var queues : Dictionary = {}
 
 var _base_sprites : Array[Sprite2D] = []
 var _base_texture : Texture2D
 
 var build_boost_mult : float = 1.0
+var _destroyed : bool = false
 
 signal death_event(team_stats : TeamStats)
 
@@ -54,11 +63,69 @@ func _ready() -> void:
 	for dock_type : int in constructors:
 		var constructor : ShipConstructor = constructors[dock_type]
 		constructor.ship_build_finish.connect(_ship_build_finish.bind(constructor))
+		queues[dock_type] = []
+
+func _process(_delta : float) -> void:
+	for dock_type : int in queues:
+		var waiting : Array = queues[dock_type]
+		if (waiting.is_empty() or _destroyed):
+			continue
+		if (dock_type != BaseDock.Type.NAVAL and !(docks[dock_type] as BaseDock).active):
+			continue
+		if (start_build_ship(waiting[0] as BoatStats)):
+			waiting.pop_front()
+
+func queue_capacity(dock_type : BaseDock.Type) -> int:
+	return QUEUE_BASE_SIZE + int(Global.modify(Enums.UpgradeTarget.BASE, QUEUE_STATS[dock_type], 0.0))
+
+func queue_used(dock_type : BaseDock.Type) -> int:
+	var busy_slot : int = 1 if (constructors[dock_type] as ShipConstructor).is_building() else 0
+	return busy_slot + (queues[dock_type] as Array).size()
+
+func queue_has_room(dock_type : BaseDock.Type) -> bool:
+	return queue_used(dock_type) < queue_capacity(dock_type)
+
+func enqueue_ship(ship : BoatStats) -> bool:
+	var dock_type : BaseDock.Type = dock_type_of(ship)
+	if (_destroyed or !queue_has_room(dock_type)):
+		return false
+	if (dock_type != BaseDock.Type.NAVAL and !(docks[dock_type] as BaseDock).active):
+		return false
+	(queues[dock_type] as Array).append(ship)
+	return true
+
+func cancel_slot(dock_type : BaseDock.Type, slot : int) -> BoatStats:
+	var constructor : ShipConstructor = constructors[dock_type]
+	if (slot == 0 and constructor.is_building()):
+		return constructor.cancel_build()
+	var waiting : Array = queues[dock_type]
+	var index : int = slot - 1
+	if (index < 0 or index >= waiting.size()):
+		return null
+	var ship : BoatStats = waiting[index]
+	waiting.remove_at(index)
+	return ship
+
+func distance_from(point : Vector2) -> float:
+	var shape_node : CollisionShape2D = get_node_or_null("BaseHitboxComponent/CollisionShape2D") as CollisionShape2D
+	var rect : RectangleShape2D = shape_node.shape as RectangleShape2D if shape_node else null
+	if (!rect):
+		return base_center.global_position.distance_to(point)
+	var xf : Transform2D = shape_node.global_transform
+	var local : Vector2 = xf.affine_inverse() * point
+	var outside : Vector2 = (local.abs() - rect.size * 0.5).max(Vector2.ZERO)
+	return (outside * xf.get_scale()).length()
 
 func get_center_pos() -> Vector2:
 	return base_center.global_position
 
 func _death_event() -> void:
+	if (!_destroyed):
+		_destroyed = true
+		var audio : BattleAudio = BattleAudio.of(self)
+		if (audio):
+			audio.stop_all_builds_for(self)
+			audio.play(&"base_break", get_center_pos(), self)
 	death_event.emit(team_stats)
 	
 static func dock_type_of(stats : EntityStats) -> BaseDock.Type:
@@ -90,10 +157,13 @@ func _ship_build_finish(ship : BoatStats, constructor : ShipConstructor) -> void
 			dock = candidate
 	if (dock and dock.has_door()):
 		await dock.open_for_exit()
-	spawn_ship_event.emit(constructor.spawn_position(), ship, team_stats)
+	var launch_at : Vector2 = constructor.spawn_position()
+	spawn_ship_event.emit(launch_at, ship, team_stats)
+	var launch : StringName = SfxCatalog.launch_event(ship)
+	if (launch != &""):
+		BattleAudio.play_at(self, launch, launch_at, constructor)
 	constructor.release_ship()
 	if (dock):
-		# tempo para o sub atravessar a doca inteira antes de fechar a porta
 		var travel : float = (BaseDock.EXIT_DISTANCE / maxf(ship.speed, 1.0) * 1.8) if ship else BaseDock.EXIT_WAIT
 		dock.close_after_exit(clampf(travel, BaseDock.EXIT_WAIT, 8.0))
 

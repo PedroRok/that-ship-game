@@ -1,14 +1,14 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scenes/entities/guns/scripts/simple_gun.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/entities/bullets/flak.tscn" id="2"]
 [ext_resource type="Texture2D" path="res://assets/game/troops/guns/aa_gun_medium_barrel.png" id="3"]
 [ext_resource type="Texture2D" path="res://assets/game/troops/guns/aa_gun_medium_base.png" id="4"]
 [ext_resource type="Texture2D" path="res://assets/game/troops/guns/projectiles/aa_gun_projectile.png" id="6"]
-[ext_resource type="AudioStream" path="res://assets/game/sounds/cannon_base.wav" id="5"]
 
-[node name="Gun" type="Node2D" node_paths=PackedStringArray("barrel_texture", "audio", "end_barrel", "base")]
+[node name="Gun" type="Node2D" node_paths=PackedStringArray("barrel_texture", "end_barrel", "base")]
 script = ExtResource("1")
+sfx_event = &"antiair_shot"
 gun_type = 7
 time_to_shoot = 30
 projectile_texture = ExtResource("6")
@@ -17,7 +17,6 @@ damage_scale = 1.5
 bullet_speed_scale = 1.2
 barrel_texture = NodePath("Barrel")
 bullet = ExtResource("2")
-audio = NodePath("AudioStreamPlayer2D")
 end_barrel = NodePath("Barrel/EndBarrel")
 base = NodePath("Base")
 
@@ -31,12 +30,6 @@ offset = Vector2(2, -1.5)
 [node name="EndBarrel" type="Marker2D" parent="Barrel"]
 position = Vector2(6.5, -1)
 gizmo_extents = 0.0
-
-[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
-stream = ExtResource("5")
-volume_db = -22.0
-panning_strength = 2.0
-bus = &"Guns"
 
 [node name="Base" type="Sprite2D" parent="."]
 position = Vector2(0, -1.5)
