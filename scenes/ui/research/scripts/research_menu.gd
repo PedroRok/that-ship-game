@@ -41,6 +41,7 @@ var node_buttons : Dictionary = {}
 func _ready() -> void:
 	position = Vector2.ZERO
 	size = get_viewport_rect().size
+	theme = PixelControls.themed()
 
 	var bg : ColorRect = ColorRect.new()
 	bg.color = Color(0.08, 0.09, 0.12)
@@ -93,7 +94,7 @@ func _build_top_bar() -> HBoxContainer:
 func _build_branch_labels(canvas : Control) -> void:
 	for branch : Dictionary in BRANCHES:
 		var label : Label = Label.new()
-		label.text = branch["title"]
+		label.text = str(branch["title"]).to_upper()
 		label.add_theme_font_size_override("font_size", 8)
 		label.position = Vector2(ORIGIN.x + branch["col"] * CELL.x, 8)
 		canvas.add_child(label)
@@ -143,19 +144,19 @@ func _buy(upgrade : UpgradeStats) -> void:
 
 func _refresh() -> void:
 	var stats : PlayerStats = Global.player_stats
-	info_label.text = "Gears: %d    Boss coins: %d" % [stats.gear, stats.boss_coin]
+	info_label.text = "GEARS: %d    BOSS COINS: %d" % [stats.gear, stats.boss_coin]
 	for upgrade : UpgradeStats in node_buttons:
 		var button : Button = node_buttons[upgrade]
 		var box : VBoxContainer = button.get_child(0)
 		var level : int = stats.get_upgrade_level(upgrade)
-		(box.get_node("Line0") as Label).text = upgrade.name_key
-		(box.get_node("Line1") as Label).text = "Lv %d/%d" % [level, upgrade.max_level]
+		(box.get_node("Line0") as Label).text = upgrade.name_key.to_upper()
+		(box.get_node("Line1") as Label).text = "LV %d/%d" % [level, upgrade.max_level]
 		var cost_text : String
 		if (level >= upgrade.max_level):
 			cost_text = "MAX"
 			button.self_modulate = Color(0.6, 1.0, 0.6)
 		else:
-			cost_text = "%d gears" % upgrade.gears_for_level(level + 1)
+			cost_text = "%d GEARS" % upgrade.gears_for_level(level + 1)
 			var coins : int = upgrade.boss_coins_for_level(level + 1)
 			if (coins > 0):
 				cost_text += " +%d coin" % coins

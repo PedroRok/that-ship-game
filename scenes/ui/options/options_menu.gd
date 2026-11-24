@@ -44,6 +44,7 @@ func _build() -> void:
 
 	var panel : PanelContainer = PanelContainer.new()
 	center.add_child(panel)
+	panel.theme = PixelControls.themed()
 	var margin : MarginContainer = MarginContainer.new()
 	for side : String in ["left", "right", "top", "bottom"]:
 		margin.add_theme_constant_override("margin_" + side, 18)
@@ -88,7 +89,7 @@ func _build() -> void:
 	width_spin = _spin(320, 7680, get_window().size.x)
 	height_spin = _spin(180, 4320, get_window().size.y)
 	var apply_custom : Button = Button.new()
-	apply_custom.text = "Apply"
+	apply_custom.text = "APPLY"
 	apply_custom.pressed.connect(func() -> void:
 		GameSettings.custom_size = Vector2i(int(width_spin.value), int(height_spin.value))
 		resolution_option.select(GameSettings.RESOLUTIONS.size())
@@ -118,14 +119,14 @@ func _build() -> void:
 	box.add_child(_row("VSync", vsync_check))
 
 	info_label = Label.new()
-	info_label.add_theme_font_size_override("font_size", 10)
+	info_label.add_theme_font_size_override("font_size", 8)
 	info_label.modulate = Color(1, 1, 1, 0.7)
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(info_label)
 
 	var hint : Label = Label.new()
-	hint.text = "You can also drag the window edges: the game follows the new size."
-	hint.add_theme_font_size_override("font_size", 10)
+	hint.text = "YOU CAN ALSO DRAG THE WINDOW EDGES: THE GAME FOLLOWS THE NEW SIZE."
+	hint.add_theme_font_size_override("font_size", 8)
 	hint.modulate = Color(1, 1, 1, 0.7)
 	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	box.add_child(hint)
@@ -139,7 +140,7 @@ func _build() -> void:
 func _row(label_text : String, control : Control) -> HBoxContainer:
 	var row : HBoxContainer = HBoxContainer.new()
 	var label : Label = Label.new()
-	label.text = label_text
+	label.text = label_text.to_upper()
 	label.custom_minimum_size = Vector2(150, 0)
 	control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(label)
@@ -165,7 +166,7 @@ func _refresh_info() -> void:
 	if (!info_label or !is_instance_valid(info_label)):
 		return
 	var window : Window = get_window()
-	info_label.text = "Current window: %d x %d" % [window.size.x, window.size.y]
+	info_label.text = "CURRENT WINDOW: %d X %d" % [window.size.x, window.size.y]
 	if (width_spin and !width_spin.get_line_edit().has_focus()):
 		width_spin.set_value_no_signal(window.size.x)
 		height_spin.set_value_no_signal(window.size.y)

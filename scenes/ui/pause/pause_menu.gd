@@ -106,7 +106,7 @@ func _build_abandon_page() -> VBoxContainer:
 	box.add_theme_constant_override("separation", 10)
 	box.add_child(_header("ABANDON RUN?", "icon_alert_v01.png"))
 	var message := Label.new()
-	message.text = "Progress in this run will be lost."
+	message.text = "PROGRESS IN THIS RUN WILL BE LOST."
 	message.add_theme_font_override("font", PIXEL_FONT)
 	message.add_theme_font_size_override("font_size", 8)
 	message.add_theme_color_override("font_color", TEXT_COLOR)
@@ -238,7 +238,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _refresh_test_label() -> void:
 	if test_label:
-		test_label.text = "[F9] test mode, enemy spawns all units: %s" % ("ON" if Global.test_enemy_all_units else "OFF")
+		test_label.text = "[F9] TEST MODE, ENEMY SPAWNS ALL UNITS: %s" % ("ON" if Global.test_enemy_all_units else "OFF")
 
 func resume() -> void:
 	get_tree().paused = false

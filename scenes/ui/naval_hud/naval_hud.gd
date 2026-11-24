@@ -14,7 +14,26 @@ const CYAN := Color("#a4d7d4")
 const AMBER := Color("#e6b35d")
 const PINK := Color("#d7a4a0")
 const DIM := Color("#c4cdd0")
-const CAM_SIZE := Vector2i(84, 41)
+const DOCK_ICONS_8: Dictionary = {
+	BaseDock.Type.NAVAL: preload("res://assets/ui/icons/naval_8x8_v02.png"),
+	BaseDock.Type.SUB: preload("res://assets/ui/icons/submarine_8x8_v01.png"),
+	BaseDock.Type.AIR: preload("res://assets/ui/icons/airship_8x8_v02.png"),
+}
+const DOCK_ICONS_12: Dictionary = {
+	BaseDock.Type.NAVAL: preload("res://assets/ui/icons/naval_12x12_v01.png"),
+	BaseDock.Type.SUB: preload("res://assets/ui/icons/submarine_fleet_12x12_v05.png"),
+	BaseDock.Type.AIR: preload("res://assets/ui/icons/airship_12x12_v03.png"),
+}
+const OFF_MODULATE := Color(0.38, 0.45, 0.45)
+const SLOT_SIZE := Vector2(32, 26)
+const QUEUE_TITLES: Dictionary = {
+	BaseDock.Type.NAVAL: "NAVAL",
+	BaseDock.Type.SUB: "SUB",
+	BaseDock.Type.AIR: "AIR",
+}
+const CATALOG_SLOTS: int = 10
+const BASE_WARNING_RATIO: float = 0.25
+const DENIED_REASONS: PackedStringArray = ["LOW SCREWS", "DOCK OFFLINE", "QUEUE FULL"]
 
 var round_scene: GameRound
 var legacy: GameUI
@@ -26,17 +45,21 @@ var card_art_materials: Array[ShaderMaterial]
 var card_screen_materials: Array[ShaderMaterial]
 var demo_overlay: ColorRect
 var card_titles: Array[Label]
+var card_headers: Array[HBoxContainer] = []
 var selected: int = -1
 var ally_hp: ProgressBar
 var enemy_hp: ProgressBar
 var ally_caption: Label
 var enemy_caption: Label
 var wave_caption: Label
-var dock_status: Dictionary = {}
-var dock_viewports: Dictionary = {}
-var dock_panels: Dictionary = {}
-var last_dock_states: Dictionary = {}
-var completion_until: Dictionary = {}
+var queue_rows: Dictionary = {}
+var queue_titles: Dictionary = {}
+var queue_slots: Dictionary = {}
+var queue_arts: Dictionary = {}
+var queue_screens: Dictionary = {}
+var queue_wells: Dictionary = {}
+var queue_percents: Dictionary = {}
+var queue_signatures: Dictionary = {}
 var menu: Button
 var demo: DEMO
 var demo_title: Label
@@ -47,8 +70,11 @@ var top_panel: PanelContainer
 var minimap: BattleMinimap
 var hover_stat: StringName
 var focused_stat: StringName
+var sfx: HudSfx
+var base_warning_armed: bool = true
 
 func _ready() -> void:
+	sfx = UiSfx
 	mouse_filter = MOUSE_FILTER_IGNORE
 	texture_filter = TEXTURE_FILTER_NEAREST
 	set_anchors_and_offsets_preset(PRESET_FULL_RECT)
@@ -56,10 +82,10 @@ func _ready() -> void:
 	hud_theme.default_font = FONT
 	hud_theme.default_font_size = 8
 	theme = hud_theme
-	roster = Global.player_stats.loadout_entities()
+	roster = Global.player_stats.loadout_slots(CATALOG_SLOTS)
 	_make_header()
 	_make_console()
-	_select(0 if not roster.is_empty() else -1)
+	_select(_first_unit())
 
 func _style(fill: Color, border: Color, thickness: int = 1) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()
@@ -103,7 +129,7 @@ func _skin_card(button: Button, available: bool, picked: bool) -> void:
 
 func _label(value: String = "", centered: bool = false) -> Label:
 	var label := Label.new()
-	label.text = value
+	label.text = value.to_upper()
 	label.mouse_filter = MOUSE_FILTER_IGNORE
 	if centered:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -194,7 +220,7 @@ func _make_console() -> void:
 	bottom_panel.offset_top = -200
 	var row := _row(_margin(bottom_panel, 4), 4)
 	_make_resources(_module(row, "RESOURCES", 120, 1.0))
-	_make_docks(_module(row, "LIVE DOCK CAMERAS", 182, 1.2))
+	_make_queues(_module(row, "PRODUCTION QUEUES", 182, 1.2))
 	_make_catalog(_module(row, "UNIT CATALOG", 506, 4.25))
 	var inspector: VBoxContainer = _module(row, "UNIT TEST SIMULATOR", 204, 1.0)
 	inspector.get_parent().get_parent().size_flags_horizontal = SIZE_FILL
@@ -220,6 +246,7 @@ const DISPLAY_REST := Color("#5fd9cf")
 const DISPLAY_SHADOW := Color("#0a2b2d")
 const DISPLAY_UNLOADED := Color("#1b4c4b")
 const DISPLAY_LIGHT := Color("#b8fff6")
+const DISPLAY_TEXT := Color("#9ad5ce")
 const SCREW_ICON := preload("res://assets/game/misc/screw.png")
 const ART_TINT_SHADER := preload("res://shaders/unit_tint.gdshader")
 
@@ -263,60 +290,96 @@ func _counter(content: VBoxContainer, value: BarValue) -> void:
 	if value == legacy.screw_label:
 		value.apply_charge_style(DISPLAY_UNLOADED, DISPLAY_REST)
 
-func _make_docks(col: VBoxContainer) -> void:
-	var top := _row(col)
-	var naval: ShipConstructor = round_scene.ally_base.constructors[BaseDock.Type.NAVAL]
-	var sub: ShipConstructor = round_scene.ally_base.constructors[BaseDock.Type.SUB]
-	var air: ShipConstructor = round_scene.ally_base.constructors[BaseDock.Type.AIR]
-	_make_dock(top, BaseDock.Type.NAVAL, "NAVAL DOCK", naval)
-	_make_dock(top, BaseDock.Type.SUB, "SUB DOCK", sub)
-	var lower := CenterContainer.new()
-	col.add_child(lower)
-	_make_dock(lower, BaseDock.Type.AIR, "AIR DOCK", air)
+func _make_queues(col: VBoxContainer) -> void:
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	col.add_child(scroll)
+	var rows := _column(scroll, 4)
+	rows.size_flags_horizontal = SIZE_EXPAND_FILL
+	for kind: BaseDock.Type in [BaseDock.Type.NAVAL, BaseDock.Type.SUB, BaseDock.Type.AIR]:
+		var panel := _panel(Color("#202b31"), EDGE)
+		rows.add_child(panel)
+		var inner := _column(_margin(panel, 3), 2)
+		var title_row := _row(inner, 3)
+		title_row.add_child(_tinted_icon(DOCK_ICONS_8[kind], Vector2.ZERO, CYAN))
+		var title := _label(QUEUE_TITLES[kind])
+		title_row.add_child(title)
+		var strip := HFlowContainer.new()
+		strip.add_theme_constant_override("h_separation", 2)
+		strip.add_theme_constant_override("v_separation", 2)
+		inner.add_child(strip)
+		var slots: Array[Button] = []
+		var arts: Array[TextureRect] = []
+		var screens: Array[ShaderMaterial] = []
+		var wells: Array[PanelContainer] = []
+		var percents: Array[Label] = []
+		for index: int in range(round_scene.ally_base.queue_capacity(kind)):
+			var slot := Button.new()
+			slot.set_meta(UiSfx.MANUAL_META, true)
+			slot.custom_minimum_size = SLOT_SIZE
+			slot.focus_mode = Control.FOCUS_NONE
+			slot.flat = true
+			var well := _panel(Color("#2f3c43"), Color("#172127"))
+			well.mouse_filter = MOUSE_FILTER_IGNORE
+			well.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+			slot.add_child(well)
+			var screen := ColorRect.new()
+			screen.mouse_filter = MOUSE_FILTER_IGNORE
+			var screen_material := ShaderMaterial.new()
+			screen_material.shader = DISPLAY_SHADER
+			screen_material.set_shader_parameter("band_strength", 0.0)
+			screen.material = screen_material
+			screen.resized.connect(func() -> void: screen_material.set_shader_parameter("rect_size", screen.size))
+			well.add_child(screen)
+			var art := TextureRect.new()
+			art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			art.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+			art.clip_contents = true
+			art.mouse_filter = MOUSE_FILTER_IGNORE
+			var art_material := ShaderMaterial.new()
+			art_material.shader = ART_TINT_SHADER
+			art_material.set_shader_parameter("tint", DISPLAY_REST)
+			art.material = art_material
+			well.add_child(art)
+			var percent := _label("", true)
+			percent.mouse_filter = MOUSE_FILTER_IGNORE
+			percent.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+			percent.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			percent.add_theme_color_override("font_color", DISPLAY_LIGHT)
+			percent.add_theme_color_override("font_outline_color", Color("#06181a"))
+			percent.add_theme_constant_override("outline_size", 4)
+			percent.visible = false
+			well.add_child(percent)
+			percents.append(percent)
+			slot.pressed.connect(_cancel_slot.bind(kind, index))
+			strip.add_child(slot)
+			slots.append(slot)
+			arts.append(art)
+			screens.append(screen_material)
+			wells.append(well)
+		queue_rows[kind] = panel
+		queue_titles[kind] = title
+		queue_slots[kind] = slots
+		queue_arts[kind] = arts
+		queue_screens[kind] = screens
+		queue_wells[kind] = wells
+		queue_percents[kind] = percents
 
-func _make_dock(parent: Control, kind: BaseDock.Type, title: String, constructor: ShipConstructor) -> void:
-	var panel := _panel(Color("#202b31"), EDGE)
-	panel.custom_minimum_size = Vector2(CAM_SIZE.x + 8, CAM_SIZE.y + 31)
-	parent.add_child(panel)
-	var col := _column(_margin(panel, 4), 2)
-	col.add_child(_label(title))
-	var texture := TextureRect.new()
-	texture.custom_minimum_size = Vector2(CAM_SIZE)
-	texture.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	texture.stretch_mode = TextureRect.STRETCH_KEEP
-	texture.mouse_filter = MOUSE_FILTER_IGNORE
-	col.add_child(texture)
-	var viewport := SubViewport.new()
-	viewport.size = CAM_SIZE
-	viewport.world_2d = round_scene.get_world_2d()
-	viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
-	viewport.gui_disable_input = true
-	viewport.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
-	viewport.snap_2d_transforms_to_pixel = true
-	viewport.snap_2d_vertices_to_pixel = true
-	add_child(viewport)
-	var camera := Camera2D.new()
-	viewport.add_child(camera)
-	camera.make_current()
-	camera.position = _dock_center(kind, constructor).round()
-	texture.texture = viewport.get_texture()
-	var status := _label("", true)
-	col.add_child(status)
-	dock_status[kind] = status
-	dock_panels[kind] = panel
-	dock_viewports[kind] = viewport
-	constructor.ship_build_finish.connect(_dock_finished.bind(kind))
+func _unit_icon(stats: EntityStats) -> Texture2D:
+	if stats is AirPlaneState:
+		var plane: AirPlaneState = stats as AirPlaneState
+		if not plane.body_frames.is_empty():
+			return plane.body_frames[0]
+	return stats.sprite
 
-func _dock_center(kind: BaseDock.Type, constructor: ShipConstructor) -> Vector2:
-	if kind == BaseDock.Type.NAVAL:
-		return constructor.global_position + Vector2(0, -7)
-	var dock: BaseDock = round_scene.ally_base.docks[kind]
-	var definition: Dictionary = BaseDock.DEFS[kind]
-	var center: Vector2 = definition["center"]
-	return dock.to_global(center)
-
-func _dock_finished(_stats: BoatStats, kind: BaseDock.Type) -> void:
-	completion_until[kind] = Time.get_ticks_msec() + 850
+func _cancel_slot(kind: BaseDock.Type, index: int) -> void:
+	var removed: BoatStats = round_scene.ally_base.cancel_slot(kind, index)
+	if removed == null:
+		return
+	legacy.refund_entity(removed)
+	sfx.play(&"confirm")
+	_refresh_catalog()
 
 func _make_catalog(col: VBoxContainer) -> void:
 	var grid := GridContainer.new()
@@ -327,15 +390,18 @@ func _make_catalog(col: VBoxContainer) -> void:
 	for index: int in range(10):
 		var unit: EntityStats = roster[index] if index < roster.size() else null
 		var button := Button.new()
+		button.set_meta(UiSfx.MANUAL_META, true)
 		button.custom_minimum_size = Vector2(100, 72)
 		button.size_flags_horizontal = SIZE_EXPAND_FILL
 		_skin(button)
 		button.disabled = unit == null
 		button.pressed.connect(quick_build.bind(index))
-		button.mouse_entered.connect(_select.bind(index))
-		button.focus_entered.connect(_select.bind(index))
+		button.mouse_entered.connect(_on_card_hover.bind(index))
+		button.focus_entered.connect(_on_card_focus.bind(index))
 		grid.add_child(button)
 		cards.append(button)
+		button.focus_neighbor_left = button.get_path()
+		button.focus_neighbor_right = button.get_path()
 		var card := _column(_margin(button, 4), 1)
 		var upper := _row(card, 3)
 		var badge := _panel(Color("#10191f"), EDGE)
@@ -382,6 +448,11 @@ func _make_catalog(col: VBoxContainer) -> void:
 		var stack := VBoxContainer.new()
 		stack.mouse_filter = MOUSE_FILTER_IGNORE
 		overlay.add_child(stack)
+		var header := HBoxContainer.new()
+		header.mouse_filter = MOUSE_FILTER_IGNORE
+		stack.add_child(header)
+		header.add_theme_constant_override("separation", 0)
+		card_headers.append(header)
 		var spacer := Control.new()
 		spacer.mouse_filter = MOUSE_FILTER_IGNORE
 		spacer.size_flags_vertical = SIZE_EXPAND_FILL
@@ -400,22 +471,42 @@ func _make_catalog(col: VBoxContainer) -> void:
 			status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		footer.add_child(status)
 		card_status.append(status)
-		var price := _label(str(unit.price) if unit else "")
-		price.add_theme_color_override("font_color", DISPLAY_LIGHT)
 		if unit != null:
-			var screw := TextureRect.new()
-			screw.texture = SCREW_ICON
-			screw.stretch_mode = TextureRect.STRETCH_KEEP
-			screw.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-			screw.size_flags_vertical = SIZE_SHRINK_CENTER
-			screw.mouse_filter = MOUSE_FILTER_IGNORE
-			var screw_material := ShaderMaterial.new()
-			screw_material.shader = ART_TINT_SHADER
-			screw_material.set_shader_parameter("tint", DISPLAY_LIGHT)
-			screw.material = screw_material
-			footer.add_child(screw)
-		footer.add_child(price)
+			header.add_child(_tinted_icon(DOCK_ICONS_12[Base.dock_type_of(unit)], Vector2.ZERO, DISPLAY_TEXT))
+			var header_gap := Control.new()
+			header_gap.mouse_filter = MOUSE_FILTER_IGNORE
+			header_gap.size_flags_horizontal = SIZE_EXPAND_FILL
+			header.add_child(header_gap)
+			var price := _label(str(unit.price))
+			price.add_theme_font_size_override("font_size", 12)
+			price.add_theme_color_override("font_color", DISPLAY_TEXT)
+			price.size_flags_vertical = SIZE_SHRINK_CENTER
+			header.add_child(price)
+			var price_gap := Control.new()
+			price_gap.mouse_filter = MOUSE_FILTER_IGNORE
+			price_gap.custom_minimum_size.x = 2
+			header.add_child(price_gap)
+			header.add_child(_tinted_icon(SCREW_ICON, Vector2(18, 18), DISPLAY_TEXT))
 		last_reasons.append("#")
+
+func _tinted_icon(texture: Texture2D, size: Vector2, tint: Color) -> TextureRect:
+	var icon := TextureRect.new()
+	icon.texture = texture
+	icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	icon.size_flags_vertical = SIZE_SHRINK_CENTER
+	icon.mouse_filter = MOUSE_FILTER_IGNORE
+	if size == Vector2.ZERO:
+		icon.stretch_mode = TextureRect.STRETCH_KEEP
+	else:
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_SCALE
+		icon.custom_minimum_size = size
+	var material := ShaderMaterial.new()
+	material.shader = ART_TINT_SHADER
+	material.set_shader_parameter("tint", tint)
+	icon.set_meta(&"base_tint", tint)
+	icon.material = material
+	return icon
 
 func _make_inspector(col: VBoxContainer) -> void:
 	var frame := _panel()
@@ -458,6 +549,25 @@ func _clear_stat_focus(key: StringName) -> void:
 	if focused_stat == key:
 		focused_stat = &""
 
+func _first_unit() -> int:
+	for index: int in range(roster.size()):
+		if roster[index] != null:
+			return index
+	return -1
+
+func _has_unit(index: int) -> bool:
+	return index >= 0 and index < roster.size() and roster[index] != null
+
+func _on_card_hover(index: int) -> void:
+	if _has_unit(index):
+		sfx.play(&"hover")
+	_select(index)
+
+func _on_card_focus(index: int) -> void:
+	if _has_unit(index) and index != selected:
+		sfx.play(&"select")
+	_select(index)
+
 func _select(index: int) -> void:
 	selected = index
 	for i: int in range(last_reasons.size()):
@@ -471,9 +581,12 @@ func _select(index: int) -> void:
 	var speed: Button = stat_buttons[&"speed"]
 	var weapons: Button = stat_buttons[&"weapons"]
 	var targets: Button = stat_buttons[&"targets"]
-	health.text = "HP %s" % _number(stats.health) if stats else "HP"
-	speed.text = "SPD %s" % _number(stats.speed) if stats else "SPD"
-	weapons.text = "GUNS %d" % stats.gun_slots.size() if stats else "GUNS"
+	health.icon = load("res://assets/ui/icons/hp_8x8_v01.png")
+	speed.icon = load("res://assets/ui/icons/speed_8x8_v01.png")
+	weapons.icon = load("res://assets/ui/icons/gun_8x8_v01.png")
+	health.text = _number(stats.health) if stats else "HP"
+	speed.text = _number(stats.speed) if stats else "SPD"
+	weapons.text = "%d" % stats.gun_slots.size() if stats else "GUNS"
 	targets.text = "TARGETS"
 	targets.tooltip_text = _target_summary(stats)
 	for button: Button in stat_buttons.values():
@@ -510,13 +623,25 @@ func _number(value: float) -> String:
 	return str(snappedf(value, 0.1))
 
 func quick_build(index: int) -> void:
-	if index < 0 or index >= roster.size():
+	if not _has_unit(index):
 		return
 	var unit: EntityStats = roster[index]
-	if _build_reason(unit) != "READY":
+	var reason: String = _build_reason(unit)
+	if reason != "READY":
+		if DENIED_REASONS.has(reason):
+			sfx.play(&"denied")
 		return
 	legacy.spawn_entity(unit)
+	sfx.play(&"confirm")
 	_refresh_catalog()
+
+func _update_base_warning(current: float, full: float) -> void:
+	var ratio: float = current / maxf(1.0, full)
+	if ratio > BASE_WARNING_RATIO:
+		base_warning_armed = true
+	elif base_warning_armed and current > 0.0 and not round_scene.game_ended:
+		base_warning_armed = false
+		sfx.play(&"base_warning")
 
 func _build_reason(unit: EntityStats) -> String:
 	if round_scene.game_ended or get_tree().paused:
@@ -528,9 +653,8 @@ func _build_reason(unit: EntityStats) -> String:
 	var kind: BaseDock.Type = Base.dock_type_of(unit)
 	if kind != BaseDock.Type.NAVAL and not (round_scene.ally_base.docks[kind] as BaseDock).active:
 		return "DOCK OFFLINE"
-	var constructor: ShipConstructor = round_scene.ally_base.constructors[kind]
-	if constructor.is_building():
-		return "DOCK BUSY"
+	if not round_scene.ally_base.queue_has_room(kind):
+		return "QUEUE FULL"
 	return "READY"
 
 func _refresh_catalog() -> void:
@@ -541,10 +665,10 @@ func _refresh_catalog() -> void:
 			continue
 		last_reasons[index] = reason
 		card_status[index].text = reason
-		var color: Color = CYAN if reason == "READY" else DIM
+		var color: Color = DISPLAY_TEXT if reason == "READY" else DIM
 		if reason == "LOW SCREWS":
 			color = PINK
-		elif reason == "DOCK BUSY":
+		elif reason == "QUEUE FULL":
 			color = AMBER
 		elif reason == "EMPTY":
 			color = DISPLAY_UNLOADED
@@ -555,6 +679,11 @@ func _refresh_catalog() -> void:
 		card_screen_materials[index].set_shader_parameter("band_strength", 1.0 if reason == "READY" else 0.0)
 		card_wells[index].modulate = Color.WHITE if reason == "READY" else Color(0.72, 0.74, 0.78)
 		card_titles[index].modulate = Color.WHITE if reason == "READY" else Color(0.65, 0.68, 0.7)
+		card_headers[index].modulate = Color.WHITE if reason == "READY" else OFF_MODULATE
+		for child: Node in card_headers[index].get_children():
+			if child is TextureRect and child.has_meta(&"base_tint"):
+				var base_tint: Color = child.get_meta(&"base_tint")
+				((child as TextureRect).material as ShaderMaterial).set_shader_parameter("tint", base_tint if reason == "READY" else base_tint.darkened(0.55))
 
 func _process(_delta: float) -> void:
 	_refresh_catalog()
@@ -562,54 +691,67 @@ func _process(_delta: float) -> void:
 	var enemy_max: float = float(round_scene.get("enemy_max_hp"))
 	_update_hp(ally_hp, ally_caption, "BASE HP", round_scene.ally_base.health_component.health, ally_max)
 	_update_hp(enemy_hp, enemy_caption, "ENEMY HP", round_scene.enemy_base.health_component.health, enemy_max)
+	_update_base_warning(round_scene.ally_base.health_component.health, ally_max)
 	if round_scene.wave_manager:
 		wave_caption.text = "WAVE %02d" % round_scene.wave_manager.current_wave_number()
 	elif Global.run:
 		wave_caption.text = "FLOOR %02d" % (int(Global.run.map.get_node(Global.run.pending_node)["col"]) + 1)
 	if int(round_scene.get("boss_notice_until")) > Time.get_ticks_msec():
 		wave_caption.text += "  BOSS"
-	for kind: int in dock_status:
-		_update_dock(kind)
+	for kind: int in queue_rows:
+		_update_queue(kind)
 	var key: StringName = hover_stat if hover_stat != &"" else focused_stat
 	demo.set_demo(&"damage" if key == &"health" else key)
-	if selected >= 0 and selected < roster.size():
+	if _has_unit(selected):
 		var label: String = roster[selected].name.to_upper()
-		demo_title.text = "%s: %s" % [label, stat_buttons[&"targets"].tooltip_text] if key == &"targets" else label
+		demo_title.text = "%s: %s" % [label.to_upper(), stat_buttons[&"targets"].tooltip_text] if key == &"targets" else label.to_upper()
 	menu.disabled = round_scene.game_ended
 
 func _update_hp(bar: ProgressBar, caption: Label, title: String, current: float, full: float) -> void:
 	bar.max_value = maxf(1, full)
 	bar.value = current
-	caption.text = "%s  %s / %s" % [title, _number(current), _number(full)]
+	caption.text = "%s  %s / %s" % [title.to_upper(), _number(current), _number(full)]
 
-func _update_dock(kind: int) -> void:
-	var constructor: ShipConstructor = round_scene.ally_base.constructors[kind]
-	var status: Label = dock_status[kind]
-	var viewport: SubViewport = dock_viewports[kind]
-	var active: bool = kind == BaseDock.Type.NAVAL or (round_scene.ally_base.docks[kind] as BaseDock).active
-	var state: String = "OFFLINE"
-	var caption: String = state
-	var color: Color = EDGE
-	if active:
-		state = "READY"
-		caption = state
-		color = CYAN
-		if constructor.is_building():
-			var material: ShaderMaterial = constructor.material as ShaderMaterial
-			var progress: float = float(material.get_shader_parameter("build_progress"))
-			state = "BUILDING"
-			caption = "%d%%" % roundi(progress * 100.0)
-			color = AMBER
-		elif int(completion_until.get(kind, 0)) > Time.get_ticks_msec():
-			state = "LAUNCHING"
-			caption = state
-	if last_dock_states.get(kind) != state:
-		var panel: PanelContainer = dock_panels[kind]
-		panel.add_theme_stylebox_override("panel", _style(Color("#202b31").lerp(color, 0.12), color.darkened(0.38)))
-		status.add_theme_color_override("font_color", color)
-		viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE if active else SubViewport.UPDATE_DISABLED
-		last_dock_states[kind] = state
-	status.text = caption
+func _update_queue(kind: int) -> void:
+	var base: Base = round_scene.ally_base
+	var active: bool = kind == BaseDock.Type.NAVAL or (base.docks[kind] as BaseDock).active
+	(queue_rows[kind] as PanelContainer).visible = active
+	if not active:
+		return
+	var constructor: ShipConstructor = base.constructors[kind]
+	var waiting: Array = base.queues[kind]
+	var building: BoatStats = constructor.boat_stats
+	var title: Label = queue_titles[kind]
+	var signature: Array = [building, waiting.duplicate(), base.queue_capacity(kind)]
+	var slots: Array = queue_slots[kind]
+	if building:
+		var material: ShaderMaterial = constructor.material as ShaderMaterial
+		var progress: float = float(material.get_shader_parameter("build_progress"))
+		(queue_percents[kind][0] as Label).text = "%d%%" % roundi(progress * 100.0)
+		(queue_percents[kind][0] as Label).visible = true
+		title.text = "%s  %d/%d" % [QUEUE_TITLES[kind], base.queue_used(kind), base.queue_capacity(kind)]
+		title.add_theme_color_override("font_color", AMBER)
+	else:
+		(queue_percents[kind][0] as Label).visible = false
+		title.text = "%s  %d/%d" % [QUEUE_TITLES[kind], base.queue_used(kind), base.queue_capacity(kind)]
+		title.add_theme_color_override("font_color", CYAN if waiting.is_empty() else DIM)
+	if queue_signatures.get(kind) == signature:
+		return
+	queue_signatures[kind] = signature
+	for index: int in range(slots.size()):
+		var slot: Button = slots[index]
+		var stats: EntityStats = null
+		if index == 0:
+			stats = building
+		elif index - 1 < waiting.size():
+			stats = waiting[index - 1]
+		var filled: bool = stats != null
+		(queue_arts[kind][index] as TextureRect).texture = _unit_icon(stats) if filled else null
+		(queue_screens[kind][index] as ShaderMaterial).set_shader_parameter("band_strength", 1.0 if filled else 0.0)
+		var edge: Color = AMBER if index == 0 and filled else Color("#172127")
+		(queue_wells[kind][index] as PanelContainer).add_theme_stylebox_override("panel", _style(Color("#4d6069") if filled else Color("#2f3c43"), edge))
+		slot.disabled = not filled
+		slot.tooltip_text = "%s: click to cancel and refund" % stats.name.to_upper() if filled else ""
 
 func covers_point(point: Vector2) -> bool:
 	return top_panel.get_global_rect().has_point(point) or bottom_panel.get_global_rect().has_point(point) or minimap.get_global_rect().has_point(point)
