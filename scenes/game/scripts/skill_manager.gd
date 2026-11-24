@@ -54,7 +54,7 @@ func _make_button(text : String, handler : Callable) -> Button:
 	var button : Button = Button.new()
 	button.custom_minimum_size = Vector2(196, 40)
 	button.add_theme_font_size_override("font_size", 8)
-	button.text = text
+	button.text = text.to_upper()
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(handler)
 	return button
@@ -68,9 +68,9 @@ func _process(delta : float) -> void:
 func _update_button(button : Button, label : String, key : StringName, cost : int) -> void:
 	var cd : float = cooldowns[key]
 	if (cd > 0.0):
-		button.text = "%s  %ds" % [label, ceili(cd)]
+		button.text = ("%s  %ds" % [label, ceili(cd)]).to_upper()
 	else:
-		button.text = "%s  %d scr" % [label, cost]
+		button.text = ("%s  %d scr" % [label, cost]).to_upper()
 	button.disabled = !enabled or cd > 0.0 or game_ui.screw_label.total_value < cost
 
 func _unhandled_input(event : InputEvent) -> void:
@@ -100,7 +100,7 @@ func stop() -> void:
 func _set_targeting(value : bool) -> void:
 	targeting_bomb = value
 	hint_label.visible = value
-	hint_label.text = "Click on the battlefield to drop bombs (Esc cancels)"
+	hint_label.text = "CLICK ON THE BATTLEFIELD TO DROP BOMBS (ESC CANCELS)"
 
 func _can_use(key : StringName, cost : int) -> bool:
 	return enabled and cooldowns[key] <= 0.0 and game_ui.screw_label.total_value >= cost

@@ -10,17 +10,15 @@ uniform float speed : hint_range(0.0, 1.0) = 0.1;
 uniform float texture_strength : hint_range(0.0, 1.0) = 0.5;
 
 uniform float deep_amount = 0.0;
-uniform float deep_start = 0.5;
-uniform float deep_end = 0.72;
+uniform float deep_start = 360.0;
+uniform float deep_end = 518.0;
 
 uniform vec4 water_tint : source_color = vec4(0.2, 0.6, 1.0, 0.1);
 
-// Uso na doca submarina: level >= 0 recorta a água pelo nível (0..1) e pela máscara da textura.
 uniform float level = -1.0;
 uniform float top = 0.2;
 uniform float bottom = 0.9;
 
-// Buracos no mar (x0, y0, x1, y1 em coordenadas globais): onde ficam as docas submarinas.
 uniform vec4 hole0 = vec4(0.0);
 uniform vec4 hole1 = vec4(0.0);
 
@@ -81,7 +79,7 @@ void fragment()
 	vec4 color2 = color + ocean_text;
 	color2.rgb = color2.rgb * 0.3 * SCREEN_UV.y;
 	COLOR = mix(color2, color *1.8, mix_value);
-	float deep = smoothstep(deep_start, deep_end, SCREEN_UV.y);
+	float deep = smoothstep(deep_start, deep_end, globalposition.y);
 	COLOR.rgb *= 1.0 - deep_amount * deep;
 	COLOR.rgb = mix(COLOR.rgb, vec3(0.8, 0.95, 1.0), dock_edge * 0.35);
 }

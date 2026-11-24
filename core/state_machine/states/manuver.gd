@@ -42,7 +42,8 @@ func process_physics(delta: float) -> void:
 		set_guns_enemy(target)
 	
 	for gun in parent.get_guns():
-		gun.shoot_gun(Vector2(1, 0))
+		if (gun.enemy):
+			gun.shoot_gun(Vector2(1, 0))
 		gun.projectile_rotation_spawn = parent.rotation
 		
 		

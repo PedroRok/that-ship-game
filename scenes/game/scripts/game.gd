@@ -56,6 +56,10 @@ func _enter_tree() -> void:
 	(front.material as ShaderMaterial).set_shader_parameter("rect_size", Vector2(front.size.x, front.size.y))
 
 func _ready() -> void:
+	var audio : BattleAudio = BattleAudio.new()
+	audio.name = "BattleAudio"
+	audio.camera = camera
+	add_child(audio)
 	var legacy_ui : Control = $CanvasLayer/GameUI as Control
 	legacy_ui.hide()
 	legacy_ui.process_mode = Node.PROCESS_MODE_INHERIT
@@ -120,8 +124,6 @@ func base_death_event(team_stats: TeamStats) -> void:
 	wave_manager.stop()
 	skill_manager.stop()
 	var victory : bool = team_stats.team_id != 1
-	var raw_screws : int = $CanvasLayer/GameUI.screw_label.total_value
-	var leftover_screws : int = int(raw_screws * Global.modify(Enums.UpgradeTarget.BASE, &"leftover_gear_mult", 1.0))
 	var waves_reached : int = max(wave_manager.current_wave_number() - 1, 0)
 	var wave_gears : int = int(waves_reached * Global.modify(Enums.UpgradeTarget.BASE, &"gears_per_wave", GEARS_PER_WAVE))
 	var bonus : int = VICTORY_BONUS if victory else 0
@@ -129,14 +131,13 @@ func base_death_event(team_stats: TeamStats) -> void:
 	var win_screen : Node = WIN_SCREEN.instantiate()
 	win_screen.title = "VICTORY" if victory else "DEFEAT"
 	win_screen.rows = [
-		{"label": "Leftover Screws", "value": leftover_screws},
 		{"label": "Waves Reached (%d)" % waves_reached, "value": wave_gears},
 		{"label": "Gears Collected", "value": gears_collected_in_round},
 		{"label": "Victory Bonus", "value": bonus},
 		{"label": "Boss Coins", "value": boss_coins_in_round},
 	]
-	win_screen.total = leftover_screws + wave_gears + bonus + gears_collected_in_round
-	Global.player_stats.gear += leftover_screws + wave_gears + bonus
+	win_screen.total = wave_gears + bonus + gears_collected_in_round
+	Global.player_stats.gear += wave_gears + bonus
 	Global.player_stats.best_wave = max(Global.player_stats.best_wave, waves_reached)
 	Global.save_game()
 	canvas_layer.call_deferred("add_child", win_screen)

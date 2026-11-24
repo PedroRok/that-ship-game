@@ -101,6 +101,9 @@ var _takeoff_left : float = 0.0
 var _runway_speed : float = 0.0
 var _runway_accel : float = 0.0
 
+func is_on_runway() -> bool:
+	return _on_runway
+
 func begin_takeoff(clear_x : float) -> void:
 	_on_runway = true
 	begin_entry(clear_x, true)
