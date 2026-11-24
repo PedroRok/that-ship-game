@@ -106,9 +106,9 @@ func _unhandled_input(event : InputEvent) -> void:
 func _on_wave_started(number : int, wave : WaveData) -> void:
 	if (wave_label == null):
 		return
-	var text : String = "Wave %d/%d" % [number, wave_manager.waves_per_run]
+	var text : String = Loc.t("battle.wave") % [number, wave_manager.waves_per_run]
 	if (number > wave_manager.waves_per_run):
-		text = "Wave %d" % number
+		text = Loc.t("battle.wave_2") % number
 	if (wave.boss):
 		text += "  - BOSS"
 	wave_label.text = text
@@ -129,12 +129,12 @@ func base_death_event(team_stats: TeamStats) -> void:
 	var bonus : int = VICTORY_BONUS if victory else 0
 
 	var win_screen : Node = WIN_SCREEN.instantiate()
-	win_screen.title = "VICTORY" if victory else "DEFEAT"
+	win_screen.title = "battle.victory" if victory else "battle.defeat"
 	win_screen.rows = [
-		{"label": "Waves Reached (%d)" % waves_reached, "value": wave_gears},
-		{"label": "Gears Collected", "value": gears_collected_in_round},
-		{"label": "Victory Bonus", "value": bonus},
-		{"label": "Boss Coins", "value": boss_coins_in_round},
+		{"label": Loc.t("battle.waves_reached") % waves_reached, "value": wave_gears},
+		{"label": "battle.gears_collected", "value": gears_collected_in_round},
+		{"label": "battle.victory_bonus", "value": bonus},
+		{"label": "battle.boss_coins", "value": boss_coins_in_round},
 	]
 	win_screen.total = wave_gears + bonus + gears_collected_in_round
 	Global.player_stats.gear += wave_gears + bonus

@@ -39,8 +39,8 @@ func _build_ui() -> void:
 	box.position = Vector2(1280 - 2 * 200 - 24, 10)
 	box.add_theme_constant_override("separation", 8)
 	canvas.add_child(box)
-	bomb_button = _make_button("[Q] Bomb", _on_bomb_pressed)
-	boost_button = _make_button("[W] Boost", _on_boost_pressed)
+	bomb_button = _make_button("battle.q_bomb", _on_bomb_pressed)
+	boost_button = _make_button("battle.w_boost", _on_boost_pressed)
 	box.add_child(bomb_button)
 	box.add_child(boost_button)
 
@@ -54,7 +54,7 @@ func _make_button(text : String, handler : Callable) -> Button:
 	var button : Button = Button.new()
 	button.custom_minimum_size = Vector2(196, 40)
 	button.add_theme_font_size_override("font_size", 8)
-	button.text = text.to_upper()
+	button.text = Loc.t(text).to_upper()
 	button.focus_mode = Control.FOCUS_NONE
 	button.pressed.connect(handler)
 	return button
@@ -62,15 +62,15 @@ func _make_button(text : String, handler : Callable) -> Button:
 func _process(delta : float) -> void:
 	for key : StringName in cooldowns:
 		cooldowns[key] = max(0.0, cooldowns[key] - delta)
-	_update_button(bomb_button, "[Q] Bomb", &"bomb", BOMB_COST)
-	_update_button(boost_button, "[W] Boost", &"boost", BOOST_COST)
+	_update_button(bomb_button, "battle.q_bomb", &"bomb", BOMB_COST)
+	_update_button(boost_button, "battle.w_boost", &"boost", BOOST_COST)
 
 func _update_button(button : Button, label : String, key : StringName, cost : int) -> void:
 	var cd : float = cooldowns[key]
 	if (cd > 0.0):
-		button.text = ("%s  %ds" % [label, ceili(cd)]).to_upper()
+		button.text = ("%s  %ds" % [Loc.t(label), ceili(cd)]).to_upper()
 	else:
-		button.text = ("%s  %d scr" % [label, cost]).to_upper()
+		button.text = (Loc.t("battle.scr") % [Loc.t(label), cost]).to_upper()
 	button.disabled = !enabled or cd > 0.0 or game_ui.screw_label.total_value < cost
 
 func _unhandled_input(event : InputEvent) -> void:
@@ -100,7 +100,7 @@ func stop() -> void:
 func _set_targeting(value : bool) -> void:
 	targeting_bomb = value
 	hint_label.visible = value
-	hint_label.text = "CLICK ON THE BATTLEFIELD TO DROP BOMBS (ESC CANCELS)"
+	hint_label.text = "battle.click_on_the_battlefield_to"
 
 func _can_use(key : StringName, cost : int) -> bool:
 	return enabled and cooldowns[key] <= 0.0 and game_ui.screw_label.total_value >= cost

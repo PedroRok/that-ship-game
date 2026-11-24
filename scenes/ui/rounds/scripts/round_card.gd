@@ -12,7 +12,7 @@ var button : Button = $Margin/VBox/Button
 @export
 var title : String = "TITLE"
 @export
-var desc : String =  "A simple description"
+var desc : String =  "result.a_simple_description"
 @onready
 var title_label : Label = $Margin/VBox/Title
 @onready
@@ -27,8 +27,8 @@ func set_stats(new_stats : RoundCardStats) -> void:
 	if (!card_stats):
 		push_error("Trying to start a card without a stats")
 		return
-	title_label.text = title.to_upper()
-	card_desc.text = desc.to_upper()
+	title_label.text = Loc.t(title).to_upper()
+	card_desc.text = Loc.t(desc).to_upper()
 	new_stats.apply_card(self)
 
 func _on_button_button_up() -> void:

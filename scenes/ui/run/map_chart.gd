@@ -39,10 +39,10 @@ func setup(new_run : RunState) -> void:
 	routes.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	routes.draw.connect(_draw_all)
 	add_child(routes)
-	var headers : Array[String] = ["01", "02", "03", "04", "BOSS"]
+	var headers : Array[String] = ["01", "02", "03", "04", "battle.boss_caps"]
 	for col : int in headers.size():
 		var label : Label = Label.new()
-		label.text = str(headers[col]).to_upper()
+		label.text = Loc.t(str(headers[col])).to_upper()
 		label.add_theme_font_override("font", FONT)
 		label.add_theme_font_size_override("font_size", 8)
 		label.add_theme_color_override("font_color", Color("#7795a1"))

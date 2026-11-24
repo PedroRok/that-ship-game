@@ -116,9 +116,9 @@ func gives_relic(id : int) -> bool:
 func expected_relic_text(id : int) -> String:
 	var node : Dictionary = map.get_node(id)
 	if (node["type"] == RunData.NodeType.ELITE):
-		return "+1 relic"
+		return "run.1_relic"
 	if (node["type"] == RunData.NodeType.BATTLE):
-		return "%d%% relic chance" % int(RunData.RELIC_CHANCE_BATTLE * 100.0)
+		return Loc.t("run.relic_chance") % int(RunData.RELIC_CHANCE_BATTLE * 100.0)
 	return ""
 
 func _effect_sources() -> Array[Dictionary]:
@@ -230,13 +230,13 @@ func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, bo
 	base_hp = clampi(base_hp_now, 0, base_max_hp)
 	var damage : int = _node_hp_before - base_hp
 	if (base_destroyed or base_hp <= 0):
-		_end_run(RunData.Result.LOST, "The base was destroyed during the battle.")
+		_end_run(RunData.Result.LOST, "run.the_base_was_destroyed_during")
 		return
 	if (!success):
 		base_hp = maxi(base_hp - RunData.FAIL_BASE_DAMAGE, 0)
 		damage = _node_hp_before - base_hp
 		if (base_hp <= 0):
-			_end_run(RunData.Result.LOST, "The objective failed and the base fell.")
+			_end_run(RunData.Result.LOST, "run.the_objective_failed_and_the")
 			return
 	var gained : int = 0
 	var offer : bool = false
@@ -262,7 +262,7 @@ func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, bo
 		node_result["relic_offered"] = offer
 	risks.clear()
 	if (success and is_boss):
-		_end_run(RunData.Result.WON, "The sector boss was defeated.")
+		_end_run(RunData.Result.WON, "run.the_sector_boss_was_defeated")
 		return
 	stage = RunData.Stage.NODE_DONE
 
@@ -440,7 +440,7 @@ func abandon() -> void:
 	result = RunData.Result.LOST
 	rewards_paid = true
 	stage = RunData.Stage.ENDED
-	end_reason = "Run abandoned."
+	end_reason = "run.run_abandoned"
 
 func to_dict() -> Dictionary:
 	var relic_names : Array = []

@@ -60,7 +60,7 @@ func _ready() -> void:
 	if (!Engine.is_editor_hint() and name_label.material == value_label.material):
 		name_label.material = value_label.material.duplicate()
 	texture.texture = icon_texture
-	name_label.text = name_string.to_upper()
+	name_label.text = Loc.t(name_string).to_upper()
 	value_label.text = str(start_value)
 	texture.material.set_shader_parameter("reference_texture", icon_texture)
 	pass

@@ -59,14 +59,14 @@ size_flags_horizontal = 0
 [node name="Screw" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
 layout_mode = 2
 icon_texture = ExtResource("3_l0ngb")
-name_string = "SCREW"
+name_string = "hud.screw"
 
 [node name="VSeparator" type="VSeparator" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats"]
 layout_mode = 2
 
 [node name="Gear" parent="NinePatchRect/MarginContainer/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
 layout_mode = 2
-name_string = "GEAR"
+name_string = "hud.gear"
 
 [node name="HSeparator" type="HSeparator" parent="NinePatchRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -106,14 +106,14 @@ layout_mode = 2
 [node name="Screw" parent="NinePatchRect2/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
 layout_mode = 2
 icon_texture = ExtResource("3_l0ngb")
-name_string = "SCREW"
+name_string = "hud.screw"
 
 [node name="HSeparator" type="HSeparator" parent="NinePatchRect2/VBoxContainer/Stats"]
 layout_mode = 2
 
 [node name="Gear" parent="NinePatchRect2/VBoxContainer/Stats" instance=ExtResource("5_138iq")]
 layout_mode = 2
-name_string = "GEAR"
+name_string = "hud.gear"
 
 [node name="HSeparator" type="HSeparator" parent="NinePatchRect2/VBoxContainer"]
 layout_mode = 2

@@ -10,18 +10,18 @@ func requires_run() -> bool:
 	return false
 
 func screen_title() -> String:
-	return "MAIN MENU"
+	return "menu.main_menu"
 
 func screen_subtitle() -> String:
-	return "CHOOSE A SAVE"
+	return "menu.choose_a_save"
 
 func header_kicker() -> String:
-	return "SHIPING"
+	return "menu.shiping"
 
 func _build() -> void:
 	Global.run = null
 	Global.start_mode = Global.StartMode.NONE
-	content.add_child(_label("Each save keeps its own gears, troops, research and campaign.", 16, TEXT_SOFT))
+	content.add_child(_label("menu.each_save_keeps_its_own", 16, TEXT_SOFT))
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 20)
 	row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -31,10 +31,10 @@ func _build() -> void:
 	content.add_child(_spacer())
 	content.add_child(_divider())
 	content.add_child(_dev_panel())
-	var options : Button = _button("OPTIONS")
+	var options : Button = _button("menu.options")
 	options.custom_minimum_size.x = 220
 	options.pressed.connect(Global.open_options)
-	var quit : Button = _button("QUIT", true)
+	var quit : Button = _button("menu.quit", true)
 	quit.custom_minimum_size.x = 220
 	quit.pressed.connect(func() -> void: get_tree().quit())
 	content.add_child(_footer(options, quit))
@@ -49,7 +49,7 @@ func _slot_card(index : int) -> Control:
 	var box : VBoxContainer = VBoxContainer.new()
 	box.add_theme_constant_override("separation", 12)
 	panel.add_child(box)
-	box.add_child(_plate("SLOT %d" % index, TEXT, 16, CYAN if exists else TEXT_DIM))
+	box.add_child(_plate(Loc.t("menu.slot") % index, TEXT, 16, CYAN if exists else TEXT_DIM))
 	var stats : VBoxContainer = VBoxContainer.new()
 	stats.add_theme_constant_override("separation", 10)
 	stats.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -62,19 +62,19 @@ func _slot_card(index : int) -> Control:
 		gears.add_child(_gear_icon())
 		gears.add_child(_label("%d" % int(summary["gear"]), 24, AMBER, true))
 		stats.add_child(gears)
-		stats.add_child(_centered("%d TROOPS UNLOCKED" % int(summary["units"]), TEXT))
-		stats.add_child(_centered("BEST WAVE: %d" % int(summary["best_wave"]), TEXT_SOFT))
+		stats.add_child(_centered(Loc.t("menu.troops_unlocked") % int(summary["units"]), TEXT))
+		stats.add_child(_centered(Loc.t("menu.best_wave_2") % int(summary["best_wave"]), TEXT_SOFT))
 		stats.add_child(_centered(_run_text(summary["run"]), TEXT_SOFT))
 	else:
-		stats.add_child(_centered("EMPTY SAVE", TEXT_DIM))
-		stats.add_child(_centered("Starts with the basic troops.", TEXT_DIM))
+		stats.add_child(_centered("menu.empty_save", TEXT_DIM))
+		stats.add_child(_centered("menu.starts_with_the_basic_troops", TEXT_DIM))
 	box.add_child(_divider())
-	var play : Button = _button("PLAY" if exists else "NEW SAVE")
+	var play : Button = _button("result.play" if exists else "menu.new_save")
 	play.pressed.connect(_on_play.bind(index))
 	box.add_child(play)
 	if (first_button == null):
 		first_button = play
-	var delete : Button = _button("DELETE", true, 8)
+	var delete : Button = _button("menu.delete", true, 8)
 	delete.custom_minimum_size.y = 32
 	delete.disabled = !exists
 	delete.pressed.connect(_on_delete.bind(index))
@@ -89,9 +89,9 @@ func _centered(text : String, color : Color) -> Label:
 
 func _run_text(run_state : Variant) -> String:
 	if (run_state == null):
-		return "NO CAMPAIGN IN PROGRESS"
+		return "menu.no_campaign_in_progress"
 	var state : RunState = run_state
-	return "CAMPAIGN: FLOOR %d/%d  |  BASE %d/%d" % [
+	return Loc.t("menu.campaign_floor_base") % [
 			mini(state.floors_cleared() + 1, RunData.COLUMNS), RunData.COLUMNS, state.base_hp, state.base_max_hp]
 
 func _dev_panel() -> Control:
@@ -100,7 +100,7 @@ func _dev_panel() -> Control:
 	row.add_theme_constant_override("separation", 16)
 	panel.add_child(row)
 	var check : CheckBox = CheckBox.new()
-	check.text = "DEV MODE"
+	check.text = "menu.dev_mode"
 	check.button_pressed = Global.dev_mode
 	check.focus_mode = Control.FOCUS_ALL
 	check.add_theme_font_override("font", FONT)
@@ -109,7 +109,7 @@ func _dev_panel() -> Control:
 		check.add_theme_color_override(key, AMBER)
 	check.toggled.connect(func(on : bool) -> void: Global.dev_mode = on)
 	row.add_child(check)
-	var note : Label = _wrapped("Starts with 99999 gears and every troop unlocked. Progress is not saved while it is on.", 12, TEXT_SOFT)
+	var note : Label = _wrapped("menu.starts_with_99999_gears_and", 12, TEXT_SOFT)
 	note.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	row.add_child(note)
 	return panel
@@ -125,12 +125,12 @@ func _on_delete(index : int) -> void:
 	if (_pending_delete != index):
 		_reset_delete_labels()
 		_pending_delete = index
-		(_delete_buttons[index] as Button).text = PixelText.fit("CONFIRM DELETE?", 8)
+		(_delete_buttons[index] as Button).text = PixelText.fit("menu.confirm_delete", 8)
 		return
 	SaveManager.delete_slot(index)
 	Global.change_scene(Global.Menu.MAIN_MENU)
 
 func _reset_delete_labels() -> void:
 	for key : Variant in _delete_buttons:
-		(_delete_buttons[key] as Button).text = "DELETE"
+		(_delete_buttons[key] as Button).text = "menu.delete"
 	_pending_delete = -1

@@ -15,10 +15,10 @@ func expected_stage() -> int:
 	return RunData.Stage.MAP
 
 func screen_title() -> String:
-	return "Run Map"
+	return "run.run_map"
 
 func screen_subtitle() -> String:
-	return "FLOOR %02d / %02d" % [mini(run.floors_cleared() + 1, RunData.COLUMNS), RunData.COLUMNS]
+	return Loc.t("run.floor_2") % [mini(run.floors_cleared() + 1, RunData.COLUMNS), RunData.COLUMNS]
 
 func _build() -> void:
 	content.add_child(_build_stats_row())
@@ -44,7 +44,7 @@ func _build_stats_row() -> Control:
 	hp_panel.size_flags_stretch_ratio = 2.0
 	var hp_box : VBoxContainer = VBoxContainer.new()
 	hp_panel.add_child(hp_box)
-	hp_box.add_child(_label("BASE HEALTH", 12, TEXT_SOFT, true))
+	hp_box.add_child(_label("run.base_health", 12, TEXT_SOFT, true))
 	var hp_row : HBoxContainer = HBoxContainer.new()
 	hp_row.add_theme_constant_override("separation", 10)
 	hp_row.add_child(_icon(RunData.ui_icon("base_health")))
@@ -53,9 +53,9 @@ func _build_stats_row() -> Control:
 	hp_row.add_child(_label("%d / %d" % [run.base_hp, run.base_max_hp], 16, TEXT, true))
 	hp_box.add_child(hp_row)
 	row.add_child(hp_panel)
-	row.add_child(_small_stat("RELICS", "%02d" % run.relics.size(), AMBER, null))
-	row.add_child(_small_stat("FLOOR", "%02d / %02d" % [mini(run.floors_cleared(), RunData.COLUMNS), RunData.COLUMNS], TEXT, _icon(RunData.ui_icon("floors"))))
-	row.add_child(_small_stat("SCREWS", str(run.screws), AMBER, _screw_icon()))
+	row.add_child(_small_stat("run.relics", "%02d" % run.relics.size(), AMBER, null))
+	row.add_child(_small_stat("run.floor_caps", "%02d / %02d" % [mini(run.floors_cleared(), RunData.COLUMNS), RunData.COLUMNS], TEXT, _icon(RunData.ui_icon("floors"))))
+	row.add_child(_small_stat("run.screws_caps", str(run.screws), AMBER, _screw_icon()))
 	return row
 
 func _small_stat(title : String, value : String, color : Color, icon : Control) -> PanelContainer:
@@ -80,7 +80,7 @@ func _build_chart_panel() -> Control:
 	box.add_theme_constant_override("separation", 4)
 	panel.add_child(box)
 	var top : HBoxContainer = HBoxContainer.new()
-	var plate : PanelContainer = _plate("NAVIGATION CHART", TEXT, 16)
+	var plate : PanelContainer = _plate("run.navigation_chart", TEXT, 16)
 	plate.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(plate)
 	box.add_child(top)
@@ -102,8 +102,8 @@ func _legend() -> HBoxContainer:
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 22)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
-	var entries : Array = [["Traveled", MapChart.ROUTE_TRAVELED], ["Selected", MapChart.ROUTE_FOCUS],
-		["Available", MapChart.ROUTE_AVAILABLE], ["Locked", MapChart.ROUTE_LOCKED]]
+	var entries : Array = [["run.traveled", MapChart.ROUTE_TRAVELED], ["run.selected_2", MapChart.ROUTE_FOCUS],
+		["run.available", MapChart.ROUTE_AVAILABLE], ["run.locked", MapChart.ROUTE_LOCKED]]
 	for entry : Array in entries:
 		var item : HBoxContainer = HBoxContainer.new()
 		item.add_theme_constant_override("separation", 6)
@@ -123,7 +123,7 @@ func _build_info_panel() -> Control:
 	var box : VBoxContainer = VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
 	panel.add_child(box)
-	box.add_child(_plate("SELECTED NODE", TEXT, 16))
+	box.add_child(_plate("run.selected_node", TEXT, 16))
 	var holder : Control = Control.new()
 	holder.custom_minimum_size = Vector2(INFO_WIDTH - 2 * (10 + FRAME_ART), INFO_HEIGHT)
 	holder.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -133,16 +133,16 @@ func _build_info_panel() -> Control:
 	info_box.set_anchors_preset(Control.PRESET_FULL_RECT)
 	info_box.add_theme_constant_override("separation", 8)
 	holder.add_child(info_box)
-	confirm_button = _button("SELECT A NODE")
+	confirm_button = _button("run.select_a_node")
 	confirm_button.pressed.connect(_on_confirm)
 	box.add_child(confirm_button)
 	box.add_child(_divider())
-	box.add_child(_label("RELICS COLLECTED", 12, TEXT_SOFT, true))
+	box.add_child(_label("run.relics_collected", 12, TEXT_SOFT, true))
 	relic_row = HBoxContainer.new()
 	relic_row.add_theme_constant_override("separation", 6)
 	relic_row.custom_minimum_size.y = 38
 	box.add_child(relic_row)
-	abandon_button = _button("ABANDON RUN", true, 12)
+	abandon_button = _button("pause.abandon_run", true, 12)
 	abandon_button.custom_minimum_size.y = 34
 	abandon_button.pressed.connect(_on_abandon)
 	box.add_child(abandon_button)
@@ -161,7 +161,7 @@ func _on_confirm() -> void:
 func _on_abandon() -> void:
 	if (!abandon_armed):
 		abandon_armed = true
-		abandon_button.text = "CONFIRM ABANDON?"
+		abandon_button.text = "run.confirm_abandon"
 		get_tree().create_timer(3.0).timeout.connect(_disarm_abandon)
 		return
 	RunFlow.abandon()
@@ -169,7 +169,7 @@ func _on_abandon() -> void:
 func _disarm_abandon() -> void:
 	abandon_armed = false
 	if (is_instance_valid(abandon_button)):
-		abandon_button.text = "ABANDON RUN"
+		abandon_button.text = "pause.abandon_run"
 
 func _refresh() -> void:
 	chart.refresh()
@@ -180,7 +180,7 @@ func _refresh() -> void:
 		var holder : PanelContainer = PanelContainer.new()
 		holder.add_theme_stylebox_override("panel", _pause_box("button_disabled_v01.png", 4, 2))
 		var rarity : int = int(RunData.RELICS[relic_id]["rarity"])
-		holder.tooltip_text = "%s [%s]\n%s" % [RunData.RELICS[relic_id]["name"], RunData.RARITY_NAMES[rarity], RunData.RELICS[relic_id]["tag"]]
+		holder.tooltip_text = "%s [%s]\n%s" % [Loc.t(RunData.RELICS[relic_id]["name"]), Loc.t(RunData.RARITY_NAMES[rarity]), Loc.t(RunData.RELICS[relic_id]["tag"])]
 		holder.add_child(_icon(RunData.relic_icon(relic_id)))
 		holder.mouse_filter = Control.MOUSE_FILTER_PASS
 		relic_row.add_child(holder)
@@ -190,10 +190,10 @@ func _refresh_info() -> void:
 		child.queue_free()
 	var id : int = run.focus_node
 	if (id < 0):
-		info_box.add_child(_wrapped("Click a node on the chart to inspect it.", 14, TEXT_DIM))
-		info_box.add_child(_wrapped("Hovering only highlights. Reachable nodes can be entered from here.", 11, TEXT_DIM))
+		info_box.add_child(_wrapped("run.click_a_node_on_the", 14, TEXT_DIM))
+		info_box.add_child(_wrapped("run.hovering_only_highlights_reachable_n", 11, TEXT_DIM))
 		confirm_button.disabled = true
-		confirm_button.text = "SELECT A NODE"
+		confirm_button.text = "run.select_a_node"
 		return
 	var entry : Dictionary = run.map.get_node(id)
 	var node_type : int = int(entry["type"])
@@ -204,20 +204,20 @@ func _refresh_info() -> void:
 	head.add_child(_icon(RunData.node_glyph(node_type, "normal")))
 	var names : VBoxContainer = VBoxContainer.new()
 	names.add_theme_constant_override("separation", 2)
-	names.add_child(_label(str(RunData.NODE_NAMES[node_type]).to_upper(), 12, AMBER, true))
-	var title : String = RunData.OBJECTIVES[objective]["name"] if is_fight else _non_fight_title(entry)
+	names.add_child(_label(Loc.t(str(RunData.NODE_NAMES[node_type])).to_upper(), 12, AMBER, true))
+	var title : String = Loc.t(RunData.OBJECTIVES[objective]["name"]) if is_fight else _non_fight_title(entry)
 	names.add_child(_label(title, 16 if title.length() > 12 else 24, TEXT, true))
 	head.add_child(names)
 	info_box.add_child(head)
 	info_box.add_child(_divider())
-	info_box.add_child(_label("OBJECTIVE" if is_fight else "DETAILS", 12, TEXT_SOFT, true))
+	info_box.add_child(_label("run.objective" if is_fight else "run.details", 12, TEXT_SOFT, true))
 	info_box.add_child(_wrapped(_describe(entry, is_fight), 12))
 	info_box.add_child(_divider())
 	var weather : int = run.node_weather(id)
 	var weather_row : HBoxContainer = HBoxContainer.new()
 	weather_row.add_theme_constant_override("separation", 8)
 	weather_row.add_child(_icon(RunData.weather_icon(weather)))
-	weather_row.add_child(_label(RunData.WEATHER[weather]["name"], 14, TEXT))
+	weather_row.add_child(_label(Loc.t(RunData.WEATHER[weather]["name"]), 14, TEXT))
 	info_box.add_child(weather_row)
 	if (is_fight):
 		var difficulty : int = run.node_difficulty(id)
@@ -226,12 +226,12 @@ func _refresh_info() -> void:
 		diff_row.add_child(_segment_bar(float(difficulty), 5.0, 5,
 				load("res://assets/ui/modifiers/reward_full_v01.png") as Texture2D,
 				load("res://assets/ui/modifiers/reward_empty_v01.png") as Texture2D))
-		diff_row.add_child(_label("Difficulty %d/5" % difficulty, 11, TEXT_DIM))
+		diff_row.add_child(_label(Loc.t("run.difficulty_5") % difficulty, 11, TEXT_DIM))
 		info_box.add_child(diff_row)
 		var reward : HBoxContainer = HBoxContainer.new()
 		reward.add_theme_constant_override("separation", 8)
 		reward.add_child(_screw_icon())
-		var reward_text : String = "%d screws" % run.expected_screws(id)
+		var reward_text : String = Loc.t("run.screws") % run.expected_screws(id)
 		var relic_text : String = run.expected_relic_text(id)
 		if (relic_text != ""):
 			reward_text += " + " + relic_text
@@ -241,20 +241,20 @@ func _refresh_info() -> void:
 	var state : String = run.node_state(id)
 	confirm_button.disabled = state != "normal"
 	if (state == "normal"):
-		confirm_button.text = "ENTER NODE"
+		confirm_button.text = "run.enter_node"
 	elif (state == "locked"):
-		confirm_button.text = "NOT REACHABLE"
+		confirm_button.text = "run.not_reachable"
 	else:
-		confirm_button.text = "COMPLETED"
+		confirm_button.text = "run.completed"
 
 func _non_fight_title(entry : Dictionary) -> String:
 	if (int(entry["type"]) == RunData.NodeType.EVENT):
 		return str(RunData.event_by_id(StringName(entry["event_id"]))["title"])
-	return "Repair Dock"
+	return "run.repair_dock"
 
 func _describe(entry : Dictionary, is_fight : bool) -> String:
 	if (is_fight):
-		return str(RunData.OBJECTIVES[int(entry["objective"])]["text"])
+		return Loc.t(str(RunData.OBJECTIVES[int(entry["objective"])]["text"]))
 	if (int(entry["type"]) == RunData.NodeType.EVENT):
-		return "Something drifts in the water. Choose how to respond."
-	return "Repair the base or upgrade one unit for %d screws." % RunData.UPGRADE_COST
+		return "run.something_drifts_in_the_water"
+	return Loc.t("run.repair_the_base_or_upgrade") % RunData.UPGRADE_COST

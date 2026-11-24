@@ -76,12 +76,12 @@ func refresh() -> void:
 	else:
 		corners.texture = load("res://assets/ui/run_map/corners_target_v01.png") as Texture2D
 	if (state == "current"):
-		caption.text = "POSITION"
+		caption.text = "run.position"
 		caption.add_theme_color_override("font_color", Color("#78dddd"))
 	elif (is_focus and state == "normal"):
-		caption.text = "SELECTED"
+		caption.text = "run.selected"
 		caption.add_theme_color_override("font_color", Color("#ecc078"))
 	else:
 		caption.text = ""
 	disabled = false
-	tooltip_text = "%s (%s)" % [RunData.NODE_NAMES[node_type], state]
+	tooltip_text = "%s (%s)" % [Loc.t(RunData.NODE_NAMES[node_type]), state]

@@ -7,10 +7,10 @@ func expected_stage() -> int:
 	return RunData.Stage.EVENT
 
 func screen_title() -> String:
-	return "Event"
+	return "run.event"
 
 func screen_subtitle() -> String:
-	return "FLOOR %02d / EVENT NODE" % [int(run.map.get_node(run.pending_node)["col"]) + 1]
+	return Loc.t("run.floor_event_node") % [int(run.map.get_node(run.pending_node)["col"]) + 1]
 
 func _build() -> void:
 	var event : Dictionary = run.current_event()
@@ -19,7 +19,7 @@ func _build() -> void:
 	var box : VBoxContainer = VBoxContainer.new()
 	box.add_theme_constant_override("separation", 14)
 	panel.add_child(box)
-	box.add_child(_plate(str(event["title"]).to_upper(), TEXT, 16, CYAN))
+	box.add_child(_plate(Loc.t(str(event["title"])).to_upper(), TEXT, 16, CYAN))
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 24)
 	row.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -27,12 +27,12 @@ func _build() -> void:
 	var left : VBoxContainer = VBoxContainer.new()
 	left.add_theme_constant_override("separation", 10)
 	left.add_child(_banner(StringName(event["id"])))
-	left.add_child(_label(str(event["tag"]), 12, TEXT_SOFT, true))
+	left.add_child(_label(Loc.t(str(event["tag"])), 12, TEXT_SOFT, true))
 	row.add_child(left)
 	var right : VBoxContainer = VBoxContainer.new()
 	right.add_theme_constant_override("separation", 12)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.add_child(_wrapped(str(event["text"]), 14, TEXT))
+	right.add_child(_wrapped(Loc.t(str(event["text"])), 14, TEXT))
 	right.add_child(_divider())
 	var first : Button = null
 	var choices : Array = event["choices"]
@@ -71,8 +71,8 @@ func _choice_button(choice : Dictionary, index : int) -> Button:
 	var texts : VBoxContainer = VBoxContainer.new()
 	texts.alignment = BoxContainer.ALIGNMENT_CENTER
 	texts.add_theme_constant_override("separation", 4)
-	texts.add_child(_label(str(choice["label"]), 16, TEXT if !button.disabled else TEXT_DIM, true))
-	var detail : String = str(choice["text"])
+	texts.add_child(_label(Loc.t(str(choice["label"])), 16, TEXT if !button.disabled else TEXT_DIM, true))
+	var detail : String = Loc.t(str(choice["text"]))
 	if (button.disabled):
 		detail += "  (not enough screws)"
 	texts.add_child(_label(detail, 10, TEXT_SOFT if !button.disabled else TEXT_DIM))

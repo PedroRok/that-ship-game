@@ -15,6 +15,7 @@ static var window_mode : int = WindowMode.WINDOWED
 static var resolution_index : int = 0
 static var scale_mode : int = ScaleMode.FIT
 static var vsync : bool = true
+static var language : String = "en"
 static var volumes : Dictionary = {"Master": 100, "WorldSFX": 100, "UI": 100}
 
 static func load_settings() -> void:
@@ -25,6 +26,7 @@ static func load_settings() -> void:
 	resolution_index = clampi(int(cfg.get_value("display", "resolution_index", 0)), 0, RESOLUTIONS.size() - 1)
 	scale_mode = int(cfg.get_value("display", "scale_mode", scale_mode))
 	vsync = bool(cfg.get_value("display", "vsync", true))
+	language = str(cfg.get_value("general", "language", language))
 	for bus : String in volumes:
 		volumes[bus] = clampi(int(cfg.get_value("audio", bus, 100)), 0, 100)
 
@@ -34,6 +36,7 @@ static func save_settings() -> void:
 	cfg.set_value("display", "resolution_index", resolution_index)
 	cfg.set_value("display", "scale_mode", scale_mode)
 	cfg.set_value("display", "vsync", vsync)
+	cfg.set_value("general", "language", language)
 	for bus : String in volumes:
 		cfg.set_value("audio", bus, volumes[bus])
 	cfg.save(PATH)

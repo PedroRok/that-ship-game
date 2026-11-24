@@ -51,17 +51,17 @@ const guns : Dictionary = {
 }
 
 const gun_info : Dictionary = {
-	Guns.BOMB : ["SURFACE BOMB", "Explodes on the water surface. Surface targets only."],
-	Guns.DEPTH_BOMB : ["DEPTH BOMB", "Sinks into the water and explodes on hit. Ships and submarines."]
+	Guns.BOMB : ["weapon.surface_bomb", "weapon.explodes_on_the_water_surface"],
+	Guns.DEPTH_BOMB : ["weapon.depth_bomb", "weapon.sinks_into_the_water_and"]
 }
 
 func gun_name(gun_type : int) -> String:
 	var info : Array = gun_info.get(gun_type, [])
-	return info[0] if !info.is_empty() else str(Guns.keys()[gun_type]).replace("_", " ")
+	return Loc.t(str(info[0])) if !info.is_empty() else Loc.named("weapon", str(Guns.keys()[gun_type]).to_lower())
 
 func gun_description(gun_type : int) -> String:
 	var info : Array = gun_info.get(gun_type, [])
-	return info[1] if info.size() > 1 else ""
+	return Loc.t(str(info[1])) if info.size() > 1 else ""
 
 
 func gun_scene(gun_type : int) -> PackedScene:

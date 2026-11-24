@@ -14,6 +14,7 @@ var stats_template : PlayerStats
 
 func _ready() -> void:
 	GameSettings.load_settings()
+	Loc.setup()
 	GameSettings.apply(get_window())
 
 func load_slot(index : int) -> void:

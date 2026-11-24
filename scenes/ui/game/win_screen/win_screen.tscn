@@ -83,7 +83,7 @@ alignment = 1
 material = SubResource("ShaderMaterial_8bdqv")
 layout_mode = 2
 theme_override_font_sizes/font_size = 48
-text = "ROUND CLEAR"
+text = "result.round_clear"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -113,7 +113,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/ValuesContainer"]
 material = SubResource("ShaderMaterial_pyebk")
 layout_mode = 2
-text = "EARNINGS"
+text = "result.earnings"
 
 [node name="HSeparator" type="HSeparator" parent="NinePatchRect/VBoxContainer/Middle/Shop/MarginContainer/Card3/Margin/ValuesContainer"]
 layout_mode = 2
@@ -138,6 +138,6 @@ theme_override_constants/margin_right = 100
 material = SubResource("ShaderMaterial_8bdqv")
 custom_minimum_size = Vector2(0, 25.75)
 layout_mode = 2
-text = "SHOP"
+text = "result.shop"
 
 [connection signal="button_up" from="NinePatchRect/VBoxContainer/MarginContainer/Button" to="." method="_on_button_button_up"]

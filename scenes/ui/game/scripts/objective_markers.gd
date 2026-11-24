@@ -43,7 +43,7 @@ func _draw() -> void:
 		draw_set_transform(edge, direction.angle(), Vector2.ONE)
 		draw_texture(arrow, -arrow.get_size() * 0.5)
 		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-		var text : String = str(target["label"]).to_upper()
+		var text : String = Loc.t(str(target["label"])).to_upper()
 		var width : float = FONT.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 8).x
 		var label_pos : Vector2 = edge - direction * 34.0
 		label_pos.x = clampf(label_pos.x - width * 0.5, 8.0, screen.size.x - width - 8.0)

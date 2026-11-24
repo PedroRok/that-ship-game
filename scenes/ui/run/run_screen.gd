@@ -39,7 +39,7 @@ func screen_subtitle() -> String:
 	return ""
 
 func header_kicker() -> String:
-	return "CAMPAIGN RUN"
+	return "run.campaign_run"
 
 func _build() -> void:
 	pass

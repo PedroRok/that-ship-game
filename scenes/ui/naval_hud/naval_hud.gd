@@ -27,13 +27,13 @@ const DOCK_ICONS_12: Dictionary = {
 const OFF_MODULATE := Color(0.38, 0.45, 0.45)
 const SLOT_SIZE := Vector2(32, 26)
 const QUEUE_TITLES: Dictionary = {
-	BaseDock.Type.NAVAL: "NAVAL",
-	BaseDock.Type.SUB: "SUB",
-	BaseDock.Type.AIR: "AIR",
+	BaseDock.Type.NAVAL: "hud.naval",
+	BaseDock.Type.SUB: "hud.sub",
+	BaseDock.Type.AIR: "hud.air",
 }
 const CATALOG_SLOTS: int = 10
 const BASE_WARNING_RATIO: float = 0.25
-const DENIED_REASONS: PackedStringArray = ["LOW SCREWS", "DOCK OFFLINE", "QUEUE FULL"]
+const DENIED_REASONS: PackedStringArray = ["hud.low_screws", "hud.dock_offline", "hud.queue_full"]
 
 var round_scene: GameRound
 var legacy: GameUI
@@ -129,7 +129,7 @@ func _skin_card(button: Button, available: bool, picked: bool) -> void:
 
 func _label(value: String = "", centered: bool = false) -> Label:
 	var label := Label.new()
-	label.text = value.to_upper()
+	label.text = Loc.t(value).to_upper()
 	label.mouse_filter = MOUSE_FILTER_IGNORE
 	if centered:
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -219,10 +219,10 @@ func _make_console() -> void:
 	bottom_panel.set_anchors_and_offsets_preset(PRESET_BOTTOM_WIDE)
 	bottom_panel.offset_top = -200
 	var row := _row(_margin(bottom_panel, 4), 4)
-	_make_resources(_module(row, "RESOURCES", 120, 1.0))
-	_make_queues(_module(row, "PRODUCTION QUEUES", 182, 1.2))
-	_make_catalog(_module(row, "UNIT CATALOG", 506, 4.25))
-	var inspector: VBoxContainer = _module(row, "UNIT TEST SIMULATOR", 204, 1.0)
+	_make_resources(_module(row, "hud.resources", 120, 1.0))
+	_make_queues(_module(row, "hud.production_queues", 182, 1.2))
+	_make_catalog(_module(row, "hud.unit_catalog", 506, 4.25))
+	var inspector: VBoxContainer = _module(row, "hud.unit_test_simulator", 204, 1.0)
 	inspector.get_parent().get_parent().size_flags_horizontal = SIZE_FILL
 	_make_inspector(inspector)
 
@@ -272,7 +272,7 @@ func _make_resources(col: VBoxContainer) -> void:
 	var centering := CenterContainer.new()
 	col.add_child(centering)
 	menu = Button.new()
-	menu.text = "MENU"
+	menu.text = "hud.menu"
 	menu.custom_minimum_size = Vector2(54, 22)
 	_skin(menu)
 	menu.pressed.connect(func() -> void: open_menu.emit())
@@ -409,7 +409,7 @@ func _make_catalog(col: VBoxContainer) -> void:
 		badge.mouse_filter = MOUSE_FILTER_IGNORE
 		badge.add_child(_label(str((index + 1) % 10), true))
 		upper.add_child(badge)
-		var title := _label(unit.name.to_upper() if unit else "EMPTY")
+		var title := _label(Loc.named("unit", unit.name).to_upper() if unit else "hud.empty")
 		title.add_theme_font_override("font", PIXEL_FONT)
 		title.size_flags_horizontal = SIZE_EXPAND_FILL
 		title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
@@ -576,7 +576,7 @@ func _select(index: int) -> void:
 	var stats: EntityStats = Global.upgraded_entity(value) if value else null
 	demo.show_unit(stats)
 	(demo_overlay.material as ShaderMaterial).set_shader_parameter("band_strength", 1.0 if stats else 0.0)
-	demo_title.text = stats.name.to_upper() if stats else "HOVER A UNIT"
+	demo_title.text = Loc.named("unit", stats.name).to_upper() if stats else "hud.hover_a_unit"
 	var health: Button = stat_buttons[&"health"]
 	var speed: Button = stat_buttons[&"speed"]
 	var weapons: Button = stat_buttons[&"weapons"]
@@ -585,9 +585,9 @@ func _select(index: int) -> void:
 	speed.icon = load("res://assets/ui/icons/speed_8x8_v01.png")
 	weapons.icon = load("res://assets/ui/icons/gun_8x8_v01.png")
 	health.text = _number(stats.health) if stats else "HP"
-	speed.text = _number(stats.speed) if stats else "SPD"
-	weapons.text = "%d" % stats.gun_slots.size() if stats else "GUNS"
-	targets.text = "TARGETS"
+	speed.text = _number(stats.speed) if stats else "hud.spd"
+	weapons.text = "%d" % stats.gun_slots.size() if stats else "hud.guns"
+	targets.text = "hud.targets"
 	targets.tooltip_text = _target_summary(stats)
 	for button: Button in stat_buttons.values():
 		button.disabled = stats == null
@@ -612,12 +612,12 @@ func _target_summary(stats: EntityStats) -> String:
 		gun.free()
 	var targets: PackedStringArray = []
 	if surface:
-		targets.append("Surface")
+		targets.append(Loc.t("hud.surface"))
 	if air:
-		targets.append("Air")
+		targets.append(Loc.t("hud.air_2"))
 	if submerged:
-		targets.append("Submerged")
-	return ", ".join(targets) if not targets.is_empty() else "No default armament"
+		targets.append(Loc.t("hud.submerged"))
+	return ", ".join(targets) if not targets.is_empty() else Loc.t("hud.no_default_armament")
 
 func _number(value: float) -> String:
 	return str(snappedf(value, 0.1))
@@ -627,7 +627,7 @@ func quick_build(index: int) -> void:
 		return
 	var unit: EntityStats = roster[index]
 	var reason: String = _build_reason(unit)
-	if reason != "READY":
+	if reason != "hud.ready":
 		if DENIED_REASONS.has(reason):
 			sfx.play(&"denied")
 		return
@@ -645,17 +645,17 @@ func _update_base_warning(current: float, full: float) -> void:
 
 func _build_reason(unit: EntityStats) -> String:
 	if round_scene.game_ended or get_tree().paused:
-		return "UNAVAILABLE"
+		return "hud.unavailable"
 	if not unit:
-		return "EMPTY"
+		return "hud.empty"
 	if unit.price > legacy.screw_label.total_value:
-		return "LOW SCREWS"
+		return "hud.low_screws"
 	var kind: BaseDock.Type = Base.dock_type_of(unit)
 	if kind != BaseDock.Type.NAVAL and not (round_scene.ally_base.docks[kind] as BaseDock).active:
-		return "DOCK OFFLINE"
+		return "hud.dock_offline"
 	if not round_scene.ally_base.queue_has_room(kind):
-		return "QUEUE FULL"
-	return "READY"
+		return "hud.queue_full"
+	return "hud.ready"
 
 func _refresh_catalog() -> void:
 	for index: int in range(cards.size()):
@@ -665,37 +665,37 @@ func _refresh_catalog() -> void:
 			continue
 		last_reasons[index] = reason
 		card_status[index].text = reason
-		var color: Color = DISPLAY_TEXT if reason == "READY" else DIM
-		if reason == "LOW SCREWS":
+		var color: Color = DISPLAY_TEXT if reason == "hud.ready" else DIM
+		if reason == "hud.low_screws":
 			color = PINK
-		elif reason == "QUEUE FULL":
+		elif reason == "hud.queue_full":
 			color = AMBER
-		elif reason == "EMPTY":
+		elif reason == "hud.empty":
 			color = DISPLAY_UNLOADED
 		card_status[index].add_theme_color_override("font_color", color)
-		_skin_card(cards[index], reason == "READY", selected == index)
-		card_wells[index].add_theme_stylebox_override("panel", _style(Color("#4d6069") if reason == "READY" else Color("#2f3c43"), Color("#172127")))
-		card_art_materials[index].set_shader_parameter("tint", DISPLAY_REST if reason == "READY" else DISPLAY_UNLOADED)
-		card_screen_materials[index].set_shader_parameter("band_strength", 1.0 if reason == "READY" else 0.0)
-		card_wells[index].modulate = Color.WHITE if reason == "READY" else Color(0.72, 0.74, 0.78)
-		card_titles[index].modulate = Color.WHITE if reason == "READY" else Color(0.65, 0.68, 0.7)
-		card_headers[index].modulate = Color.WHITE if reason == "READY" else OFF_MODULATE
+		_skin_card(cards[index], reason == "hud.ready", selected == index)
+		card_wells[index].add_theme_stylebox_override("panel", _style(Color("#4d6069") if reason == "hud.ready" else Color("#2f3c43"), Color("#172127")))
+		card_art_materials[index].set_shader_parameter("tint", DISPLAY_REST if reason == "hud.ready" else DISPLAY_UNLOADED)
+		card_screen_materials[index].set_shader_parameter("band_strength", 1.0 if reason == "hud.ready" else 0.0)
+		card_wells[index].modulate = Color.WHITE if reason == "hud.ready" else Color(0.72, 0.74, 0.78)
+		card_titles[index].modulate = Color.WHITE if reason == "hud.ready" else Color(0.65, 0.68, 0.7)
+		card_headers[index].modulate = Color.WHITE if reason == "hud.ready" else OFF_MODULATE
 		for child: Node in card_headers[index].get_children():
 			if child is TextureRect and child.has_meta(&"base_tint"):
 				var base_tint: Color = child.get_meta(&"base_tint")
-				((child as TextureRect).material as ShaderMaterial).set_shader_parameter("tint", base_tint if reason == "READY" else base_tint.darkened(0.55))
+				((child as TextureRect).material as ShaderMaterial).set_shader_parameter("tint", base_tint if reason == "hud.ready" else base_tint.darkened(0.55))
 
 func _process(_delta: float) -> void:
 	_refresh_catalog()
 	var ally_max: float = float(round_scene.get("ally_max_hp"))
 	var enemy_max: float = float(round_scene.get("enemy_max_hp"))
-	_update_hp(ally_hp, ally_caption, "BASE HP", round_scene.ally_base.health_component.health, ally_max)
-	_update_hp(enemy_hp, enemy_caption, "ENEMY HP", round_scene.enemy_base.health_component.health, enemy_max)
+	_update_hp(ally_hp, ally_caption, "hud.base_hp", round_scene.ally_base.health_component.health, ally_max)
+	_update_hp(enemy_hp, enemy_caption, "hud.enemy_hp", round_scene.enemy_base.health_component.health, enemy_max)
 	_update_base_warning(round_scene.ally_base.health_component.health, ally_max)
 	if round_scene.wave_manager:
-		wave_caption.text = "WAVE %02d" % round_scene.wave_manager.current_wave_number()
+		wave_caption.text = Loc.t("hud.wave") % round_scene.wave_manager.current_wave_number()
 	elif Global.run:
-		wave_caption.text = "FLOOR %02d" % (int(Global.run.map.get_node(Global.run.pending_node)["col"]) + 1)
+		wave_caption.text = Loc.t("hud.floor") % (int(Global.run.map.get_node(Global.run.pending_node)["col"]) + 1)
 	if int(round_scene.get("boss_notice_until")) > Time.get_ticks_msec():
 		wave_caption.text += "  BOSS"
 	for kind: int in queue_rows:
@@ -703,14 +703,14 @@ func _process(_delta: float) -> void:
 	var key: StringName = hover_stat if hover_stat != &"" else focused_stat
 	demo.set_demo(&"damage" if key == &"health" else key)
 	if _has_unit(selected):
-		var label: String = roster[selected].name.to_upper()
+		var label: String = Loc.named("unit", roster[selected].name).to_upper()
 		demo_title.text = "%s: %s" % [label.to_upper(), stat_buttons[&"targets"].tooltip_text] if key == &"targets" else label.to_upper()
 	menu.disabled = round_scene.game_ended
 
 func _update_hp(bar: ProgressBar, caption: Label, title: String, current: float, full: float) -> void:
 	bar.max_value = maxf(1, full)
 	bar.value = current
-	caption.text = "%s  %s / %s" % [title.to_upper(), _number(current), _number(full)]
+	caption.text = "%s  %s / %s" % [Loc.t(title).to_upper(), _number(current), _number(full)]
 
 func _update_queue(kind: int) -> void:
 	var base: Base = round_scene.ally_base
@@ -729,11 +729,11 @@ func _update_queue(kind: int) -> void:
 		var progress: float = float(material.get_shader_parameter("build_progress"))
 		(queue_percents[kind][0] as Label).text = "%d%%" % roundi(progress * 100.0)
 		(queue_percents[kind][0] as Label).visible = true
-		title.text = "%s  %d/%d" % [QUEUE_TITLES[kind], base.queue_used(kind), base.queue_capacity(kind)]
+		title.text = "%s  %d/%d" % [Loc.t(QUEUE_TITLES[kind]), base.queue_used(kind), base.queue_capacity(kind)]
 		title.add_theme_color_override("font_color", AMBER)
 	else:
 		(queue_percents[kind][0] as Label).visible = false
-		title.text = "%s  %d/%d" % [QUEUE_TITLES[kind], base.queue_used(kind), base.queue_capacity(kind)]
+		title.text = "%s  %d/%d" % [Loc.t(QUEUE_TITLES[kind]), base.queue_used(kind), base.queue_capacity(kind)]
 		title.add_theme_color_override("font_color", CYAN if waiting.is_empty() else DIM)
 	if queue_signatures.get(kind) == signature:
 		return
@@ -751,7 +751,7 @@ func _update_queue(kind: int) -> void:
 		var edge: Color = AMBER if index == 0 and filled else Color("#172127")
 		(queue_wells[kind][index] as PanelContainer).add_theme_stylebox_override("panel", _style(Color("#4d6069") if filled else Color("#2f3c43"), edge))
 		slot.disabled = not filled
-		slot.tooltip_text = "%s: click to cancel and refund" % stats.name.to_upper() if filled else ""
+		slot.tooltip_text = Loc.t("hud.click_to_cancel_and_refund") % Loc.named("unit", stats.name).to_upper() if filled else ""
 
 func covers_point(point: Vector2) -> bool:
 	return top_panel.get_global_rect().has_point(point) or bottom_panel.get_global_rect().has_point(point) or minimap.get_global_rect().has_point(point)

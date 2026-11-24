@@ -6,11 +6,11 @@ const NODE_SIZE : Vector2 = Vector2(126, 88)
 const ORIGIN : Vector2 = Vector2(8, 36)
 
 const BRANCHES : Array[Dictionary] = [
-	{"title": "ECONOMY", "col": 0},
-	{"title": "BASE", "col": 2},
-	{"title": "UNITS", "col": 3},
-	{"title": "WEAPONS", "col": 5},
-	{"title": "SKILLS", "col": 7},
+	{"title": "research.economy", "col": 0},
+	{"title": "research.base", "col": 2},
+	{"title": "research.units", "col": 3},
+	{"title": "research.weapons", "col": 5},
+	{"title": "research.skills", "col": 7},
 ]
 
 class TreeLines extends Control:
@@ -77,7 +77,7 @@ func _ready() -> void:
 func _build_top_bar() -> HBoxContainer:
 	var bar : HBoxContainer = HBoxContainer.new()
 	var title : Label = Label.new()
-	title.text = "RESEARCH"
+	title.text = "research.research"
 	title.custom_minimum_size.x = 200
 	bar.add_child(title)
 	info_label = Label.new()
@@ -85,7 +85,7 @@ func _build_top_bar() -> HBoxContainer:
 	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	bar.add_child(info_label)
 	var back : Button = Button.new()
-	back.text = "BACK TO SHOP"
+	back.text = "research.back_to_shop"
 	back.custom_minimum_size = Vector2(220, 36)
 	back.pressed.connect(func() -> void: Global.change_scene(Global.Menu.SHOP))
 	bar.add_child(back)
@@ -94,7 +94,7 @@ func _build_top_bar() -> HBoxContainer:
 func _build_branch_labels(canvas : Control) -> void:
 	for branch : Dictionary in BRANCHES:
 		var label : Label = Label.new()
-		label.text = str(branch["title"]).to_upper()
+		label.text = Loc.t(str(branch["title"])).to_upper()
 		label.add_theme_font_size_override("font_size", 8)
 		label.position = Vector2(ORIGIN.x + branch["col"] * CELL.x, 8)
 		canvas.add_child(label)
@@ -109,7 +109,7 @@ func _build_nodes(canvas : Control) -> void:
 		button.position = _node_position(upgrade)
 		button.custom_minimum_size = NODE_SIZE
 		button.size = NODE_SIZE
-		button.tooltip_text = upgrade.description_key
+		button.tooltip_text = Loc.t(upgrade.description_key)
 		button.pressed.connect(_buy.bind(upgrade))
 		var box : VBoxContainer = VBoxContainer.new()
 		box.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -144,19 +144,19 @@ func _buy(upgrade : UpgradeStats) -> void:
 
 func _refresh() -> void:
 	var stats : PlayerStats = Global.player_stats
-	info_label.text = "GEARS: %d    BOSS COINS: %d" % [stats.gear, stats.boss_coin]
+	info_label.text = Loc.t("research.gears_boss_coins") % [stats.gear, stats.boss_coin]
 	for upgrade : UpgradeStats in node_buttons:
 		var button : Button = node_buttons[upgrade]
 		var box : VBoxContainer = button.get_child(0)
 		var level : int = stats.get_upgrade_level(upgrade)
-		(box.get_node("Line0") as Label).text = upgrade.name_key.to_upper()
+		(box.get_node("Line0") as Label).text = Loc.t(upgrade.name_key).to_upper()
 		(box.get_node("Line1") as Label).text = "LV %d/%d" % [level, upgrade.max_level]
 		var cost_text : String
 		if (level >= upgrade.max_level):
-			cost_text = "MAX"
+			cost_text = "research.max"
 			button.self_modulate = Color(0.6, 1.0, 0.6)
 		else:
-			cost_text = "%d GEARS" % upgrade.gears_for_level(level + 1)
+			cost_text = Loc.t("research.gears") % upgrade.gears_for_level(level + 1)
 			var coins : int = upgrade.boss_coins_for_level(level + 1)
 			if (coins > 0):
 				cost_text += " +%d coin" % coins

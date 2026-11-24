@@ -29,7 +29,7 @@ func _ready() -> void:
 		print("Erro: O tamanho do Label não está definido corretamente.")
 		return
 	
-	label.text = generate_aligned_text(label_value.to_upper(), str(value), total_width, font)
+	label.text = generate_aligned_text(Loc.t(label_value).to_upper(), str(value), total_width, font)
 	label.visible_ratio = 0.0
 	
 	var tween : Tween = get_tree().create_tween()

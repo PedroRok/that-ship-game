@@ -18,9 +18,9 @@ func _ready() -> void:
 		title_label.text = title
 	var delay : int = 0
 	for row : Dictionary in rows:
-		add_value(row["label"], row["value"], delay, values_container)
+		add_value(Loc.t(row["label"]), row["value"], delay, values_container)
 		delay += 1
-	add_value("Total Gears", total, delay, final_value_container)
+	add_value("result.total_gears", total, delay, final_value_container)
 
 func add_value(label : String, value : int, delay : int, container : VBoxContainer) -> void:
 	var value_row : WinShowValue = VALUE_SHOW_UP.instantiate()

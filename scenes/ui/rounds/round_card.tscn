@@ -91,13 +91,13 @@ stretch_mode = 5
 [node name="Desc" type="RichTextLabel" parent="Margin/VBox"]
 material = SubResource("ShaderMaterial_pys3l")
 layout_mode = 2
-text = "Simples description here"
+text = "result.simples_description_here"
 fit_content = true
 
 [node name="Button" type="Button" parent="Margin/VBox"]
 material = SubResource("ShaderMaterial_waxpq")
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
-text = "PLAY"
+text = "result.play"
 
 [connection signal="button_up" from="Margin/VBox/Button" to="." method="_on_button_button_up"]

@@ -7,6 +7,7 @@ const PIXEL_FONT := preload("res://assets/fonts/dogicapixel.ttf")
 const BATTLE_TOP := 38.0
 const HUD_BOTTOM := 200.0
 const PANEL_SIZE := Vector2(320, 216)
+const HEADER_TEXT_WIDTH : float = 220.0
 const TEXT_COLOR := Color(0.92, 0.96, 0.97)
 const DANGER_COLOR := Color(1.0, 0.72, 0.72)
 const DISABLED_COLOR := Color(0.55, 0.6, 0.62)
@@ -85,15 +86,15 @@ func _build() -> void:
 func _build_pause_page() -> VBoxContainer:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 8)
-	box.add_child(_header("PAUSED", "icon_pause_v01.png"))
+	box.add_child(_header("pause.paused", "icon_pause_v01.png"))
 	var gap := Control.new()
 	gap.custom_minimum_size.y = 4
 	box.add_child(gap)
-	resume_button = _button("RESUME", false)
+	resume_button = _button("pause.resume", false)
 	resume_button.pressed.connect(resume)
-	options_button = _button("DISPLAY OPTIONS", false)
+	options_button = _button("pause.display_options", false)
 	options_button.pressed.connect(_open_options)
-	var abandon := _button("ABANDON RUN", true)
+	var abandon := _button("pause.abandon_run", true)
 	abandon.pressed.connect(func() -> void: _show_page(Page.ABANDON))
 	box.add_child(_inset(resume_button))
 	box.add_child(_inset(options_button))
@@ -104,9 +105,9 @@ func _build_pause_page() -> VBoxContainer:
 func _build_abandon_page() -> VBoxContainer:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 10)
-	box.add_child(_header("ABANDON RUN?", "icon_alert_v01.png"))
+	box.add_child(_header("pause.abandon_run_caps", "icon_alert_v01.png"))
 	var message := Label.new()
-	message.text = "PROGRESS IN THIS RUN WILL BE LOST."
+	message.text = "pause.progress_in_this_run_will"
 	message.add_theme_font_override("font", PIXEL_FONT)
 	message.add_theme_font_size_override("font_size", 8)
 	message.add_theme_color_override("font_color", TEXT_COLOR)
@@ -119,9 +120,9 @@ func _build_abandon_page() -> VBoxContainer:
 	var gap := Control.new()
 	gap.custom_minimum_size.y = 4
 	box.add_child(gap)
-	cancel_button = _button("CANCEL", false)
+	cancel_button = _button("pause.cancel", false)
 	cancel_button.pressed.connect(func() -> void: _show_page(Page.PAUSED))
-	var confirm := _button("ABANDON RUN", true)
+	var confirm := _button("pause.abandon_run", true)
 	confirm.pressed.connect(_abandon)
 	for b: Button in [cancel_button, confirm]:
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -148,11 +149,15 @@ func _header(text: String, icon_file: String) -> PanelContainer:
 	var label := Label.new()
 	label.text = text
 	label.add_theme_font_override("font", FONT)
-	label.add_theme_font_size_override("font_size", 16)
+	var title_size : int = 16
+	if (FONT.get_string_size(Loc.t(text), HORIZONTAL_ALIGNMENT_LEFT, -1, title_size).x > HEADER_TEXT_WIDTH):
+		title_size = 8
+	label.add_theme_font_size_override("font_size", title_size)
 	label.add_theme_color_override("font_color", TEXT_COLOR)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.clip_text = true
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(label)
 	var balance := Control.new()
@@ -238,7 +243,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _refresh_test_label() -> void:
 	if test_label:
-		test_label.text = "[F9] TEST MODE, ENEMY SPAWNS ALL UNITS: %s" % ("ON" if Global.test_enemy_all_units else "OFF")
+		test_label.text = Loc.t("pause.f9_test_mode_enemy_spawns") % ("ON" if Global.test_enemy_all_units else "pause.off")
 
 func resume() -> void:
 	get_tree().paused = false

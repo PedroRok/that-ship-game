@@ -10,17 +10,17 @@ func expected_stage() -> int:
 	return RunData.Stage.SHIPYARD
 
 func screen_title() -> String:
-	return "Shipyard"
+	return "run.shipyard"
 
 func screen_subtitle() -> String:
-	return "FLOOR %02d / REPAIR NODE" % [int(run.map.get_node(run.pending_node)["col"]) + 1]
+	return Loc.t("run.floor_repair_node") % [int(run.map.get_node(run.pending_node)["col"]) + 1]
 
 func _build() -> void:
 	var top : PanelContainer = _panel(10)
 	var top_box : VBoxContainer = VBoxContainer.new()
 	top_box.add_theme_constant_override("separation", 10)
 	top.add_child(top_box)
-	top_box.add_child(_plate("BASE UNDER MAINTENANCE", TEXT, 16, CYAN))
+	top_box.add_child(_plate("run.base_under_maintenance", TEXT, 16, CYAN))
 	var status : HBoxContainer = HBoxContainer.new()
 	status.add_theme_constant_override("separation", 14)
 	status.add_child(_icon(RunData.ui_icon("base_health")))
@@ -28,22 +28,22 @@ func _build() -> void:
 	status.add_child(_label("%d / %d HP" % [run.base_hp, run.base_max_hp], 16, TEXT, true))
 	status.add_child(_spacer())
 	status.add_child(_screw_icon())
-	status.add_child(_label("%d screws" % run.screws, 16, AMBER, true))
+	status.add_child(_label(Loc.t("run.screws") % run.screws, 16, AMBER, true))
 	top_box.add_child(status)
 	content.add_child(top)
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
-	repair_button = _button("REPAIR / %d SCREWS" % RunData.REPAIR_COST)
-	upgrade_button = _button("CHOOSE / %d SCREWS" % RunData.UPGRADE_COST)
-	row.add_child(_action_panel("REPAIR BASE", RunData.ui_icon("repair"),
-			"Recover up to %d HP of the base." % RunData.REPAIR_HP, repair_button, CYAN))
-	row.add_child(_action_panel("UPGRADE 1 UNIT", RunData.ui_icon("upgrade_unit"),
-			"Pick a unit: +%d%% health for the rest of the run." % int((RunData.UPGRADE_HEALTH_MULT - 1.0) * 100.0),
+	repair_button = _button(Loc.t("run.repair_screws") % RunData.REPAIR_COST)
+	upgrade_button = _button(Loc.t("run.choose_screws") % RunData.UPGRADE_COST)
+	row.add_child(_action_panel("run.repair_base", RunData.ui_icon("repair"),
+			Loc.t("run.recover_up_to_hp_of") % RunData.REPAIR_HP, repair_button, CYAN))
+	row.add_child(_action_panel("run.upgrade_1_unit", RunData.ui_icon("upgrade_unit"),
+			Loc.t("run.pick_a_unit_health_for") % int((RunData.UPGRADE_HEALTH_MULT - 1.0) * 100.0),
 			upgrade_button, AMBER))
 	content.add_child(row)
 	content.add_child(_spacer())
 	content.add_child(_divider())
-	var back : Button = _button("BACK TO MAP")
+	var back : Button = _button("run.back_to_map")
 	back.custom_minimum_size.x = 270
 	back.pressed.connect(_on_back)
 	content.add_child(_footer(null, back))
@@ -77,11 +77,11 @@ func _refresh() -> void:
 	repair_button.disabled = !run.can_repair()
 	upgrade_button.disabled = !run.can_upgrade_unit()
 	if (run.shipyard_used("repair")):
-		repair_button.text = "REPAIRED"
+		repair_button.text = "run.repaired"
 	elif (run.base_hp >= run.base_max_hp):
-		repair_button.text = "BASE AT FULL HEALTH"
+		repair_button.text = "run.base_at_full_health"
 	if (run.shipyard_used("upgrade")):
-		upgrade_button.text = "UPGRADED"
+		upgrade_button.text = "run.upgraded"
 
 func _on_repair() -> void:
 	if (run.repair_base()):
@@ -109,7 +109,7 @@ func _build_picker() -> Control:
 	var box : VBoxContainer = VBoxContainer.new()
 	box.add_theme_constant_override("separation", 10)
 	panel.add_child(box)
-	box.add_child(_plate("CHOOSE A UNIT", TEXT, 16, AMBER))
+	box.add_child(_plate("run.choose_a_unit", TEXT, 16, AMBER))
 	var grid : GridContainer = GridContainer.new()
 	grid.columns = 3
 	grid.add_theme_constant_override("h_separation", 8)
@@ -118,13 +118,13 @@ func _build_picker() -> Control:
 	var first : Button = null
 	for stats : EntityStats in Global.player_stats.loadout_entities():
 		var level : int = int(run.unit_buffs.get(stats.name, 0))
-		var button : Button = _button("%s  +%d" % [stats.name.to_upper(), level], false, 12)
+		var button : Button = _button("%s  +%d" % [Loc.named("unit", stats.name).to_upper(), level], false, 12)
 		button.custom_minimum_size = Vector2(190, 40)
 		button.pressed.connect(_on_unit_chosen.bind(stats.name))
 		grid.add_child(button)
 		if (first == null):
 			first = button
-	var cancel : Button = _button("CANCEL", true, 12)
+	var cancel : Button = _button("pause.cancel", true, 12)
 	cancel.custom_minimum_size.y = 36
 	cancel.pressed.connect(_close_picker)
 	box.add_child(cancel)

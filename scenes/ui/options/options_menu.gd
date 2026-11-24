@@ -21,8 +21,8 @@ const LABEL_WIDTH : int = 190
 const ROW_HEIGHT : int = 32
 
 const SCALE_NOTES : Dictionary = {
-	GameSettings.ScaleMode.FIT: "FILLS THE WINDOW AND KEEPS THE PROPORTION. PIXELS MAY LOOK UNEVEN.",
-	GameSettings.ScaleMode.PIXEL: "ONLY WHOLE-NUMBER SCALES: SHARP PIXELS, BLACK BARS WHEN THE WINDOW DOES NOT FIT.",
+	GameSettings.ScaleMode.FIT: "options.fills_the_window_and_keeps",
+	GameSettings.ScaleMode.PIXEL: "options.only_whole_number_scales_sharp",
 }
 
 const PREVIEWS : Dictionary = {
@@ -58,6 +58,16 @@ func _unhandled_input(event : InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 		close()
 
+func _reopen() -> void:
+	for child : Node in get_children():
+		if (child is Control):
+			child.queue_free()
+	_building = true
+	_build()
+	_building = false
+	_refresh_info()
+	mode_option.grab_focus.call_deferred()
+
 func close() -> void:
 	GameSettings.save_settings()
 	closed.emit()
@@ -91,17 +101,17 @@ func _build() -> void:
 	box.custom_minimum_size = Vector2(PANEL_WIDTH, 0)
 	panel.add_child(box)
 
-	box.add_child(_header("SETTINGS", "DISPLAY & AUDIO"))
+	box.add_child(_header("options.settings", "options.display_audio"))
 
 	mode_option = OptionButton.new()
-	mode_option.add_item("WINDOWED", GameSettings.WindowMode.WINDOWED)
-	mode_option.add_item("BORDERLESS FULLSCREEN", GameSettings.WindowMode.BORDERLESS)
-	mode_option.add_item("EXCLUSIVE FULLSCREEN", GameSettings.WindowMode.FULLSCREEN)
+	mode_option.add_item("options.windowed", GameSettings.WindowMode.WINDOWED)
+	mode_option.add_item("options.borderless_fullscreen", GameSettings.WindowMode.BORDERLESS)
+	mode_option.add_item("options.exclusive_fullscreen", GameSettings.WindowMode.FULLSCREEN)
 	mode_option.select(mode_option.get_item_index(GameSettings.window_mode))
 	mode_option.item_selected.connect(func(index : int) -> void:
 		GameSettings.window_mode = mode_option.get_item_id(index)
 		_apply())
-	box.add_child(_row("Window mode", mode_option))
+	box.add_child(_row("options.window_mode", mode_option))
 
 	resolution_option = OptionButton.new()
 	for res : Vector2i in GameSettings.RESOLUTIONS:
@@ -110,20 +120,30 @@ func _build() -> void:
 	resolution_option.item_selected.connect(func(index : int) -> void:
 		GameSettings.resolution_index = index
 		_apply())
-	box.add_child(_row("Window size", resolution_option))
+	box.add_child(_row("options.window_size", resolution_option))
+
+	var language_option : OptionButton = OptionButton.new()
+	for entry : Dictionary in Loc.languages():
+		language_option.add_item(str(entry["name"]))
+	language_option.select(Loc.language_index(GameSettings.language))
+	language_option.item_selected.connect(func(index : int) -> void:
+		Loc.set_language(str(Loc.languages()[index]["code"]))
+		GameSettings.save_settings()
+		_reopen.call_deferred())
+	box.add_child(_row("options.language", language_option))
 
 	box.add_child(_divider())
 
 	var scale_option : OptionButton = OptionButton.new()
-	scale_option.add_item("FIT", GameSettings.ScaleMode.FIT)
-	scale_option.add_item("PIXEL PERFECT", GameSettings.ScaleMode.PIXEL)
+	scale_option.add_item("options.fit", GameSettings.ScaleMode.FIT)
+	scale_option.add_item("options.pixel_perfect", GameSettings.ScaleMode.PIXEL)
 	scale_option.select(scale_option.get_item_index(GameSettings.scale_mode))
 	scale_option.item_selected.connect(func(index : int) -> void:
 		GameSettings.scale_mode = scale_option.get_item_id(index)
 		_refresh_scale_note()
 		_apply(false))
 	var vsync_check : CheckButton = CheckButton.new()
-	vsync_check.text = "VSYNC"
+	vsync_check.text = "options.vsync"
 	vsync_check.button_pressed = GameSettings.vsync
 	vsync_check.focus_mode = Control.FOCUS_ALL
 	vsync_check.toggled.connect(func(on : bool) -> void:
@@ -135,7 +155,7 @@ func _build() -> void:
 	vsync_check.size_flags_horizontal = Control.SIZE_SHRINK_END
 	scale_box.add_child(scale_option)
 	scale_box.add_child(vsync_check)
-	box.add_child(_row("Scaling", scale_box))
+	box.add_child(_row("options.scaling", scale_box))
 
 	scale_note = _wrapped("", 8, TEXT_DIM)
 	box.add_child(_indent(scale_note))
@@ -143,7 +163,7 @@ func _build() -> void:
 
 	box.add_child(_divider())
 
-	for entry : Array in [["Master volume", "Master"], ["Effects volume", "WorldSFX"], ["Interface volume", "UI"]]:
+	for entry : Array in [["options.master_volume", "Master"], ["options.effects_volume", "WorldSFX"], ["options.interface_volume", "UI"]]:
 		box.add_child(_volume_row(str(entry[0]), str(entry[1])))
 
 	box.add_child(_divider())
@@ -151,11 +171,11 @@ func _build() -> void:
 	info_label = _label("", 8, CYAN, true)
 	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(info_label)
-	var hint : Label = _wrapped("YOU CAN ALSO DRAG THE WINDOW EDGES: THE GAME FOLLOWS THE NEW SIZE.", 8, TEXT_DIM)
+	var hint : Label = _wrapped("options.you_can_also_drag_the", 8, TEXT_DIM)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(hint)
 
-	var close_button : Button = _button("CLOSE", 16)
+	var close_button : Button = _button("options.close", 16)
 	close_button.custom_minimum_size = Vector2(0, 44)
 	close_button.pressed.connect(close)
 	box.add_child(close_button)
@@ -409,4 +429,4 @@ func _refresh_info() -> void:
 	if (!info_label or !is_instance_valid(info_label)):
 		return
 	var size : Vector2i = DisplayServer.window_get_size()
-	info_label.text = "CURRENT WINDOW: %d X %d" % [size.x, size.y]
+	info_label.text = Loc.t("options.current_window_x") % [size.x, size.y]

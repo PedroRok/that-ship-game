@@ -114,16 +114,16 @@ func _process(delta : float) -> void:
 		RunData.Objective.ESCORT:
 			_process_escort()
 		RunData.Objective.HUNT_SUBMARINE:
-			_update_hud("Hunt: %d/%d" % [hunted, RunData.HUNT_TARGET], float(hunted) / RunData.HUNT_TARGET)
+			_update_hud(Loc.t("battle.hunt") % [hunted, RunData.HUNT_TARGET], float(hunted) / RunData.HUNT_TARGET)
 			if (hunted >= RunData.HUNT_TARGET):
 				_finish(true)
 		RunData.Objective.SHOOT_DOWN_BOMBER:
-			_update_hud("Bomber down: %s" % ("YES" if boss_defeated else "NO"), 1.0 if boss_defeated else 0.0)
+			_update_hud(Loc.t("battle.bomber_down") % ("YES" if boss_defeated else "NO"), 1.0 if boss_defeated else 0.0)
 		RunData.Objective.DEFEAT_BOSS:
-			_update_hud("Boss: %s" % ("DOWN" if boss_defeated else "ALIVE"), 1.0 if boss_defeated else 0.0)
+			_update_hud(Loc.t("battle.boss") % ("battle.down" if boss_defeated else "battle.alive"), 1.0 if boss_defeated else 0.0)
 		_:
 			var hp : float = clampf(enemy_base.health_component.health / enemy_hp_max, 0.0, 1.0)
-			_update_hud("Enemy base: %d%%" % int(round(hp * 100.0)), 1.0 - hp)
+			_update_hud(Loc.t("battle.enemy_base") % int(round(hp * 100.0)), 1.0 - hp)
 	if (done):
 		return
 	if (time_limit > 0.0 and elapsed >= time_limit):
@@ -151,7 +151,7 @@ func _process_director(delta : float) -> void:
 	var enemy_fraction : float = clampf(enemy_base.health_component.health / enemy_hp_max, 0.0, 1.0)
 	director.update(step, allies, enemies, ally_fraction, enemy_fraction)
 	enemy_base.set_director(director.interval_mult, director.skip_chance)
-	hud.set_debug_text("THREAT %d  pace x%.2f  skip %d%%  units %d v %d" % [int(director.threat), director.interval_mult,
+	hud.set_debug_text(Loc.t("battle.threat_pace_x_skip_units") % [int(director.threat), director.interval_mult,
 			int(director.skip_chance * 100.0), allies, enemies])
 
 func _process_defend(delta : float) -> void:
@@ -160,7 +160,7 @@ func _process_defend(delta : float) -> void:
 	if (!contested):
 		defend_left = maxf(defend_left - delta, 0.0)
 	var total : float = RunData.DEFEND_SECONDS * run.modify(RunData.T_RUN, &"time_mult", 1.0)
-	_update_hud("Defend: %d:%02d" % [int(defend_left) / 60, int(defend_left) % 60],
+	_update_hud(Loc.t("battle.defend") % [int(defend_left) / 60, int(defend_left) % 60],
 			1.0 - defend_left / maxf(total, 1.0), contested)
 	if (defend_left <= 0.0):
 		_finish(true)
@@ -178,7 +178,7 @@ func _enemy_in_zone() -> bool:
 
 func _process_escort() -> void:
 	if (escort == null):
-		_update_hud("Escort: waiting", 0.0)
+		_update_hud("battle.escort_waiting", 0.0)
 		return
 	if (!is_instance_valid(escort) or escort.is_queued_for_deletion()):
 		_finish(false)
@@ -186,14 +186,14 @@ func _process_escort() -> void:
 	var start_x : float = ally_base.global_position.x
 	var goal_x : float = enemy_base.global_position.x
 	var progress : float = clampf((escort.global_position.x - start_x) / (goal_x - start_x), 0.0, 1.0)
-	_update_hud("Escort: %d%%" % int(round(progress / RunData.ESCORT_GOAL * 100.0)), minf(progress / RunData.ESCORT_GOAL, 1.0))
+	_update_hud(Loc.t("battle.escort") % int(round(progress / RunData.ESCORT_GOAL * 100.0)), minf(progress / RunData.ESCORT_GOAL, 1.0))
 	if (progress >= RunData.ESCORT_GOAL):
 		_finish(true)
 
 func _update_hud(headline : String, fraction : float, warn : bool = false) -> void:
-	var detail : String = str(RunData.OBJECTIVES[objective]["text"])
+	var detail : String = Loc.t(str(RunData.OBJECTIVES[objective]["text"]))
 	if (warn):
-		detail = "Contested: enemies in the zone stop the countdown."
+		detail = "battle.contested_enemies_in_the_zone"
 	var left : float = -1.0
 	if (time_limit > 0.0):
 		left = maxf(time_limit - elapsed, 0.0)
@@ -241,7 +241,7 @@ func _finish(success : bool, base_destroyed : bool = false) -> void:
 
 func _show_result_banner(success : bool, base_destroyed : bool) -> void:
 	var label : Label = Label.new()
-	label.text = "BASE DESTROYED" if base_destroyed else ("OBJECTIVE COMPLETE" if success else "OBJECTIVE FAILED")
+	label.text = "battle.base_destroyed" if base_destroyed else ("battle.objective_complete" if success else "battle.objective_failed")
 	label.add_theme_font_override("font", load("res://assets/fonts/dogicabold.ttf") as Font)
 	label.add_theme_font_size_override("font_size", 32)
 	label.add_theme_color_override("font_color", Color("#78dddd") if success else Color("#dfa0a2"))
@@ -260,9 +260,9 @@ func _marker_targets() -> Array[Dictionary]:
 	if (done):
 		return targets
 	if (objective == RunData.Objective.ESCORT and escort and is_instance_valid(escort)):
-		targets.append({"pos": escort.global_position, "kind": "ally", "label": "ESCORT"})
+		targets.append({"pos": escort.global_position, "kind": "ally", "label": "battle.escort_caps"})
 	if (objective == RunData.Objective.DEFEND and defense_point):
-		targets.append({"pos": defense_point.global_position, "kind": "target", "label": "DEFENSE POINT"})
+		targets.append({"pos": defense_point.global_position, "kind": "target", "label": "battle.defense_point"})
 	var context : BattleContext = BattleContext.of(self)
 	if (context == null):
 		return targets
@@ -272,9 +272,9 @@ func _marker_targets() -> Array[Dictionary]:
 		var stats : EntityStats = unit.entity_stats
 		if (stats.is_boss and (objective == RunData.Objective.SHOOT_DOWN_BOMBER or objective == RunData.Objective.DEFEAT_BOSS)):
 			targets.append({"pos": unit.global_position, "kind": "target",
-				"label": "BOMBER" if objective == RunData.Objective.SHOOT_DOWN_BOMBER else "BOSS"})
+				"label": "battle.bomber" if objective == RunData.Objective.SHOOT_DOWN_BOMBER else "battle.boss_caps"})
 		elif (objective == RunData.Objective.HUNT_SUBMARINE):
 			var boat : BoatStats = stats as BoatStats
 			if (boat and boat.can_submerge):
-				targets.append({"pos": unit.global_position, "kind": "enemy", "label": "SUBMARINE"})
+				targets.append({"pos": unit.global_position, "kind": "enemy", "label": "battle.submarine"})
 	return targets

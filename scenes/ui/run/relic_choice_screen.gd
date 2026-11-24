@@ -10,13 +10,13 @@ func expected_stage() -> int:
 	return RunData.Stage.RELIC
 
 func screen_title() -> String:
-	return "Choose a relic"
+	return "run.choose_a_relic"
 
 func screen_subtitle() -> String:
-	return "NODE REWARD"
+	return "run.node_reward"
 
 func _build() -> void:
-	content.add_child(_label("Choose 1 of the %d relics for this run." % run.relic_offer.size(), 16, TEXT_SOFT))
+	content.add_child(_label(Loc.t("run.choose_1_of_the_relics") % run.relic_offer.size(), 16, TEXT_SOFT))
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 28)
 	row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -31,10 +31,10 @@ func _build() -> void:
 	footer.add_theme_constant_override("separation", 14)
 	footer.add_child(_legend())
 	footer.add_child(_spacer())
-	var skip : Button = _button("SKIP", true)
+	var skip : Button = _button("run.skip", true)
 	skip.custom_minimum_size.x = 140
 	skip.pressed.connect(_on_skip)
-	confirm_button = _button("CONFIRM")
+	confirm_button = _button("run.confirm")
 	confirm_button.custom_minimum_size.x = 246
 	confirm_button.disabled = true
 	confirm_button.pressed.connect(_on_confirm)
@@ -46,7 +46,7 @@ func _build() -> void:
 
 func _legend() -> Control:
 	var box : VBoxContainer = VBoxContainer.new()
-	box.add_child(_label("RARITIES", 12, TEXT_SOFT, true))
+	box.add_child(_label("run.rarities", 12, TEXT_SOFT, true))
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
 	for rarity : int in RunData.RARITY_NAMES:
@@ -57,7 +57,7 @@ func _legend() -> Control:
 		swatch.custom_minimum_size = Vector2(8, 8)
 		swatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		item.add_child(swatch)
-		item.add_child(_label(str(RunData.RARITY_NAMES[rarity]).capitalize(), 12, TEXT_SOFT))
+		item.add_child(_label(Loc.t(str(RunData.RARITY_NAMES[rarity])).capitalize(), 12, TEXT_SOFT))
 		row.add_child(item)
 	box.add_child(row)
 	return box
@@ -87,7 +87,7 @@ func _build_card(relic_id : StringName) -> Button:
 	inner.add_theme_constant_override("separation", 10)
 	inner.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	card.add_child(inner)
-	var plate : PanelContainer = _plate(str(RunData.RARITY_NAMES[rarity]), color, 16, color)
+	var plate : PanelContainer = _plate(Loc.t(str(RunData.RARITY_NAMES[rarity])), color, 16, color)
 	var check : TextureRect = _icon(RunData.ui_icon("check_ok"))
 	check.name = "Check"
 	check.visible = false
@@ -114,18 +114,18 @@ func _build_card(relic_id : StringName) -> Button:
 	if (cursed):
 		niche.add_child(_icon(load("res://assets/ui/relics/cursed_cracks_v01.png") as Texture2D))
 	inner.add_child(niche)
-	var title : Label = _label(str(data["name"]), 16, TEXT, true)
+	var title : Label = _label(Loc.t(str(data["name"])), 16, TEXT, true)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	inner.add_child(title)
 	inner.add_child(_divider())
-	var description : Label = _wrapped(str(data["text"]), 14, TEXT)
+	var description : Label = _wrapped(Loc.t(str(data["text"])), 14, TEXT)
 	description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	description.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	inner.add_child(description)
 	var band_key : String = "penalty" if cursed else key
 	var band : PanelContainer = PanelContainer.new()
 	band.add_theme_stylebox_override("panel", _box("res://assets/ui/relics/effect_band_%s_v01.png" % band_key, 4, 8))
-	var tag : Label = _label(str(data["tag"]), 12, color, true)
+	var tag : Label = _label(Loc.t(str(data["tag"])), 12, color, true)
 	tag.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	band.add_child(tag)
 	inner.add_child(band)

@@ -10,40 +10,40 @@ func requires_run() -> bool:
 	return false
 
 func screen_title() -> String:
-	return "Select campaign"
+	return "menu.select_campaign"
 
 func screen_subtitle() -> String:
-	return "SLOT %d" % SaveManager.slot
+	return Loc.t("menu.slot") % SaveManager.slot
 
 func _build() -> void:
 	Global.run = null
 	saved = SaveManager.load_run() if SaveManager.has_run() else null
-	content.add_child(_label("Pick how you want to play. You can change it later from the troop menu.", 16, TEXT_SOFT))
+	content.add_child(_label("menu.pick_how_you_want_to", 16, TEXT_SOFT))
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 20)
 	row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
 	content.add_child(row)
-	row.add_child(_card("NEW CAMPAIGN", CYAN, RunData.node_glyph(RunData.NodeType.BATTLE, "normal"),
-			"A sector run: %d floors and a boss on a branching map. Pick your route, take risks, collect relics. The base stays damaged between battles." % RunData.COLUMNS,
-			"Replaces your saved campaign." if saved else "Starts a fresh run.",
-			"START NEW", _on_new, true))
-	var continue_text : String = "No saved campaign."
+	row.add_child(_card("menu.new_campaign", CYAN, RunData.node_glyph(RunData.NodeType.BATTLE, "normal"),
+			Loc.t("menu.a_sector_run_floors_and") % RunData.COLUMNS,
+			"menu.replaces_your_saved_campaign" if saved else "menu.starts_a_fresh_run",
+			"menu.start_new", _on_new, true))
+	var continue_text : String = "menu.no_saved_campaign"
 	if (saved):
-		continue_text = "Floor %d/%d  |  Base %d/%d HP  |  %d relics  |  %d screws" % [
+		continue_text = Loc.t("menu.floor_base_hp_relics_screws") % [
 				mini(saved.floors_cleared() + 1, RunData.COLUMNS), RunData.COLUMNS, saved.base_hp, saved.base_max_hp,
 				saved.relics.size(), saved.screws]
-	row.add_child(_card("CONTINUE CAMPAIGN", AMBER, RunData.node_glyph(RunData.NodeType.SHIPYARD, "normal"),
-			"Pick up the run where you left it. Your route, relics and base health are kept.",
-			continue_text, "CONTINUE", _on_continue, saved != null))
-	row.add_child(_card("ENDLESS WAVES", DANGER, RunData.node_glyph(RunData.NodeType.ELITE, "normal"),
-			"The original mode: survive wave after wave against a growing enemy base with bosses.",
-			"Best wave: %d" % Global.player_stats.best_wave, "PLAY ENDLESS", _on_classic, true))
+	row.add_child(_card("menu.continue_campaign", AMBER, RunData.node_glyph(RunData.NodeType.SHIPYARD, "normal"),
+			"menu.pick_up_the_run_where",
+			continue_text, "menu.continue", _on_continue, saved != null))
+	row.add_child(_card("menu.endless_waves", DANGER, RunData.node_glyph(RunData.NodeType.ELITE, "normal"),
+			"menu.the_original_mode_survive_wave",
+			Loc.t("menu.best_wave") % Global.player_stats.best_wave, "menu.play_endless", _on_classic, true))
 	content.add_child(_spacer())
 	content.add_child(_divider())
-	var options : Button = _button("OPTIONS")
+	var options : Button = _button("menu.options")
 	options.custom_minimum_size.x = 220
 	options.pressed.connect(Global.open_options)
-	var back : Button = _button("MAIN MENU")
+	var back : Button = _button("menu.main_menu")
 	back.custom_minimum_size.x = 220
 	back.pressed.connect(func() -> void: Global.change_scene(Global.Menu.MAIN_MENU))
 	content.add_child(_footer(back, options))

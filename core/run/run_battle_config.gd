@@ -76,19 +76,19 @@ static func expected_enemies(entry : Dictionary) -> Array[Dictionary]:
 	for unit : BoatStats in pool:
 		names.append(unit.name)
 	if (objective == RunData.Objective.ESCORT):
-		result.append({"key": "escort", "label": "Allied Escort"})
+		result.append({"key": "escort", "label": "run.allied_escort"})
 	if (objective == RunData.Objective.DEFEAT_BOSS):
-		result.append({"key": "boss", "label": "Dreadnought"})
+		result.append({"key": "boss", "label": "run.dreadnought"})
 	if (objective == RunData.Objective.SHOOT_DOWN_BOMBER):
-		result.append({"key": "bomber", "label": "Heavy Bomber"})
+		result.append({"key": "bomber", "label": "run.heavy_bomber"})
 	if (names.has("destroyer") or names.has("cruiser") or names.has("frigate") or names.has("tank")):
-		result.append({"key": "destroyer", "label": "Warships"})
+		result.append({"key": "destroyer", "label": "run.warships"})
 	elif (names.has("medium") or names.has("flak") or names.has("torpedo") or names.has("small") or names.has("mini")):
-		result.append({"key": "destroyer", "label": "Patrol Boats"})
+		result.append({"key": "destroyer", "label": "run.patrol_boats"})
 	if (names.has("submarine")):
-		result.append({"key": "submarine", "label": "Submarine"})
+		result.append({"key": "submarine", "label": "run.submarine"})
 	if (names.has("bomber") or names.has("plane")) and objective != RunData.Objective.SHOOT_DOWN_BOMBER:
-		result.append({"key": "bomber", "label": "Bomber"})
+		result.append({"key": "bomber", "label": "run.bomber"})
 	while (result.size() > 3):
 		result.pop_back()
 	return result

@@ -17,11 +17,11 @@ func expected_stage() -> int:
 	return RunData.Stage.BRIEFING
 
 func screen_title() -> String:
-	return "Briefing"
+	return "run.briefing"
 
 func screen_subtitle() -> String:
 	var node : Dictionary = run.map.get_node(run.pending_node)
-	return "FLOOR %02d / %s" % [int(node["col"]) + 1, str(RunData.NODE_NAMES[int(node["type"])]).to_upper()]
+	return Loc.t("run.floor") % [int(node["col"]) + 1, Loc.t(str(RunData.NODE_NAMES[int(node["type"])])).to_upper()]
 
 func _build() -> void:
 	var main : HBoxContainer = HBoxContainer.new()
@@ -30,10 +30,10 @@ func _build() -> void:
 	content.add_child(main)
 	main.add_child(_build_mission_panel())
 	main.add_child(_build_risk_panel())
-	var back : Button = _button("BACK TO MAP")
+	var back : Button = _button("run.back_to_map")
 	back.custom_minimum_size.x = 250
 	back.pressed.connect(_on_back)
-	var start : Button = _button("START BATTLE")
+	var start : Button = _button("run.start_battle")
 	start.custom_minimum_size.x = 270
 	start.pressed.connect(_on_start)
 	content.add_child(_divider())
@@ -50,28 +50,28 @@ func _build_mission_panel() -> Control:
 	var box : VBoxContainer = VBoxContainer.new()
 	box.add_theme_constant_override("separation", 10)
 	panel.add_child(box)
-	box.add_child(_plate("MISSION OBJECTIVE", TEXT, 16))
+	box.add_child(_plate("run.mission_objective", TEXT, 16))
 	var head : HBoxContainer = HBoxContainer.new()
 	head.add_theme_constant_override("separation", 12)
 	var well : PanelContainer = PanelContainer.new()
 	well.add_theme_stylebox_override("panel", _flat(Color("#1d2c33"), Color("#2a3d46")))
 	well.add_child(_icon(RunData.objective_hud_icon(objective), Vector2(44, 44)))
 	head.add_child(well)
-	head.add_child(_label(RunData.OBJECTIVES[objective]["name"], 24, TEXT, true))
+	head.add_child(_label(Loc.t(RunData.OBJECTIVES[objective]["name"]), 24, TEXT, true))
 	box.add_child(head)
-	box.add_child(_wrapped(RunData.OBJECTIVES[objective]["text"], 12, TEXT))
+	box.add_child(_wrapped(Loc.t(RunData.OBJECTIVES[objective]["text"]), 12, TEXT))
 	box.add_child(_divider())
 	weather_info = VBoxContainer.new()
 	box.add_child(weather_info)
 	box.add_child(_divider())
-	box.add_child(_label("EXPECTED ENEMIES", 12, TEXT_SOFT, true))
+	box.add_child(_label("run.expected_enemies", 12, TEXT_SOFT, true))
 	var enemies : HBoxContainer = HBoxContainer.new()
 	enemies.add_theme_constant_override("separation", 10)
 	for enemy : Dictionary in RunBattleConfig.expected_enemies(node):
-		enemies.add_child(_enemy_card(str(enemy["key"]), str(enemy["label"])))
+		enemies.add_child(_enemy_card(str(enemy["key"]), Loc.t(str(enemy["label"]))))
 	box.add_child(enemies)
 	box.add_child(_divider())
-	box.add_child(_label("EXPECTED REWARD", 12, TEXT_SOFT, true))
+	box.add_child(_label("run.expected_reward", 12, TEXT_SOFT, true))
 	reward_box = VBoxContainer.new()
 	reward_box.add_theme_constant_override("separation", 6)
 	box.add_child(reward_box)
@@ -106,14 +106,14 @@ func _build_risk_panel() -> Control:
 	box.add_theme_constant_override("separation", 8)
 	panel.add_child(box)
 	var top : HBoxContainer = HBoxContainer.new()
-	var plate : PanelContainer = _plate("RISK MODIFIERS", TEXT, 16)
+	var plate : PanelContainer = _plate("run.risk_modifiers", TEXT, 16)
 	plate.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	top.add_child(plate)
 	box.add_child(top)
 	count_label = _label("", 16, CYAN, true)
 	count_label.position = Vector2.ZERO
 	var count_holder : HBoxContainer = HBoxContainer.new()
-	count_holder.add_child(_label("ACTIVE SLOTS", 12, TEXT_SOFT, true))
+	count_holder.add_child(_label("run.active_slots", 12, TEXT_SOFT, true))
 	count_holder.add_child(_spacer())
 	count_holder.add_child(count_label)
 	box.add_child(count_holder)
@@ -121,7 +121,7 @@ func _build_risk_panel() -> Control:
 	slots_row.add_theme_constant_override("separation", 8)
 	box.add_child(slots_row)
 	box.add_child(_divider())
-	box.add_child(_label("AVAILABLE MODIFIERS", 12, TEXT_SOFT, true))
+	box.add_child(_label("run.available_modifiers", 12, TEXT_SOFT, true))
 	list_grid = GridContainer.new()
 	list_grid.columns = 2
 	list_grid.add_theme_constant_override("h_separation", 8)
@@ -131,7 +131,7 @@ func _build_risk_panel() -> Control:
 	box.add_child(_divider())
 	var reward_row : HBoxContainer = HBoxContainer.new()
 	reward_row.add_theme_constant_override("separation", 12)
-	reward_row.add_child(_label("REWARD", 14, TEXT_SOFT, true))
+	reward_row.add_child(_label("run.reward", 14, TEXT_SOFT, true))
 	reward_meter = HBoxContainer.new()
 	reward_meter.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	reward_row.add_child(reward_meter)
@@ -153,7 +153,7 @@ func _refresh_weather() -> void:
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)
 	row.add_child(_icon(RunData.weather_icon(weather)))
-	row.add_child(_label(RunData.WEATHER[weather]["name"], 14, TEXT))
+	row.add_child(_label(Loc.t(RunData.WEATHER[weather]["name"]), 14, TEXT))
 	row.add_child(_spacer())
 	var difficulty : int = run.node_difficulty(run.pending_node)
 	row.add_child(_segment_bar(float(difficulty), 5.0, 5,
@@ -161,7 +161,7 @@ func _refresh_weather() -> void:
 			load("res://assets/ui/modifiers/reward_empty_v01.png") as Texture2D))
 	row.add_child(_label("%d/5" % difficulty, 14, TEXT_DIM))
 	weather_info.add_child(row)
-	weather_info.add_child(_label(RunData.WEATHER[weather]["text"], 10, TEXT_DIM))
+	weather_info.add_child(_label(Loc.t(RunData.WEATHER[weather]["text"]), 10, TEXT_DIM))
 
 func _refresh_slots() -> void:
 	count_label.text = "%d / %d" % [run.risks.size(), RunData.MAX_RISKS]
@@ -196,7 +196,7 @@ func _slot_button(index : int) -> Button:
 		var texts : VBoxContainer = VBoxContainer.new()
 		texts.alignment = BoxContainer.ALIGNMENT_CENTER
 		texts.add_theme_constant_override("separation", 4)
-		texts.add_child(_label(str(data["name"]), 10, TEXT, true))
+		texts.add_child(_label(Loc.t(str(data["name"])), 10, TEXT, true))
 		texts.add_child(_label("+%d%%" % int(float(data["bonus"]) * 100.0), 10, AMBER))
 		inner.add_child(texts)
 		inner.add_child(_spacer())
@@ -204,7 +204,7 @@ func _slot_button(index : int) -> Button:
 		slot.pressed.connect(_on_risk_toggled.bind(risk_id))
 	else:
 		inner.add_child(_margin_spacer(8))
-		inner.add_child(_label("%02d  Empty slot" % (index + 1), 10, TEXT_DIM))
+		inner.add_child(_label(Loc.t("run.empty_slot") % (index + 1), 10, TEXT_DIM))
 	return slot
 
 func _margin_spacer(width : int) -> Control:
@@ -247,8 +247,8 @@ func _risk_button(risk_id : StringName) -> Button:
 	texts.alignment = BoxContainer.ALIGNMENT_CENTER
 	texts.add_theme_constant_override("separation", 5)
 	texts.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	texts.add_child(_label(str(data["name"]), 12, TEXT if available else TEXT_DIM, true))
-	texts.add_child(_label(str(data["text"]), 10, TEXT_SOFT if available else TEXT_DIM))
+	texts.add_child(_label(Loc.t(str(data["name"])), 12, TEXT if available else TEXT_DIM, true))
+	texts.add_child(_label(Loc.t(str(data["text"])), 10, TEXT_SOFT if available else TEXT_DIM))
 	inner.add_child(texts)
 	var mark : Texture2D = RunData.ui_icon("check_ok") if equipped else null
 	if (mark):
@@ -270,7 +270,7 @@ func _refresh_reward() -> void:
 	var screws_row : HBoxContainer = HBoxContainer.new()
 	screws_row.add_theme_constant_override("separation", 10)
 	screws_row.add_child(_screw_icon())
-	screws_row.add_child(_label("%d screws" % run.expected_screws(run.pending_node), 16, TEXT, true))
+	screws_row.add_child(_label(Loc.t("run.screws") % run.expected_screws(run.pending_node), 16, TEXT, true))
 	reward_box.add_child(screws_row)
 	var relic_text : String = run.expected_relic_text(run.pending_node)
 	if (relic_text != ""):

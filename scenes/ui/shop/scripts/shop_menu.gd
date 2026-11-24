@@ -39,11 +39,11 @@ const DEMO := preload("res://scenes/ui/naval_hud/battle_sandbox.gd")
 const SIM_SCALE : int = 2
 const SIM_DIGITAL_SCREEN : bool = true
 
-const FILTERS : Array[String] = ["ALL", "NAVAL", "AIR", "SUB"]
+const FILTERS : Array[String] = ["shop.all", "hud.naval", "hud.air", "hud.sub"]
 const CARD_COLUMNS : int = 4
 
 var selected : BoatStats
-var filter : String = "ALL"
+var filter : String = "shop.all"
 
 var gear_label : Label
 var screw_label : Label
@@ -182,16 +182,16 @@ func _screw_value(value : int, color : Color, size : int = 8, factor : int = 1) 
 func _dock_of(unit : EntityStats) -> String:
 	var boat : BoatStats = unit as BoatStats
 	if (boat != null and boat.can_submerge):
-		return "SUB"
+		return "hud.sub"
 	if (unit.unit_class == Enums.UnitClass.AIR):
-		return "AIR"
-	return "NAVAL"
+		return "hud.air"
+	return "hud.naval"
 
 func _dock_icon(dock : String) -> Texture2D:
-	return ICON_AIR if dock == "AIR" else (ICON_SUB if dock == "SUB" else ICON_NAVAL)
+	return ICON_AIR if dock == "hud.air" else (ICON_SUB if dock == "hud.sub" else ICON_NAVAL)
 
 func _dock_icon_12(dock : String) -> Texture2D:
-	return ICON12_AIR if dock == "AIR" else (ICON12_SUB if dock == "SUB" else ICON12_NAVAL)
+	return ICON12_AIR if dock == "hud.air" else (ICON12_SUB if dock == "hud.sub" else ICON12_NAVAL)
 
 func _icon_value(icon : Texture2D, text : String, color : Color = TEXT) -> HBoxContainer:
 	var row : HBoxContainer = HBoxContainer.new()
@@ -233,13 +233,13 @@ func _build_header() -> PanelContainer:
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 14)
 	_margin(panel, 10).add_child(row)
-	var title : Label = _label("FLEET", TEXT, 32)
+	var title : Label = _label("shop.fleet", TEXT, 32)
 	title.add_theme_font_override("font", PIXEL_FONT)
 	row.add_child(title)
 	row.add_child(VSeparator.new())
 	var gears : VBoxContainer = VBoxContainer.new()
 	gears.add_theme_constant_override("separation", 4)
-	gears.add_child(_label("GEARS", DIM))
+	gears.add_child(_label("run.gears", DIM))
 	var gear_row : HBoxContainer = HBoxContainer.new()
 	gear_row.add_theme_constant_override("separation", 6)
 	gear_label = _label("", TEXT, 16)
@@ -251,7 +251,7 @@ func _build_header() -> PanelContainer:
 	start.add_theme_constant_override("separation", 4)
 	var start_title : HBoxContainer = HBoxContainer.new()
 	start_title.add_theme_constant_override("separation", 4)
-	start_title.add_child(_label("STARTING", DIM))
+	start_title.add_child(_label("shop.starting", DIM))
 	start_title.add_child(_silhouette(SCREW_ICON, DIM, 1))
 	start.add_child(start_title)
 	screw_label = _label("", TEXT, 16)
@@ -259,11 +259,11 @@ func _build_header() -> PanelContainer:
 	row.add_child(start)
 	row.add_child(_spacer())
 	for entry : Dictionary in [
-			{"text": "CHANGE MODE", "width": 150, "action": func() -> void: Global.change_scene(Global.Menu.CAMPAIGN_SELECT)},
-			{"text": "RESEARCH", "width": 130, "action": func() -> void: Global.change_scene(Global.Menu.RESEARCH)},
-			{"text": "OPTIONS", "width": 130, "action": Global.open_options}]:
+			{"text": "shop.change_mode", "width": 150, "action": func() -> void: Global.change_scene(Global.Menu.CAMPAIGN_SELECT)},
+			{"text": "research.research", "width": 130, "action": func() -> void: Global.change_scene(Global.Menu.RESEARCH)},
+			{"text": "menu.options", "width": 130, "action": Global.open_options}]:
 		var button : Button = Button.new()
-		button.text = entry["text"]
+		button.text = Loc.t(entry["text"])
 		button.custom_minimum_size = Vector2(entry["width"], 34)
 		button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 		_skin(button)
@@ -272,7 +272,7 @@ func _build_header() -> PanelContainer:
 	return panel
 
 func _build_catalog() -> PanelContainer:
-	var col : VBoxContainer = _module("UNIT CATALOG", true)
+	var col : VBoxContainer = _module("hud.unit_catalog", true)
 	var panel : PanelContainer = col.get_meta("panel")
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	panel.set_drag_forwarding(
@@ -463,7 +463,7 @@ func _refresh_catalog() -> void:
 	_clear(grid)
 	for item : Variant in Global.CATALOG.units:
 		var unit : BoatStats = item
-		if (filter == "ALL" or filter == _dock_of(unit)):
+		if (filter == "shop.all" or filter == _dock_of(unit)):
 			grid.add_child(_make_card(unit))
 
 func _make_card(unit : BoatStats) -> Button:
@@ -487,20 +487,20 @@ func _make_card(unit : BoatStats) -> Button:
 	col.add_theme_constant_override("separation", 3)
 	_margin(button, 5).add_child(col)
 	button.get_child(0).set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	var title : Label = _label(unit.name.to_upper())
+	var title : Label = _label(Loc.named("unit", unit.name).to_upper())
 	title.modulate = Color.WHITE if available else Color(0.65, 0.68, 0.7)
 	col.add_child(title)
-	var corner : String = "%d GEARS" % unit.unlock_cost
+	var corner : String = Loc.t("research.gears") % unit.unlock_cost
 	var corner_color : Color = AMBER
 	if (stats.has_boat(unit.name)):
 		var slot : int = stats.loadout.find(unit.name)
-		corner = "SLOT %d" % (slot + 1) if slot >= 0 else "OWNED"
+		corner = Loc.t("menu.slot") % (slot + 1) if slot >= 0 else "shop.owned"
 		corner_color = DIM if slot >= 0 else CYAN
 	col.add_child(_make_portrait(unit, available, 60, 2, "", true, true, corner, corner_color))
 	return button
 
 func _refresh_detail() -> void:
-	detail_title.text = selected.name.to_upper() if selected else "NO UNIT"
+	detail_title.text = Loc.named("unit", selected.name).to_upper() if selected else "shop.no_unit"
 	_clear(dock_slot)
 	if (selected != null):
 		dock_slot.add_child(_silhouette(_dock_icon_12(_dock_of(selected)), DIM))
@@ -517,7 +517,7 @@ func _refresh_detail() -> void:
 		return
 	var stats : PlayerStats = Global.player_stats
 	var upgraded : EntityStats = Global.upgraded_entity(selected)
-	sim_tag.text = "%s UNIT" % _dock_of(selected)
+	sim_tag.text = Loc.t("shop.unit") % Loc.t(_dock_of(selected))
 	sim_well.modulate = Color.WHITE if _is_available(selected) else Color(0.72, 0.74, 0.78)
 	if (sim_overlay):
 		(sim_overlay.material as ShaderMaterial).set_shader_parameter("band_strength", 1.0 if _is_available(selected) else 0.0)
@@ -526,9 +526,9 @@ func _refresh_detail() -> void:
 		sim.show_unit(upgraded)
 	var rows : Array = [
 		["HP", "%.1f" % upgraded.health, ICON_HP],
-		["SPEED", "%.1f" % upgraded.speed, ICON_SPEED],
-		["GUN SLOTS", str(upgraded.gun_slots.size()), ICON_GUN],
-		["DOCK", _dock_of(selected), _dock_icon(_dock_of(selected))],
+		["shop.speed", "%.1f" % upgraded.speed, ICON_SPEED],
+		["shop.gun_slots", str(upgraded.gun_slots.size()), ICON_GUN],
+		["shop.dock", _dock_of(selected), _dock_icon(_dock_of(selected))],
 	]
 	var summary_panel : PanelContainer = _panel(ROW, ROW)
 	var summary : HBoxContainer = HBoxContainer.new()
@@ -560,7 +560,7 @@ func _refresh_detail() -> void:
 		detail_box.add_child(stat_col)
 		var cost : HBoxContainer = HBoxContainer.new()
 		cost.add_theme_constant_override("separation", 10)
-		cost.add_child(_label("BUILD COST", DIM))
+		cost.add_child(_label("shop.build_cost", DIM))
 		cost.add_child(_screw_value(selected.price, TEXT))
 		var cost_margin : MarginContainer = MarginContainer.new()
 		cost_margin.add_theme_constant_override("margin_left", 5)
@@ -571,12 +571,12 @@ func _refresh_detail() -> void:
 	action.custom_minimum_size = Vector2(0, 30)
 	if (stats.has_boat(selected.name)):
 		var equipped : bool = stats.in_loadout(selected.name)
-		action.text = "REMOVE FROM LOADOUT" if equipped else "ADD TO LOADOUT"
+		action.text = "shop.remove_from_loadout" if equipped else "shop.add_to_loadout"
 		action.disabled = !equipped and stats.loadout_count() >= loadout_limit()
 		_skin(action, CYAN, Color("#1f4448"))
 		action.pressed.connect(_toggle_loadout.bind(selected))
 	else:
-		action.text = "UNLOCK  %d GEARS" % selected.unlock_cost
+		action.text = Loc.t("shop.unlock_gears") % selected.unlock_cost
 		action.disabled = !stats.can_buy(selected.unlock_cost)
 		_skin(action, AMBER, Color("#3a3220"))
 		action.add_theme_color_override("font_color", AMBER)
@@ -601,7 +601,7 @@ func _add_weapon_selector(unit : EntityStats) -> void:
 		var index : int = maxi(0, options.find(current))
 		var row : HBoxContainer = HBoxContainer.new()
 		row.add_theme_constant_override("separation", 6)
-		row.add_child(_label("WEAPON", DIM))
+		row.add_child(_label("shop.weapon", DIM))
 		row.add_child(_spacer())
 		for step : int in [-1, 1]:
 			var arrow : Button = Button.new()
@@ -640,7 +640,7 @@ func _cycle_weapon(unit : EntityStats, slot_index : int, options : Array[int], n
 func _refresh_loadout() -> void:
 	var stats : PlayerStats = Global.player_stats
 	var limit : int = loadout_limit()
-	loadout_title.text = "LOADOUT   %d / %d" % [stats.loadout_count(), limit]
+	loadout_title.text = Loc.t("shop.loadout") % [stats.loadout_count(), limit]
 	_clear(slots_row)
 	var start_screws : int = _start_screws()
 	for index : int in range(limit):
@@ -679,7 +679,7 @@ func _make_slot(index : int, unit : EntityStats, start_screws : int) -> Button:
 	col.add_child(_label(str(index + 1), DIM))
 	if (unit != null):
 		col.add_child(_make_portrait(unit, usable, 30, 1, "", true, false))
-		var name_label : Label = _label(unit.name.to_upper())
+		var name_label : Label = _label(Loc.named("unit", unit.name).to_upper())
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		name_label.modulate = Color.WHITE if usable else Color(0.65, 0.68, 0.7)
 		col.add_child(name_label)
@@ -689,7 +689,7 @@ func _make_slot(index : int, unit : EntityStats, start_screws : int) -> Button:
 		plus.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		plus.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 		col.add_child(plus)
-		var empty : Label = _label("EMPTY", Color("#7f8b90"))
+		var empty : Label = _label("hud.empty", Color("#7f8b90"))
 		empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		col.add_child(empty)
 	return button
@@ -744,7 +744,7 @@ func _make_empty_card() -> Button:
 	button.add_theme_stylebox_override("disabled", _style(face, edge))
 	var holder : MarginContainer = _margin(button, 5)
 	holder.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
-	var empty : Label = _label("EMPTY", Color("#7f8b90"))
+	var empty : Label = _label("hud.empty", Color("#7f8b90"))
 	empty.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	empty.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	holder.add_child(empty)
@@ -805,8 +805,8 @@ func _toggle_loadout(unit : EntityStats) -> void:
 
 func _start_text() -> String:
 	if (Global.start_mode == Global.StartMode.CAMPAIGN):
-		return "CONTINUE CAMPAIGN" if !Global.start_new_campaign else "START CAMPAIGN"
-	return "START ENDLESS"
+		return "menu.continue_campaign" if !Global.start_new_campaign else "shop.start_campaign"
+	return "shop.start_endless"
 
 func _on_start_pressed() -> void:
 	if (Global.start_mode == Global.StartMode.CAMPAIGN):
