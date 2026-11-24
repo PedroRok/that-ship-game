@@ -59,10 +59,10 @@ func _play(objective : int) -> void:
 		if (!shot and game_time > 12.0):
 			shot = true
 			_screenshot("battle_%s.png" % RunData.OBJECTIVES[objective]["icon"])
-		if (game_time - last_log > 40.0):
+		if (game_time - last_log > 25.0):
 			last_log = game_time
 			var campaign : CampaignBattle = (game as GameRound).campaign
-			print("  [obj %d] t=%ds %s" % [objective, int(game_time), campaign.hud.title_label.text if campaign else "?"])
+			print("  [obj %d] t=%ds %s | threat %d pace x%.2f skip %d%%" % [objective, int(game_time), campaign.hud.title_label.text if campaign else "?", int(campaign.director.threat), campaign.director.interval_mult, int(campaign.director.skip_chance * 100.0)])
 	Engine.time_scale = 1.0
 	print("OBJECTIVE %d (%s): stage=%d result=%s base_hp=%d screws=%d" % [objective, RunData.OBJECTIVES[objective]["name"],
 			run.stage, str(run.node_result.get("success", "-")), run.base_hp, run.screws])

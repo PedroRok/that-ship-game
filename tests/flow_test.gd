@@ -15,11 +15,15 @@ func current_screen() -> Node:
 	return manager.menu_scene
 
 func _ready() -> void:
-	SaveManager.delete_run()
+	SaveManager.slot = 3
+	SaveManager.delete_slot(3)
 	manager = (load("res://scenes/ui/rounds_scene_manager/rounds_scene_manager.tscn") as PackedScene).instantiate()
 	add_child(manager)
 	await frames()
-	check(current_screen() is CampaignSelectScreen, "the game opens on the campaign screen, before the troop menu")
+	check(current_screen() is MainMenu, "the game opens on the main menu")
+	(current_screen() as MainMenu)._on_play(3)
+	await frames(10)
+	check(current_screen() is CampaignSelectScreen and SaveManager.slot == 3, "playing a slot opens the campaign screen")
 	(current_screen() as CampaignSelectScreen)._on_new()
 	await frames(10)
 	check(current_screen() is ShopMenu and Global.start_mode == Global.StartMode.CAMPAIGN, "picking a mode opens the troop menu")

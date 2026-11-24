@@ -51,6 +51,7 @@ func _shoot_all() -> void:
 	await _capture(Global.Menu.RUN_MAP, "map.png")
 	await _capture_map_selected(run, "map_selected_a.png", 0)
 	await _capture_map_selected(run, "map_selected_b.png", reachable.size() - 1)
+	await _capture(Global.Menu.MAIN_MENU, "main_menu.png")
 	await _capture(Global.Menu.CAMPAIGN_SELECT, "campaign_select.png")
 
 	var brief : RunState = _fresh_run()
