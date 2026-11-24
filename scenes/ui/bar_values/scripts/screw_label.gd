@@ -57,15 +57,23 @@ signal value_change(new_val : int)
 
 func _ready() -> void:
 	total_value = start_value
+	if (!Engine.is_editor_hint() and name_label.material == value_label.material):
+		name_label.material = value_label.material.duplicate()
 	texture.texture = icon_texture
-	name_label.text = name_string
+	name_label.text = name_string.to_upper()
 	value_label.text = str(start_value)
 	texture.material.set_shader_parameter("reference_texture", icon_texture)
 	pass
 	
+func refresh_text() -> void:
+	if (waiting_to_increment > 0):
+		value_label.text = str(total_value) + "+" + str(waiting_to_increment)
+	else:
+		value_label.text = str(total_value)
+
 func change_value(plus_amout: int) -> void:
 	total_value = total_value + plus_amout
-	value_label.text = str(total_value)
+	refresh_text()
 	value_label.pivot_offset = value_label.size/2
 	value_label.rotation_degrees -= 3
 	value_change.emit(total_value)
@@ -73,7 +81,7 @@ func change_value(plus_amout: int) -> void:
 func change_value_animated(plus_amount : int) -> void:
 	increment_cd = 120
 	waiting_to_increment += plus_amount
-	value_label.text = str(total_value) + "+" + str(waiting_to_increment)
+	refresh_text()
 	audio.pitch_scale = 1.
 	texture.pivot_offset = texture.size / 2
 	texture.scale = Vector2(1.35, 1.35)
@@ -92,7 +100,7 @@ func _physics_process(delta: float) -> void:
 				pos_increment_cd = 30 / waiting_to_increment
 				total_value += 1
 				waiting_to_increment -= 1
-				value_label.text = str(total_value)
+				refresh_text()
 				audio.play()
 				audio.pitch_scale += 0.1
 				value_label.pivot_offset = value_label.size/2

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://dgsxqgb5sfcb0" path="res://assets/game/misc/gear.png" id="2_4mlqb"]
 [ext_resource type="Script" uid="uid://dnso0us22a478" path="res://scenes/ui/bar_values/scripts/screw_label.gd" id="3_g1xcr"]
 [ext_resource type="FontFile" uid="uid://nq85blpc6ev2" path="res://assets/fonts/dogicabold.ttf" id="4_obnpr"]
-[ext_resource type="AudioStream" uid="uid://tv078j1cdq7k" path="res://assets/game/sounds/pling.wav" id="5_ps3bi"]
+[ext_resource type="AudioStream" path="res://assets/game/sounds/pling.ogg" id="5_ps3bi"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_30vna"]
 resource_local_to_scene = true
@@ -76,3 +76,4 @@ text = "Value"
 stream = ExtResource("5_ps3bi")
 volume_db = -11.886
 pitch_scale = 2.0
+bus = &"UI"
