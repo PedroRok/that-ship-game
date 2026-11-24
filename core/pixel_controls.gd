@@ -69,6 +69,12 @@ static func apply_theme(theme : Theme) -> void:
 		focus.draw_center = false
 		theme.set_stylebox("focus", type, focus)
 	theme.set_constant("check_v_offset", "CheckBox", 0)
+	for kind : String in ["checked", "radio_checked"]:
+		theme.set_icon(kind, "PopupMenu", checked)
+		theme.set_icon(kind + "_disabled", "PopupMenu", checked_dim)
+	for kind : String in ["unchecked", "radio_unchecked"]:
+		theme.set_icon(kind, "PopupMenu", unchecked)
+		theme.set_icon(kind + "_disabled", "PopupMenu", unchecked)
 
 static func themed(base : Theme = null) -> Theme:
 	var result : Theme = base if base else Theme.new()
