@@ -119,15 +119,20 @@ func loadout_entities() -> Array[EntityStats]:
 func loadout_slots(count : int) -> Array[EntityStats]:
 	var result : Array[EntityStats] = []
 	for index : int in range(count):
-		var found : EntityStats = null
 		var unit_name : String = loadout[index] if index < loadout.size() else ""
-		if (unit_name != ""):
-			for stats : EntityStats in unlocked_entities:
-				if (stats.name == unit_name):
-					found = stats
-					break
-		result.append(found)
+		result.append(find_entry(unit_name))
 	return result
+
+func find_entry(unit_name : String) -> EntityStats:
+	if (unit_name == ""):
+		return null
+	var skill : SkillStats = SkillCatalog.find(unit_name)
+	if (skill):
+		return skill
+	for stats : EntityStats in unlocked_entities:
+		if (stats.name == unit_name):
+			return stats
+	return null
 
 func sanitize_loadout() -> void:
 	var clean : Array[String] = []
@@ -147,6 +152,8 @@ func sanitize_loadout() -> void:
 	_trim_loadout()
 
 func has_boat(boat_name : String) -> bool:
+	if (SkillCatalog.find(boat_name)):
+		return true
 	for stats : EntityStats in unlocked_entities:
 		if (boat_name == stats.name):
 			return true

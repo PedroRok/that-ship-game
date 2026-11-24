@@ -13,7 +13,7 @@ var needs_line_of_sight : bool = true
 var gun_line_of_sight: RayCast2D = $GunLineOfSight
 
 func shoot_gun(direction: Vector2) -> void:
-	if (!needs_line_of_sight or gun_line_of_sight.is_colliding()):
+	if (!needs_line_of_sight or enemy is Base or gun_line_of_sight.is_colliding()):
 		super.shoot_gun(direction)
 
 func _physics_process(_delta: float) -> void:

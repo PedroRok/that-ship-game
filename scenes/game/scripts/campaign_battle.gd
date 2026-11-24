@@ -2,6 +2,7 @@ class_name CampaignBattle
 extends Node
 
 const BANNER_SECONDS : float = 1.8
+const RUN_END_OVERLAY = preload("res://scenes/ui/pause/run_end_overlay.gd")
 
 var game_round : GameRound
 var run : RunState
@@ -43,6 +44,8 @@ func setup(round_node : GameRound, new_run : RunState) -> void:
 	Global.test_enemy_all_units = false
 	ally_base.health_component.health = float(run.base_hp)
 	ally_base.health_component.label.text = str(run.base_hp)
+	ally_base._max_health = maxf(float(run.base_max_hp), 1.0)
+	ally_base.update_damage_visual()
 	ally_base.death_event.connect(_on_base_death)
 	enemy_base.death_event.connect(_on_base_death)
 	ships_manager.boss_defeated.connect(_on_boss_defeated)
@@ -237,7 +240,7 @@ func _finish(success : bool, base_destroyed : bool = false) -> void:
 	var hp : int = 0 if base_destroyed else int(ceil(ally_base.health_component.health))
 	run.resolve_battle(success, hp, base_destroyed, boss_defeated)
 	RunFlow.persist()
-	_show_result_banner(success, base_destroyed)
+	RUN_END_OVERLAY.show_for(run, game_round)
 
 func _show_result_banner(success : bool, base_destroyed : bool) -> void:
 	var label : Label = Label.new()

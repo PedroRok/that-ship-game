@@ -23,6 +23,25 @@ func _start_flight() -> void:
 	var zoom : float = get_viewport().get_canvas_transform().get_scale().x
 	GearFlyer.launch(self, sprite.texture, from_screen, target_control, zoom * scale.x, _arrived)
 
+func _ready() -> void:
+	add_to_group(&"collectible")
+
+func collect_instantly() -> void:
+	if (desapier):
+		return
+	desapier = true
+	pickup_gear.emit(amount)
+	queue_free()
+
+static func collect_visible(tree : SceneTree) -> void:
+	var viewport : Viewport = tree.root
+	var screen : Rect2 = Rect2(Vector2.ZERO, viewport.get_visible_rect().size)
+	var to_screen : Transform2D = viewport.get_canvas_transform()
+	for node : Node in tree.get_nodes_in_group(&"collectible"):
+		var item : GearEntity = node as GearEntity
+		if (item and is_instance_valid(item) and screen.has_point(to_screen * item.global_position)):
+			item.collect_instantly()
+
 func _arrived() -> void:
 	pickup_gear.emit(amount)
 	queue_free()

@@ -34,6 +34,17 @@ var _base_texture : Texture2D
 
 var build_boost_mult : float = 1.0
 var _destroyed : bool = false
+var _max_health : float = 1.0
+var _damage_material : ShaderMaterial
+
+const DAMAGE_SHADER : Shader = preload("res://shaders/damage.tres")
+const DAMAGE_MIN_DISSOLVE : float = 0.93
+const DAMAGE_NOISE_SIZE : int = 128
+const DAMAGE_NOISE_FREQUENCY : float = 0.22
+const FIRE_MAX_AMOUNT : int = 90
+const FIRE_MIN_RATIO : float = 0.3
+
+var _fire : GPUParticles2D
 
 signal death_event(team_stats : TeamStats)
 
@@ -53,6 +64,8 @@ func _ready() -> void:
 	health_component.death_event.connect(Callable(self, "_death_event"))
 	_base_sprites = [$BaseSprite/BaseBackground as Sprite2D, $BaseSprite/base as Sprite2D]
 	_base_texture = _base_sprites[0].texture
+	_max_health = maxf(health_component.health, 1.0)
+	_setup_damage_visual()
 	constructors[BaseDock.Type.NAVAL] = ship_constructor
 	for dock_type : BaseDock.Type in [BaseDock.Type.AIR, BaseDock.Type.SUB]:
 		var dock : BaseDock = BaseDock.new()
@@ -118,6 +131,68 @@ func distance_from(point : Vector2) -> float:
 
 func get_center_pos() -> Vector2:
 	return base_center.global_position
+
+func _setup_damage_visual() -> void:
+	var noise : FastNoiseLite = FastNoiseLite.new()
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	noise.frequency = DAMAGE_NOISE_FREQUENCY
+	noise.fractal_type = FastNoiseLite.FRACTAL_NONE
+	var texture : NoiseTexture2D = NoiseTexture2D.new()
+	texture.width = DAMAGE_NOISE_SIZE
+	texture.height = DAMAGE_NOISE_SIZE
+	texture.as_normal_map = true
+	texture.bump_strength = 32.0
+	texture.noise = noise
+	_damage_material = ShaderMaterial.new()
+	_damage_material.shader = DAMAGE_SHADER
+	_damage_material.set_shader_parameter("Noise", texture)
+	_damage_material.set_shader_parameter("dissolve", 1.0)
+	for sprite : Sprite2D in _base_sprites:
+		sprite.material = _damage_material
+	_setup_fire()
+
+func _setup_fire() -> void:
+	var shape_node : CollisionShape2D = get_node_or_null("BaseHitboxComponent/CollisionShape2D") as CollisionShape2D
+	var rect : RectangleShape2D = shape_node.shape as RectangleShape2D if shape_node else null
+	if (rect == null):
+		return
+	var ramp : Gradient = Gradient.new()
+	ramp.offsets = PackedFloat32Array([0.0, 0.45, 1.0])
+	ramp.colors = PackedColorArray([Color(1.0, 0.82, 0.25, 1.0), Color(0.95, 0.35, 0.08, 0.9), Color(0.15, 0.1, 0.1, 0.0)])
+	var ramp_texture : GradientTexture1D = GradientTexture1D.new()
+	ramp_texture.gradient = ramp
+	var process : ParticleProcessMaterial = ParticleProcessMaterial.new()
+	process.particle_flag_disable_z = true
+	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
+	process.emission_box_extents = Vector3(rect.size.x * 0.5, rect.size.y * 0.5, 1.0)
+	process.direction = Vector3(0, -1, 0)
+	process.spread = 25.0
+	process.initial_velocity_min = 8.0
+	process.initial_velocity_max = 28.0
+	process.gravity = Vector3(0, -18, 0)
+	process.scale_min = 1.8
+	process.scale_max = 3.8
+	process.color_ramp = ramp_texture
+	_fire = GPUParticles2D.new()
+	_fire.process_material = process
+	_fire.amount = FIRE_MAX_AMOUNT
+	_fire.amount_ratio = 0.0
+	_fire.lifetime = 1.1
+	_fire.z_index = 1100
+	_fire.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_fire.position = shape_node.position
+	_fire.visibility_rect = Rect2(-200, -200, 400, 400)
+	add_child(_fire)
+
+func update_damage_visual() -> void:
+	if (_damage_material == null):
+		return
+	var ratio : float = clampf(health_component.health / _max_health, 0.0, 1.0)
+	_damage_material.set_shader_parameter("dissolve", lerpf(1.0, DAMAGE_MIN_DISSOLVE, 1.0 - ratio))
+	if (_fire):
+		var damaged : bool = ratio < 1.0
+		_fire.emitting = damaged
+		_fire.amount_ratio = lerpf(FIRE_MIN_RATIO, 1.0, 1.0 - ratio) if damaged else 0.0
 
 func _death_event() -> void:
 	if (!_destroyed):

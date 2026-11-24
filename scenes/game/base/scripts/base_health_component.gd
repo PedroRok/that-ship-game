@@ -22,6 +22,9 @@ func handle_hit(damage : Damage) -> void:
 	if health < 0:
 		health = 0
 	label.text = str(snappedf(health, 0.1))
+	var base : Base = get_parent() as Base
+	if (base):
+		base.update_damage_visual()
 	
 
 func _damage_taken_mult() -> float:

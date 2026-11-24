@@ -97,7 +97,7 @@ func _ready() -> void:
 		wave_manager.start()
 
 func _unhandled_input(event : InputEvent) -> void:
-	if (event.is_action_pressed("game_pause") and !get_tree().paused):
+	if (event.is_action_pressed("game_pause") and !get_tree().paused and !game_ended):
 		get_viewport().set_input_as_handled()
 		var pause : PauseMenu = PauseMenu.new()
 		pause.name = "PauseMenu"

@@ -28,12 +28,6 @@ func _ready() -> void:
 	elif wave_manager.current_wave_number() == 1:
 		ally_max_hp = ally_base.health_component.health
 
-	var skill_buttons: HBoxContainer = skill_manager.bomb_button.get_parent()
-	skill_buttons.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	skill_buttons.offset_left = -200.0
-	skill_buttons.offset_right = 200.0
-	skill_buttons.offset_top = 40.0
-	skill_buttons.offset_bottom = 80.0
 	skill_manager.hint_label.position.y = 106.0
 	skill_manager.set_process_input(false)
 	camera.set_process_input(false)

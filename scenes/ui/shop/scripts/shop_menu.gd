@@ -19,6 +19,7 @@ const ICON12_GUN := preload("res://assets/ui/icons/gun_turret_12x12_v04.png")
 const ICON12_NAVAL := preload("res://assets/ui/icons/naval_12x12_v01.png")
 const ICON12_AIR := preload("res://assets/ui/icons/airship_12x12_v03.png")
 const ICON12_SUB := preload("res://assets/ui/icons/submarine_fleet_12x12_v05.png")
+const SKILL_ICON_12 := preload("res://assets/ui/icons/skill_12x12_v01.png")
 const GEAR_ICON := preload("res://assets/game/misc/gear.png")
 
 const DISPLAY_REST := Color("#5fd9cf")
@@ -39,7 +40,7 @@ const DEMO := preload("res://scenes/ui/naval_hud/battle_sandbox.gd")
 const SIM_SCALE : int = 2
 const SIM_DIGITAL_SCREEN : bool = true
 
-const FILTERS : Array[String] = ["shop.all", "hud.naval", "hud.air", "hud.sub"]
+const FILTERS : Array[String] = ["shop.all", "hud.naval", "hud.air", "hud.sub", "shop.skills"]
 const CARD_COLUMNS : int = 4
 
 var selected : BoatStats
@@ -479,6 +480,91 @@ func _refresh_catalog() -> void:
 		var unit : BoatStats = item
 		if (filter == "shop.all" or filter == _dock_of(unit)):
 			grid.add_child(_make_card(unit))
+	if (filter == "shop.all" or filter == "shop.skills"):
+		for skill : SkillStats in SkillCatalog.all():
+			grid.add_child(_make_skill_card(skill))
+
+func _make_skill_card(skill : SkillStats) -> Button:
+	var stats : PlayerStats = Global.player_stats
+	var slot : int = stats.loadout.find(skill.name)
+	var button : Button = Button.new()
+	button.custom_minimum_size = Vector2(0, 112)
+	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var pal : DisplayPalette = DisplayPalette.of_skill()
+	_skin(button, pal.rest if slot < 0 else pal.text, Color("#2a2036"))
+	button.tooltip_text = skill.description
+	button.pressed.connect(_toggle_loadout.bind(skill))
+	button.set_drag_forwarding(
+		func(_at : Vector2) -> Variant: return _unit_drag_data(skill.name, slot, button),
+		func(_at : Vector2, _data : Variant) -> bool: return false,
+		func(_at : Vector2, _data : Variant) -> void: pass)
+	var col : VBoxContainer = VBoxContainer.new()
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_theme_constant_override("separation", 3)
+	_margin(button, 5).add_child(col)
+	button.get_child(0).set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	col.add_child(_label(Loc.named("unit", skill.name).to_upper()))
+	var corner : String = Loc.t("menu.slot") % (slot + 1) if slot >= 0 else "shop.owned"
+	col.add_child(_make_skill_portrait(skill, 60, 2, corner, DIM if slot >= 0 else pal.rest))
+	return button
+
+func _make_skill_portrait(skill : SkillStats, min_height : float, max_factor : int, corner : String = "", corner_color : Color = DIM) -> PanelContainer:
+	var pal : DisplayPalette = DisplayPalette.of_skill()
+	var well : PanelContainer = _panel(Color("#4d6069"), Color("#172127"))
+	well.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	well.custom_minimum_size.y = min_height
+	well.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var stage : Control = Control.new()
+	stage.clip_contents = true
+	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	well.add_child(stage)
+	var screen : ColorRect = ColorRect.new()
+	screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var screen_material : ShaderMaterial = ShaderMaterial.new()
+	screen_material.shader = DISPLAY_SHADER
+	screen.material = screen_material
+	pal.apply_screen(screen_material)
+	screen.resized.connect(func() -> void: screen_material.set_shader_parameter("rect_size", screen.size))
+	stage.add_child(screen)
+	screen.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	var art : TextureRect = TextureRect.new()
+	art.texture = skill.sprite
+	art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_SCALE
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var art_material : ShaderMaterial = ShaderMaterial.new()
+	art_material.shader = ART_TINT_SHADER
+	art_material.set_shader_parameter("tint", pal.rest)
+	art.material = art_material
+	stage.add_child(art)
+	stage.resized.connect(_fit_art.bind(art, stage, max_factor))
+	var header : HBoxContainer = HBoxContainer.new()
+	header.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	header.add_theme_constant_override("separation", 0)
+	header.add_child(_silhouette(SKILL_ICON_12, pal.text))
+	header.add_child(_spacer())
+	header.add_child(_label(str(skill.price), pal.text, 12))
+	var gap : Control = Control.new()
+	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	gap.custom_minimum_size.x = 2
+	header.add_child(gap)
+	header.add_child(_silhouette(SCREW_ICON, pal.text, 2))
+	stage.add_child(header)
+	header.set_anchors_and_offsets_preset(PRESET_TOP_WIDE)
+	header.offset_left = 3
+	header.offset_right = -3
+	header.offset_top = 3
+	if (corner != ""):
+		var corner_label : Label = _label(corner, corner_color)
+		stage.add_child(corner_label)
+		corner_label.set_anchors_and_offsets_preset(PRESET_BOTTOM_RIGHT)
+		corner_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+		corner_label.grow_vertical = Control.GROW_DIRECTION_BEGIN
+		corner_label.offset_right = -4
+		corner_label.offset_top = -11.0
+		corner_label.offset_bottom = 2.0
+	return well
 
 func _make_card(unit : BoatStats) -> Button:
 	var stats : PlayerStats = Global.player_stats
@@ -668,16 +754,13 @@ func _slot_unit(index : int) -> EntityStats:
 	var stats : PlayerStats = Global.player_stats
 	if (index >= stats.loadout.size() or stats.loadout[index] == ""):
 		return null
-	for item : Variant in stats.unlocked_entities:
-		if ((item as EntityStats).name == stats.loadout[index]):
-			return item
-	return null
+	return stats.find_entry(stats.loadout[index])
 
 func _make_slot(index : int, unit : EntityStats, start_screws : int) -> Button:
 	var button : Button = Button.new()
 	button.custom_minimum_size = Vector2(0, 78)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var usable : bool = unit != null and unit.price <= start_screws
+	var usable : bool = unit != null and (unit is SkillStats or unit.price <= start_screws)
 	_skin(button, Color("#72838d") if unit != null else Color("#3a464c"), Color("#293740") if unit != null else Color("#141b1f"))
 	button.add_theme_stylebox_override("disabled", button.get_theme_stylebox("normal"))
 	if (unit != null):
@@ -695,7 +778,12 @@ func _make_slot(index : int, unit : EntityStats, start_screws : int) -> Button:
 	_margin(button, 3).add_child(col)
 	button.get_child(0).set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	col.add_child(_label(str(index + 1), DIM))
-	if (unit != null):
+	if (unit is SkillStats):
+		col.add_child(_make_skill_portrait(unit, 30, 1))
+		var skill_name : Label = _label(Loc.named("unit", unit.name).to_upper())
+		skill_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		col.add_child(skill_name)
+	elif (unit != null):
 		col.add_child(_make_portrait(unit, usable, 30, 1, "", true, false))
 		var name_label : Label = _label(Loc.named("unit", unit.name).to_upper())
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -718,15 +806,19 @@ func _toggle_stats() -> void:
 	_refresh_detail()
 
 func _unit_drag_data(unit_name : String, from_slot : int, source : Control) -> Variant:
-	var unit : BoatStats = null
+	var unit : EntityStats = null
 	for item : Variant in Global.CATALOG.units:
 		if ((item as BoatStats).name == unit_name):
 			unit = item
+	if (unit == null):
+		unit = SkillCatalog.find(unit_name)
 	if (unit == null or !Global.player_stats.has_boat(unit_name)):
 		return null
 	var copy : Control
 	if (from_slot >= 0):
 		copy = _make_slot(from_slot, unit, _start_screws())
+	elif (unit is SkillStats):
+		copy = _make_skill_card(unit)
 	else:
 		copy = _make_card(unit)
 	copy.custom_minimum_size = source.size

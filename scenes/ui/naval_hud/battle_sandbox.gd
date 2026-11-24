@@ -73,7 +73,7 @@ func _ready() -> void:
 	viewport.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
 	viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	add_child(viewport)
-	var shown := TextureRect.new()
+	shown = TextureRect.new()
 	shown.texture = viewport.get_texture()
 	shown.mouse_filter = MOUSE_FILTER_IGNORE
 	shown.stretch_mode = TextureRect.STRETCH_KEEP
@@ -109,6 +109,8 @@ func _ready() -> void:
 	viewport.add_child(camera)
 	camera.make_current()
 	_aim_camera(Vector2(START_X + 60.0, WATER_Y))
+
+var shown: TextureRect
 
 func show_unit(value: EntityStats) -> void:
 	stats = value
@@ -147,6 +149,7 @@ func _restart() -> void:
 	_clear()
 	run_time = 0.0
 	end_timer = 0.0
+	shown.visible = stats != null
 	if not stats:
 		viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 		return

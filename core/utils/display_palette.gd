@@ -20,7 +20,23 @@ static func of_dock(kind : BaseDock.Type) -> DisplayPalette:
 static func of_unit(unit : EntityStats) -> DisplayPalette:
 	if (unit == null):
 		return of_dock(BaseDock.Type.NAVAL)
+	if (unit is SkillStats):
+		return of_skill()
 	return of_dock(Base.dock_type_of(unit))
+
+static func of_skill() -> DisplayPalette:
+	if (!_cache.has(&"skill")):
+		var palette : DisplayPalette = DisplayPalette.new()
+		palette.rest = Color("#c58ae8")
+		palette.shadow = Color("#240a2d")
+		palette.unloaded = Color("#43225a")
+		palette.light = Color("#ecc4ff")
+		palette.text = Color("#c9a6dd")
+		palette.base = Color(0.06, 0.02, 0.085, 1.0)
+		palette.line = Color(0.65, 0.40, 0.88, 1.0)
+		palette.overlay_dark = Color("#13041a")
+		_cache[&"skill"] = palette
+	return _cache[&"skill"]
 
 static func _make(kind : BaseDock.Type) -> DisplayPalette:
 	var palette : DisplayPalette = DisplayPalette.new()

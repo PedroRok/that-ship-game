@@ -24,6 +24,7 @@ const DOCK_ICONS_12: Dictionary = {
 	BaseDock.Type.SUB: preload("res://assets/ui/icons/submarine_fleet_12x12_v05.png"),
 	BaseDock.Type.AIR: preload("res://assets/ui/icons/airship_12x12_v03.png"),
 }
+const SKILL_ICON_12 := preload("res://assets/ui/icons/skill_12x12_v01.png")
 const OFF_MODULATE := Color(0.38, 0.45, 0.45)
 const SLOT_SIZE := Vector2(32, 26)
 const QUEUE_TITLES: Dictionary = {
@@ -44,6 +45,7 @@ var card_wells: Array[PanelContainer]
 var card_art_materials: Array[ShaderMaterial]
 var card_screen_materials: Array[ShaderMaterial]
 var demo_overlay: ColorRect
+var demo_unavailable: Label
 var card_titles: Array[Label]
 var card_headers: Array[HBoxContainer] = []
 var selected: int = -1
@@ -475,7 +477,7 @@ func _make_catalog(col: VBoxContainer) -> void:
 		footer.add_child(status)
 		card_status.append(status)
 		if unit != null:
-			header.add_child(_tinted_icon(DOCK_ICONS_12[Base.dock_type_of(unit)], Vector2.ZERO, pal.text))
+			header.add_child(_tinted_icon(SKILL_ICON_12, Vector2.ZERO, pal.text) if unit is SkillStats else _tinted_icon(DOCK_ICONS_12[Base.dock_type_of(unit)], Vector2.ZERO, pal.text))
 			var header_gap := Control.new()
 			header_gap.mouse_filter = MOUSE_FILTER_IGNORE
 			header_gap.size_flags_horizontal = SIZE_EXPAND_FILL
@@ -522,6 +524,13 @@ func _make_inspector(col: VBoxContainer) -> void:
 	demo_overlay = overlay
 	demo.add_child(overlay)
 	overlay.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	demo_unavailable = _label("hud.preview_unavailable", true)
+	demo_unavailable.add_theme_color_override("font_color", DisplayPalette.of_skill().text)
+	demo_unavailable.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	demo_unavailable.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	demo_unavailable.hide()
+	overlay.add_child(demo_unavailable)
+	demo_unavailable.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	demo_title = _label()
 	col.add_child(demo_title)
 	for keys: Array in [[&"health", &"speed"], [&"weapons", &"targets"]]:
@@ -576,10 +585,15 @@ func _select(index: int) -> void:
 	for i: int in range(last_reasons.size()):
 		last_reasons[i] = "#"
 	var value: EntityStats = roster[index] if index >= 0 and index < roster.size() else null
-	var stats: EntityStats = Global.upgraded_entity(value) if value else null
+	var skill: SkillStats = value as SkillStats
+	var stats: EntityStats = Global.upgraded_entity(value) if value and not skill else null
 	demo.show_unit(stats)
 	(demo_overlay.material as ShaderMaterial).set_shader_parameter("band_strength", 1.0 if stats else 0.0)
-	demo_title.text = Loc.named("unit", stats.name).to_upper() if stats else "hud.hover_a_unit"
+	demo_unavailable.visible = skill != null
+	if skill:
+		demo_title.text = Loc.named("unit", skill.name).to_upper()
+	else:
+		demo_title.text = Loc.named("unit", stats.name).to_upper() if stats else "hud.hover_a_unit"
 	var health: Button = stat_buttons[&"health"]
 	var speed: Button = stat_buttons[&"speed"]
 	var weapons: Button = stat_buttons[&"weapons"]
@@ -629,6 +643,10 @@ func quick_build(index: int) -> void:
 	if not _has_unit(index):
 		return
 	var unit: EntityStats = roster[index]
+	var skill: SkillStats = unit as SkillStats
+	if skill:
+		_use_skill(skill)
+		return
 	var reason: String = _build_reason(unit)
 	if reason != "hud.ready":
 		if DENIED_REASONS.has(reason):
@@ -636,6 +654,17 @@ func quick_build(index: int) -> void:
 		return
 	legacy.spawn_entity(unit)
 	sfx.play(&"confirm")
+	_refresh_catalog()
+
+func _use_skill(skill: SkillStats) -> void:
+	var manager: SkillManager = round_scene.skill_manager
+	var reason: String = _build_reason(skill)
+	if reason != "hud.ready" and reason != "hud.aiming":
+		if reason == "hud.low_screws" or reason.begins_with("cd:"):
+			sfx.play(&"denied")
+		return
+	if manager.activate(skill):
+		sfx.play(&"confirm")
 	_refresh_catalog()
 
 func _update_base_warning(current: float, full: float) -> void:
@@ -651,6 +680,8 @@ func _build_reason(unit: EntityStats) -> String:
 		return "hud.unavailable"
 	if not unit:
 		return "hud.empty"
+	if unit is SkillStats:
+		return round_scene.skill_manager.skill_reason(unit)
 	if unit.price > legacy.screw_label.total_value:
 		return "hud.low_screws"
 	var kind: BaseDock.Type = Base.dock_type_of(unit)
@@ -667,27 +698,30 @@ func _refresh_catalog() -> void:
 		if reason == last_reasons[index]:
 			continue
 		last_reasons[index] = reason
-		card_status[index].text = reason
+		var lit: bool = reason == "hud.ready" or reason == "hud.aiming"
+		card_status[index].text = (Loc.t("hud.cooldown_s") % int(reason.substr(3))).to_upper() if reason.begins_with("cd:") else reason
 		var pal: DisplayPalette = DisplayPalette.of_unit(roster[index] if index < roster.size() else null)
-		var color: Color = pal.text if reason == "hud.ready" else DIM
-		if reason == "hud.low_screws":
+		var color: Color = pal.text if lit else DIM
+		if reason == "hud.aiming":
+			color = pal.light
+		elif reason == "hud.low_screws":
 			color = PINK
 		elif reason == "hud.queue_full":
 			color = AMBER
 		elif reason == "hud.empty":
 			color = pal.unloaded
 		card_status[index].add_theme_color_override("font_color", color)
-		_skin_card(cards[index], reason == "hud.ready", selected == index)
-		card_wells[index].add_theme_stylebox_override("panel", _style(Color("#4d6069") if reason == "hud.ready" else Color("#2f3c43"), Color("#172127")))
-		card_art_materials[index].set_shader_parameter("tint", pal.rest if reason == "hud.ready" else pal.unloaded)
-		card_screen_materials[index].set_shader_parameter("band_strength", 1.0 if reason == "hud.ready" else 0.0)
-		card_wells[index].modulate = Color.WHITE if reason == "hud.ready" else Color(0.72, 0.74, 0.78)
-		card_titles[index].modulate = Color.WHITE if reason == "hud.ready" else Color(0.65, 0.68, 0.7)
-		card_headers[index].modulate = Color.WHITE if reason == "hud.ready" else OFF_MODULATE
+		_skin_card(cards[index], lit, selected == index or reason == "hud.aiming")
+		card_wells[index].add_theme_stylebox_override("panel", _style(Color("#4d6069") if lit else Color("#2f3c43"), Color("#172127")))
+		card_art_materials[index].set_shader_parameter("tint", pal.rest if lit else pal.unloaded)
+		card_screen_materials[index].set_shader_parameter("band_strength", 1.0 if lit else 0.0)
+		card_wells[index].modulate = Color.WHITE if lit else Color(0.72, 0.74, 0.78)
+		card_titles[index].modulate = Color.WHITE if lit else Color(0.65, 0.68, 0.7)
+		card_headers[index].modulate = Color.WHITE if lit else OFF_MODULATE
 		for child: Node in card_headers[index].get_children():
 			if child is TextureRect and child.has_meta(&"base_tint"):
 				var base_tint: Color = child.get_meta(&"base_tint")
-				((child as TextureRect).material as ShaderMaterial).set_shader_parameter("tint", base_tint if reason == "hud.ready" else base_tint.darkened(0.55))
+				((child as TextureRect).material as ShaderMaterial).set_shader_parameter("tint", base_tint if lit else base_tint.darkened(0.55))
 
 func _process(_delta: float) -> void:
 	_refresh_catalog()

@@ -10,6 +10,7 @@ var radar_component : RadarComponent
 var distance_warn_component : DistanceWarnComponent
 
 var pass_until : float = 0.0
+var _clock : float = 0.0
 
 func enter() -> void:
 	var enemy : Node = radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)
@@ -40,7 +41,8 @@ func process_physics(delta: float) -> void:
 			gun.shoot_gun(Vector2(1, 0))
 			gun.projectile_rotation_spawn = parent.rotation
 		return
-	var now : float = Time.get_ticks_msec() / 1000.0
+	_clock += delta
+	var now : float = _clock
 	if (now < pass_until):
 		var climb_angle : float = to_heading(parent.rotation)
 		parent.angular_velocity = get_rotation_direction(climb_angle, -0.5) * 2.0 * mirror_sign()
