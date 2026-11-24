@@ -36,7 +36,7 @@ func setup(new_run : RunState, id : int) -> void:
 	checkmark.texture = load("res://assets/ui/run_map/checkmark_v01.png") as Texture2D
 	caption = Label.new()
 	caption.add_theme_font_override("font", FONT)
-	caption.add_theme_font_size_override("font_size", 10)
+	caption.add_theme_font_size_override("font_size", 8)
 	caption.position = Vector2(-26, 52)
 	caption.size = Vector2(100, 14)
 	caption.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

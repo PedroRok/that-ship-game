@@ -8,11 +8,6 @@
 
 config_version=5
 
-[ai_assistant_hub]
-
-base_url="http://127.0.0.1:11434"
-llm_api="ollama_api"
-
 [animation]
 
 compatibility/default_parent_skeleton_in_mesh_instance_3d=true
@@ -22,6 +17,11 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 config/name="Shiping"
 run/main_scene="uid://cunue2ob1vdcg"
 config/features=PackedStringArray("4.7", "Mobile")
+config/icon="res://assets/ui/icon_v01.png"
+boot_splash/bg_color=Color(0.0156863, 0.0745098, 0.101961, 1)
+boot_splash/image="res://assets/ui/splash_v02.png"
+boot_splash/fullsize=true
+boot_splash/use_filter=false
 
 [audio]
 
@@ -32,6 +32,7 @@ buses/default_bus_layout="res://core/utils/default_bus_layout.tres"
 Signal_Debugger="*res://addons/SignalVisualizer/Debugger/SignalDebugger.gd"
 Enums="*res://scripts/enums.gd"
 Global="*res://scripts/global.gd"
+UiSfx="*res://scripts/ui_sfx.gd"
 
 [debug]
 

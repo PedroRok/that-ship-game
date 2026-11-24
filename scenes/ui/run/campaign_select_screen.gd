@@ -13,7 +13,7 @@ func screen_title() -> String:
 	return "Select campaign"
 
 func screen_subtitle() -> String:
-	return "CHOOSE A MODE"
+	return "SLOT %d" % SaveManager.slot
 
 func _build() -> void:
 	Global.run = null
@@ -43,7 +43,10 @@ func _build() -> void:
 	var options : Button = _button("OPTIONS")
 	options.custom_minimum_size.x = 220
 	options.pressed.connect(Global.open_options)
-	content.add_child(_footer(options, null))
+	var back : Button = _button("MAIN MENU")
+	back.custom_minimum_size.x = 220
+	back.pressed.connect(func() -> void: Global.change_scene(Global.Menu.MAIN_MENU))
+	content.add_child(_footer(back, options))
 	var target : Button = first_button if first_button else options
 	_defer_focus(target)
 

@@ -42,9 +42,9 @@ func setup(new_run : RunState) -> void:
 	var headers : Array[String] = ["01", "02", "03", "04", "BOSS"]
 	for col : int in headers.size():
 		var label : Label = Label.new()
-		label.text = headers[col]
+		label.text = str(headers[col]).to_upper()
 		label.add_theme_font_override("font", FONT)
-		label.add_theme_font_size_override("font_size", 12)
+		label.add_theme_font_size_override("font_size", 8)
 		label.add_theme_color_override("font_color", Color("#7795a1"))
 		label.position = Vector2(COLUMN_X[col] - 20, 8)
 		label.size = Vector2(40, 16)

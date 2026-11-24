@@ -38,6 +38,9 @@ func screen_title() -> String:
 func screen_subtitle() -> String:
 	return ""
 
+func header_kicker() -> String:
+	return "CAMPAIGN RUN"
+
 func _build() -> void:
 	pass
 
@@ -52,7 +55,8 @@ func _ready() -> void:
 		return
 	var ui_theme : Theme = Theme.new()
 	ui_theme.default_font = PIXEL_FONT
-	ui_theme.default_font_size = 12
+	ui_theme.default_font_size = 8
+	PixelControls.apply_theme(ui_theme)
 	theme = ui_theme
 	add_child(MenuBackground.new())
 	var margin : MarginContainer = MarginContainer.new()
@@ -74,10 +78,10 @@ func _fit_viewport() -> void:
 
 func _label(text : String, size : int = 12, color : Color = TEXT, bold : bool = false) -> Label:
 	var label : Label = Label.new()
-	label.text = text
+	label.text = PixelText.fit(text, size)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.add_theme_font_override("font", FONT if bold else PIXEL_FONT)
-	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_font_size_override("font_size", PixelText.snap(size))
 	label.add_theme_color_override("font_color", color)
 	return label
 
@@ -137,7 +141,7 @@ func _header(title : String, subtitle : String) -> Control:
 	margin.add_child(texts)
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(margin)
-	texts.add_child(_label("CAMPAIGN RUN", 16, CYAN, true))
+	texts.add_child(_label(header_kicker(), 16, CYAN, true))
 	texts.add_child(_label(title, 32, TEXT, true))
 	var sub : Label = _label(subtitle, 16, TEXT_DIM)
 	sub.size_flags_vertical = Control.SIZE_SHRINK_CENTER
@@ -216,7 +220,7 @@ func _button(text : String, danger : bool = false, font_size : int = 16) -> Butt
 	button.custom_minimum_size = Vector2(0, 46)
 	button.focus_mode = Control.FOCUS_ALL
 	button.add_theme_font_override("font", FONT)
-	button.add_theme_font_size_override("font_size", font_size)
+	button.add_theme_font_size_override("font_size", PixelText.snap(font_size))
 	var color : Color = DANGER if danger else TEXT
 	for key : String in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
 		button.add_theme_color_override(key, color)
