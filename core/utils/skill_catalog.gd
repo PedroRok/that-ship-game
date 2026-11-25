@@ -4,13 +4,15 @@ extends RefCounted
 const BOMB : StringName = &"bomb"
 const BOOST : StringName = &"boost"
 const PREFIX : String = "skill_"
+const BOMB_COST : int = 12
+const BOOST_COST : int = 8
 
 static var _all : Array[SkillStats] = []
 
 static func all() -> Array[SkillStats]:
 	if (_all.is_empty()):
-		_all.append(_make(BOMB, SkillManager.BOMB_COST, true, preload("res://assets/ui/icons/skill_bomb_24x24_v01.png")))
-		_all.append(_make(BOOST, SkillManager.BOOST_COST, false, preload("res://assets/ui/icons/skill_boost_24x24_v01.png")))
+		_all.append(_make(BOMB, BOMB_COST, true, preload("res://assets/ui/icons/skill_bomb_24x24_v01.png")))
+		_all.append(_make(BOOST, BOOST_COST, false, preload("res://assets/ui/icons/skill_boost_24x24_v01.png")))
 	return _all
 
 static func _make(id : StringName, cost : int, targeted : bool, icon : Texture2D) -> SkillStats:
