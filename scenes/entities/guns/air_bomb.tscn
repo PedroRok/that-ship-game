@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scenes/entities/guns/scripts/bomb_gun.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/entities/bullets/bomb.tscn" id="2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/guns/air_bomb.png" id="3"]
+
+[node name="Gun" type="Node2D" node_paths=PackedStringArray("end_barrel", "base")]
+script = ExtResource("1")
+gun_type = 18
+time_to_shoot = 45
+damage_scale = 2.8
+bullet = ExtResource("2")
+end_barrel = NodePath("EndBarrel")
+base = NodePath("Base")
+
+[node name="Base" type="Sprite2D" parent="."]
+texture = ExtResource("3")
+
+[node name="EndBarrel" type="Marker2D" parent="."]
+position = Vector2(0, 3)
+gizmo_extents = 0.0

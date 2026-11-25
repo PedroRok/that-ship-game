@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="AirPlaneState" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/airplane_stats.gd" id="s_main"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/missile_plane/missile_plane_1.png" id="body_1"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/missile_plane/missile_plane_2.png" id="body_2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/missile_plane/missile_plane_3.png" id="body_3"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/missile_plane/missile_plane_4.png" id="body_4"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/missile_plane/missile_plane_5.png" id="body_5"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(4, 6)
+allowed_types = Array[int]([17])
+with_base = true
+max_size = 0
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(24, 9)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(8, 6)
+
+[resource]
+script = ExtResource("s_main")
+name = "missile_plane"
+health = 9.0
+speed = 105.0
+radar_distance = 520
+price = 16
+produce_cd = 5
+unit_class = 2
+unlock_cost = 120
+sprite = ExtResource("body_3")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0")])
+hitbox_colision_shape = SubResource("hit")
+particles_shape = SubResource("part")
+body_frames = Array[Texture2D]([ExtResource("body_1"), ExtResource("body_2"), ExtResource("body_3"), ExtResource("body_4"), ExtResource("body_5")])

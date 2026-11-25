@@ -25,7 +25,7 @@ func process_physics(delta: float) -> void:
 		
 	if (avoid_base_climb()):
 		return
-	if radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction):
+	if (radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction) and (parent as AirEntity).can_engage()):
 		Transitioned.emit(self, "AirAttack")
 		return
 		

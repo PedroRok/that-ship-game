@@ -157,6 +157,7 @@ func apply_team_outline(item : Node2D) -> void:
 	node.material = mat
 	node.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	node.show_behind_parent = true
+	node.z_index = -1
 	item.add_child(node)
 	_outlines.append({"src": item, "node": node, "frames": null})
 	_sync_outline()
@@ -217,14 +218,15 @@ func add_gun(gun : Gun, gun_slot : GunSlot) -> void:
 	gun.connect("fired_bullet", Callable(self, "handle_bullet_fired"))
 	gun._set_show_base_texture(gun_slot.with_base)
 	add_child(gun)
-	gun.position = gun_slot.position
+	var slot_position : Vector2 = gun_slot.position_for(gun.gun_type)
+	gun.position = slot_position
 	apply_team_outline(gun.get("barrel_texture") as Node2D)
 	apply_team_outline(gun.base)
 	if (entity_stats is BoatStats and entity_stats.hide_guns):
 		gun.visible = false
 	
 	if team_stats.direction < 0 and !rotates_with_body():
-		gun.position.x = -gun_slot.position.x 
+		gun.position.x = -slot_position.x
 		gun.flip()
 	if (team_stats.team_id == 1):
 		gun.time_to_shoot = int(Global.modify(Enums.UpgradeTarget.GUN, &"shoot_interval", gun.time_to_shoot))

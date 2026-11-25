@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scenes/entities/guns/scripts/twin_gun.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/entities/bullets/bullet.tscn" id="2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/guns/air_twin_cannon.png" id="3"]
+
+[node name="Gun" type="Node2D" node_paths=PackedStringArray("barrel_texture", "end_barrel", "base")]
+script = ExtResource("1")
+sfx_event = &"light_cannon"
+gun_type = 16
+time_to_shoot = 12
+damage_scale = 0.8
+barrel_texture = NodePath("Barrel")
+bullet = ExtResource("2")
+end_barrel = NodePath("EndBarrel")
+base = NodePath("Base")
+
+[node name="Base" type="Sprite2D" parent="."]
+texture = ExtResource("3")
+
+[node name="Barrel" type="Sprite2D" parent="."]
+use_parent_material = true
+
+[node name="EndBarrel" type="Marker2D" parent="."]
+position = Vector2(4, 0)
+gizmo_extents = 0.0
+
+[node name="GunLineOfSight" type="RayCast2D" parent="."]
+target_position = Vector2(600, 0)

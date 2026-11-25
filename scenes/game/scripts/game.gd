@@ -51,6 +51,10 @@ func _enter_tree() -> void:
 	var water : WaterBody = get_node("Environment/Water_Body") as WaterBody
 	water.spring_number = int(ceil((base_distance + WATER_MARGIN) / WATER_SPRING_GAP))
 	WeatherSky.apply(self, weather)
+	if (weather == RunData.Weather.STORM):
+		var storm : LightningStorm = LightningStorm.new()
+		storm.name = "LightningStorm"
+		get_node("Environment").add_child(storm)
 	var front : ColorRect = get_node("Environment/CloudsFront") as ColorRect
 	front.size.x = base_distance + 1.0
 	(front.material as ShaderMaterial).set_shader_parameter("rect_size", Vector2(front.size.x, front.size.y))

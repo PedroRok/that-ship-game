@@ -370,11 +370,7 @@ func _make_queues(col: VBoxContainer) -> void:
 		queue_percents[kind] = percents
 
 func _unit_icon(stats: EntityStats) -> Texture2D:
-	if stats is AirPlaneState:
-		var plane: AirPlaneState = stats as AirPlaneState
-		if not plane.body_frames.is_empty():
-			return plane.body_frames[0]
-	return stats.sprite
+	return UnitIcon.of(stats)
 
 func _cancel_slot(kind: BaseDock.Type, index: int) -> void:
 	var removed: BoatStats = round_scene.ally_base.cancel_slot(kind, index)
@@ -437,7 +433,7 @@ func _make_catalog(col: VBoxContainer) -> void:
 		card_screen_materials.append(screen_material)
 		well.add_child(screen)
 		var art := TextureRect.new()
-		art.texture = unit.sprite if unit else null
+		art.texture = UnitIcon.of(unit) if unit else null
 		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		art.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
 		art.clip_contents = true
@@ -482,7 +478,7 @@ func _make_catalog(col: VBoxContainer) -> void:
 			header_gap.mouse_filter = MOUSE_FILTER_IGNORE
 			header_gap.size_flags_horizontal = SIZE_EXPAND_FILL
 			header.add_child(header_gap)
-			var price := _label(str(unit.price))
+			var price := _label(str(Global.screw_cost(unit)))
 			price.add_theme_font_size_override("font_size", 12)
 			price.add_theme_color_override("font_color", pal.text)
 			price.size_flags_vertical = SIZE_SHRINK_CENTER
@@ -682,7 +678,7 @@ func _build_reason(unit: EntityStats) -> String:
 		return "hud.empty"
 	if unit is SkillStats:
 		return round_scene.skill_manager.skill_reason(unit)
-	if unit.price > legacy.screw_label.total_value:
+	if Global.screw_cost(unit) > legacy.screw_label.total_value:
 		return "hud.low_screws"
 	var kind: BaseDock.Type = Base.dock_type_of(unit)
 	if kind != BaseDock.Type.NAVAL and not (round_scene.ally_base.docks[kind] as BaseDock).active:

@@ -33,14 +33,14 @@ func setup() -> void:
 		shader_material.set_shader_parameter("enabled", true)
 		enabled = true
 		price_label.show()
-	price_label.text = str(entity_stats.price)
+	price_label.text = str(Global.screw_cost(entity_stats))
 	shader_material.set_shader_parameter("reference_texture", entity_stats.sprite)
 	button.icon = entity_stats.sprite
 	
 	
 func on_value_change(new_val : int) -> void:
 	if (!entity_stats): return
-	if (new_val >= entity_stats.price):
+	if (new_val >= Global.screw_cost(entity_stats)):
 		if (button.disabled):
 			price_label.custom_minimum_size.y = 32
 		button.disabled = false

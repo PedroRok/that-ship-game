@@ -1,0 +1,38 @@
+[gd_resource type="Resource" script_class="AirPlaneState" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/airplane_stats.gd" id="s_main"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/interceptor/interceptor_1.png" id="body_1"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/interceptor/interceptor_2.png" id="body_2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/interceptor/interceptor_3.png" id="body_3"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/interceptor/interceptor_4.png" id="body_4"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/plane/interceptor/interceptor_5.png" id="body_5"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(9, 3)
+allowed_types = Array[int]([16])
+with_base = true
+max_size = 0
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(18, 8)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(6, 6)
+
+[resource]
+script = ExtResource("s_main")
+name = "interceptor"
+health = 7.0
+speed = 140.0
+radar_distance = 500
+price = 12
+produce_cd = 4
+unit_class = 2
+unlock_cost = 90
+sprite = ExtResource("body_3")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0")])
+hitbox_colision_shape = SubResource("hit")
+particles_shape = SubResource("part")
+body_frames = Array[Texture2D]([ExtResource("body_1"), ExtResource("body_2"), ExtResource("body_3"), ExtResource("body_4"), ExtResource("body_5")])

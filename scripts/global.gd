@@ -72,6 +72,17 @@ func upgraded_entity(stats : EntityStats) -> EntityStats:
 	copy.radar_distance = int(modify(Enums.UpgradeTarget.ENTITY, &"radar_distance", stats.radar_distance, stats.name))
 	return copy
 
+func screw_cost(stats : EntityStats) -> int:
+	if (stats == null):
+		return 0
+	var total : int = stats.price
+	if (stats is SkillStats):
+		return total
+	for slot_index : int in range(stats.gun_slots.size()):
+		var slot : GunSlot = stats.gun_slots[slot_index]
+		total += Enums.gun_extra_cost(gun_type_for(stats.name, slot_index, slot))
+	return maxi(total, 0)
+
 const COUNTERS : Dictionary = {
 	Vector2i(1, 0): 1.5,
 	Vector2i(0, 1): 0.75,

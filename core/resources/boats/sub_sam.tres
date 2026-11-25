@@ -1,0 +1,61 @@
+[gd_resource type="Resource" script_class="BoatStats" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/boat_stats.gd" id="s_main"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/submarine_sam.png" id="t_sprite"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/submarine_sam_submerged.png" id="t_sub"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(24, 5)
+allowed_types = Array[int]([8])
+with_base = false
+max_size = 0
+
+[sub_resource type="Resource" id="slot_1"]
+script = ExtResource("s_slot")
+position = Vector2(-8, 1)
+allowed_types = Array[int]([19, 20])
+with_base = true
+max_size = 0
+
+[sub_resource type="Resource" id="slot_2"]
+script = ExtResource("s_slot")
+position = Vector2(4, 1)
+allowed_types = Array[int]([19, 20])
+with_base = true
+max_size = 0
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(60, 10)
+
+[sub_resource type="RectangleShape2D" id="water"]
+size = Vector2(58, 7)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(58, 5)
+
+[resource]
+script = ExtResource("s_main")
+name = "sub_sam"
+health = 36.0
+speed = 110.0
+radar_distance = 320
+price = 24
+produce_cd = 6
+unit_class = 4
+unlock_cost = 170
+deceleration = 0.5
+max_tilt_angle = 0.1
+water_colision_shape = SubResource("water")
+water_colision_pos = Vector2(0, 0.0)
+sprite = ExtResource("t_sprite")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0"), SubResource("slot_1"), SubResource("slot_2")])
+hitbox_colision_shape = SubResource("hit")
+hitbox_colision_pos = Vector2(0, 1.5)
+particles_shape = SubResource("part")
+can_submerge = true
+submerged_sprite = ExtResource("t_sub")
+dive_distance = 90.0
+hide_guns = true
+surfaces_for_air = true

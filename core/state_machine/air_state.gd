@@ -35,5 +35,5 @@ func set_guns_enemy(enemy : Node2D) -> void:
 	on_radar_enemy = enemy
 	for gun in parent.get_guns():
 		gun.enemy = enemy
-		if (!(gun is BombGun)):
+		if (!(gun is BombGun) and !(gun is HomingMissileGun)):
 			gun.time_to_shoot = 12

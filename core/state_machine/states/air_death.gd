@@ -33,27 +33,44 @@ func enter() -> void:
 	
 	pass
 	
+const SINK_SPEED : float = 12.0
+const SINK_TICKS : int = 90
+
+var _sink_ticks : int = 0
+
+func _finish() -> void:
+	parent.is_dead = true
+	var particle : ParticleProcessMaterial = particle_component.hit.process_material
+	particle.direction.y = 0
+	particle.gravity.y = 20
+	particle.spread = 180
+	particle.initial_velocity_max = 20
+	particle_component.hit.lifetime = 2.5
+	particle_component.hit.randomness = 1
+	particle_component.hit.amount = 80
+	particle_component.hit.amount_ratio = 1
+	particle_component.hit.restart()
+	particle_component.fire.amount_ratio = 0
+	parent.animated_sprite.free()
+	for child : Node in parent.get_children():
+		if (child is AnimatedSprite2D or child is Gun):
+			(child as CanvasItem).visible = false
+
+func _sink_in_water() -> void:
+	if (!hitbox_component.is_on_water):
+		return
+	_sink_ticks += 1
+	initial_velocity.y = SINK_SPEED
+	if (_sink_ticks >= SINK_TICKS and death_deespawn_delay > 1):
+		death_deespawn_delay = 1
+
 func process_input(_event: InputEvent) -> void:
 	return
 
 func process_physics(delta: float) -> void:
 	death_deespawn_delay -= 1;
 	if death_deespawn_delay == 0:
-		parent.is_dead = true
-		var particle : ParticleProcessMaterial = particle_component.hit.process_material
-		particle.direction.y = 0
-		particle.gravity.y = 20
-		particle.spread = 180
-		particle.initial_velocity_max = 20
-		particle_component.hit.lifetime = 2.5
-		particle_component.hit.randomness = 1
-		particle_component.hit.amount = 80
-		particle_component.hit.amount_ratio = 1
-		particle_component.hit.restart()
-		particle_component.fire.amount_ratio = 0
-		parent.animated_sprite.free()
-		
-		pass
+		_finish()
 	if death_deespawn_delay == -180:
 		parent.free()
 		return
@@ -65,6 +82,7 @@ func process_physics(delta: float) -> void:
 	
 	initial_velocity.y += gravity * delta
 	
+	_sink_in_water()
 	parent.linear_velocity = initial_velocity
 	
 	var spin_increase : float = abs(initial_velocity.y) * spin_increase_factor

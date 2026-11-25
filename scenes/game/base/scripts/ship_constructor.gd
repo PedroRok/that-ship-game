@@ -11,7 +11,10 @@ var prefer_submerged_sprite : bool = false
 var floor_y : float = NAN
 var hold_until_released : bool = false
 
+const HELI_PAD_OFFSET : float = 60.0
+
 var _bar : BuildBar
+var _home_x : float = NAN
 var _tween : Tween
 
 func _ready() -> void:
@@ -38,6 +41,10 @@ func spawn_position() -> Vector2:
 	return exit_marker.global_position if exit_marker else global_position
 
 func build_ship(boat_stats : BoatStats, time_mult : float = 1.0) -> void:
+	if (is_nan(_home_x)):
+		_home_x = position.x
+	var pad : float = HELI_PAD_OFFSET if boat_stats is HelicopterStats else 0.0
+	position.x = _home_x + (-pad if flip_h else pad)
 	if (boat_stats.is_boss):
 		texture = null
 	elif (boat_stats is AirPlaneState):

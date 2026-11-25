@@ -20,12 +20,16 @@ var hits_surface : bool = true
 var hits_submerged : bool = false
 @export
 var bullet_speed_scale : float = 1.0
+@export
+var range_override : float = 0.0
 @export 
 var bullet : PackedScene
 @export
 var sfx_event : StringName = &""
 @export
 var end_barrel : Marker2D
+
+var disabled : bool = false
 
 var projectile_rotation_spawn : float = 0
 
@@ -55,6 +59,8 @@ func _set_show_base_texture(_show_base : bool) -> void:
 var _range_cache : float = -1.0
 
 func effective_range() -> float:
+	if (range_override > 0.0):
+		return range_override
 	if (_range_cache >= 0.0):
 		return _range_cache
 	var reach : float = 400.0
@@ -91,6 +97,8 @@ func can_target(target : Node2D) -> bool:
 	return hits_surface
 
 func shoot_gun(direction: Vector2) -> void:
+	if (disabled):
+		return
 	if (enemy and !can_target(enemy)):
 		return
 	if (enemy and target_distance(enemy) > effective_range()):
@@ -103,26 +111,31 @@ func shoot_gun(direction: Vector2) -> void:
 		return
 	current_time_to_shoot = time_to_shoot
 	if enemy:
-		var bullet_instance : Bullet = bullet.instantiate()
-		bullet_instance.target = enemy
-		if bullet_instance.damage:
-			bullet_instance.damage = bullet_instance.damage.duplicate()
-			bullet_instance.damage.damage *= damage_scale
-		bullet_instance.bullet_stats.speed = maxi(1, int(round(bullet_instance.bullet_stats.speed * bullet_speed_scale)))
-		bullet_instance.hits_air = hits_air
-		_apply_projectile_texture(bullet_instance)
-		bullet_instance.hits_submerged = hits_submerged
-		if direction.x > 0:
-			direction = direction.rotated(projectile_rotation_spawn)
-		else:
-			direction = direction.rotated(-projectile_rotation_spawn)
-		fired_bullet.emit(bullet_instance, end_barrel.global_position, direction, projectile_rotation_spawn)
-		play_effects()
+		_fire(direction)
 	else:
 		push_error("Trying to shoot without enemy defined")
-		
-	
-	
+
+func _fire(direction : Vector2) -> void:
+	var bullet_instance : Bullet = _make_bullet()
+	if direction.x > 0:
+		direction = direction.rotated(projectile_rotation_spawn)
+	else:
+		direction = direction.rotated(-projectile_rotation_spawn)
+	fired_bullet.emit(bullet_instance, end_barrel.global_position, direction, projectile_rotation_spawn)
+	play_effects()
+
+func _make_bullet() -> Bullet:
+	var bullet_instance : Bullet = bullet.instantiate()
+	bullet_instance.target = enemy
+	if bullet_instance.damage:
+		bullet_instance.damage = bullet_instance.damage.duplicate()
+		bullet_instance.damage.damage *= damage_scale
+	bullet_instance.bullet_stats.speed = maxi(1, int(round(bullet_instance.bullet_stats.speed * bullet_speed_scale)))
+	bullet_instance.hits_air = hits_air
+	_apply_projectile_texture(bullet_instance)
+	bullet_instance.hits_submerged = hits_submerged
+	return bullet_instance
+
 func _apply_projectile_texture(bullet_instance : Bullet) -> void:
 	if (!projectile_texture):
 		return

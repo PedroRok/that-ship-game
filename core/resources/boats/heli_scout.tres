@@ -1,0 +1,41 @@
+[gd_resource type="Resource" script_class="HelicopterStats" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/helicopter_stats.gd" id="s_main"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/scout/body.png" id="body"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/scout/rotor_1.png" id="rotor_1"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/scout/rotor_2.png" id="rotor_2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/scout/rotor_3.png" id="rotor_3"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/scout/rotor_4.png" id="rotor_4"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(12, 5)
+allowed_types = Array[int]([12])
+with_base = true
+max_size = 0
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(22, 9)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(8, 6)
+
+[resource]
+script = ExtResource("s_main")
+name = "heli_scout"
+health = 10.0
+speed = 75.0
+radar_distance = 380
+price = 11
+produce_cd = 4
+unit_class = 2
+unlock_cost = 80
+sprite = ExtResource("body")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0")])
+hitbox_colision_shape = SubResource("hit")
+particles_shape = SubResource("part")
+body_frames = Array[Texture2D]([ExtResource("body")])
+rotor_frames = Array[Texture2D]([ExtResource("rotor_1"), ExtResource("rotor_2"), ExtResource("rotor_3"), ExtResource("rotor_4")])
+cruise_height = 125.0
+hover_offset = 48.0

@@ -27,6 +27,8 @@ func _setup_visuals() -> void:
 		for tex : Texture2D in stats.body_frames:
 			body.add_frame(&"default", tex)
 		animated_sprite.sprite_frames = body
+	if (stats.blade_frames.is_empty() and animated_blades):
+		animated_blades.visible = false
 	if (stats.blade_frames.size() == 7):
 		var blades : SpriteFrames = SpriteFrames.new()
 		blades.set_animation_speed(&"default", 20.0)
@@ -51,10 +53,23 @@ func _ready() -> void:
 	super._ready()
 	_setup_visuals()
 	apply_team_outline(animated_sprite)
-	animated_blades.play()
-	for guns in get_guns():
-		guns.fixed_angle = true
-	
+	if (animated_blades and animated_blades.sprite_frames):
+		animated_blades.play()
+	_prepare_guns()
+
+func can_engage() -> bool:
+	var guns_list : Array[Gun] = get_guns()
+	if (guns_list.is_empty()):
+		return true
+	for gun : Gun in guns_list:
+		if (!(gun is HomingMissileGun) or (gun as HomingMissileGun).is_ready()):
+			return true
+	return false
+
+func _prepare_guns() -> void:
+	for gun : Gun in get_guns():
+		gun.set("fixed_angle", true)
+
 const CLIFF_WIDTH : float = 140.0
 
 func _cliff_top(depth : float) -> float:
@@ -139,10 +154,24 @@ func _physics_process(delta: float) -> void:
 	var rotation_speed : float = 3.0
 	
 	if (animated_sprite && !is_dead):
-		animated_sprite.frame = map_rotation_to_value()
-		check_direction_and_flip()
-		_update_props()
-	pass
+		_update_body_frame()
+
+func _update_body_frame() -> void:
+	animated_sprite.frame = map_rotation_to_value()
+	check_direction_and_flip()
+	_update_props()
+	_mirror_guns()
+
+var _guns_mirrored : bool = false
+
+func _mirror_guns() -> void:
+	var down : bool = animated_sprite.flip_v
+	if (down == _guns_mirrored):
+		return
+	_guns_mirrored = down
+	for gun : Gun in get_guns():
+		gun.position.y = -gun.position.y
+		gun.scale.y = -gun.scale.y
 
 func get_actual_rotation_angle() -> float:
 	return fmod(rotation_degrees + 360, 360)

@@ -134,6 +134,11 @@ func _label(text : String = "", color : Color = TEXT, size : int = 8) -> Label:
 		label.add_theme_font_size_override("font_size", size)
 	return label
 
+func _ellipsize(label : Label) -> void:
+	label.clip_text = true
+	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	label.custom_minimum_size.x = 0
+
 func _spacer() -> Control:
 	var spacer : Control = Control.new()
 	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -400,7 +405,7 @@ func _make_portrait(unit : EntityStats, available : bool, min_height : float, ma
 	screen.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	if (unit != null):
 		var art : TextureRect = TextureRect.new()
-		art.texture = unit.sprite
+		art.texture = UnitIcon.of_sprite(unit)
 		art.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		art.stretch_mode = TextureRect.STRETCH_SCALE
@@ -424,7 +429,7 @@ func _make_portrait(unit : EntityStats, available : bool, min_height : float, ma
 			header.add_child(dock_gap)
 			header.add_child(_label(_dock_of(unit), header_color))
 		header.add_child(_spacer())
-		header.add_child(_label(str(unit.price), header_color, 12))
+		header.add_child(_label(str(Global.screw_cost(unit)), header_color, 12))
 		var gap : Control = Control.new()
 		gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		gap.custom_minimum_size.x = 2
@@ -578,6 +583,7 @@ func _make_card(unit : BoatStats) -> Button:
 	_skin(button, edge, face)
 	button.add_theme_stylebox_override("disabled", _style(face, edge))
 	button.pressed.connect(_select.bind(unit))
+	button.gui_input.connect(_card_input.bind(unit))
 	button.set_drag_forwarding(
 		func(_at : Vector2) -> Variant: return _unit_drag_data(unit.name, stats.loadout.find(unit.name), button),
 		func(_at : Vector2, _data : Variant) -> bool: return false,
@@ -642,7 +648,7 @@ func _refresh_detail() -> void:
 	summary.add_child(_icon_value(ICON12_SPEED, "%.1f" % upgraded.speed))
 	summary.add_child(_icon_value(ICON12_GUN, "%d" % upgraded.gun_slots.size()))
 	summary.add_child(_spacer())
-	summary.add_child(_screw_value(selected.price, TEXT))
+	summary.add_child(_screw_value(Global.screw_cost(selected), TEXT))
 	var toggle : Button = Button.new()
 	toggle.text = "-" if stats_expanded else "+"
 	toggle.custom_minimum_size = Vector2(22, 20)
@@ -665,7 +671,7 @@ func _refresh_detail() -> void:
 		var cost : HBoxContainer = HBoxContainer.new()
 		cost.add_theme_constant_override("separation", 10)
 		cost.add_child(_label("shop.build_cost", DIM))
-		cost.add_child(_screw_value(selected.price, TEXT))
+		cost.add_child(_screw_value(Global.screw_cost(selected), TEXT))
 		var cost_margin : MarginContainer = MarginContainer.new()
 		cost_margin.add_theme_constant_override("margin_left", 5)
 		cost_margin.add_child(cost)
@@ -715,7 +721,8 @@ func _add_weapon_selector(unit : EntityStats) -> void:
 			arrow.pressed.connect(_cycle_weapon.bind(unit, slot_index, options, index + step))
 			row.add_child(arrow)
 			if (step < 0):
-				var name_label : Label = _label(Enums.gun_name(current), TEXT)
+				var extra_cost : int = Enums.gun_extra_cost(current)
+				var name_label : Label = _label(Enums.gun_name(current) + (" +%d" % extra_cost if extra_cost != 0 else ""), TEXT)
 				name_label.custom_minimum_size.x = 150
 				name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 				row.add_child(name_label)
@@ -760,7 +767,7 @@ func _make_slot(index : int, unit : EntityStats, start_screws : int) -> Button:
 	var button : Button = Button.new()
 	button.custom_minimum_size = Vector2(0, 78)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var usable : bool = unit != null and (unit is SkillStats or unit.price <= start_screws)
+	var usable : bool = unit != null and (unit is SkillStats or Global.screw_cost(unit) <= start_screws)
 	_skin(button, Color("#72838d") if unit != null else Color("#3a464c"), Color("#293740") if unit != null else Color("#141b1f"))
 	button.add_theme_stylebox_override("disabled", button.get_theme_stylebox("normal"))
 	if (unit != null):
@@ -782,11 +789,13 @@ func _make_slot(index : int, unit : EntityStats, start_screws : int) -> Button:
 		col.add_child(_make_skill_portrait(unit, 30, 1))
 		var skill_name : Label = _label(Loc.named("unit", unit.name).to_upper())
 		skill_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_ellipsize(skill_name)
 		col.add_child(skill_name)
 	elif (unit != null):
 		col.add_child(_make_portrait(unit, usable, 30, 1, "", true, false))
 		var name_label : Label = _label(Loc.named("unit", unit.name).to_upper())
 		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_ellipsize(name_label)
 		name_label.modulate = Color.WHITE if usable else Color(0.65, 0.68, 0.7)
 		col.add_child(name_label)
 	else:
@@ -894,6 +903,12 @@ func _drop_remove(data : Variant) -> void:
 func _set_filter(key : String) -> void:
 	filter = key
 	_refresh_all()
+
+func _card_input(event : InputEvent, unit : BoatStats) -> void:
+	var click : InputEventMouseButton = event as InputEventMouseButton
+	if (click and click.pressed and click.double_click and click.button_index == MOUSE_BUTTON_LEFT and Global.player_stats.has_boat(unit.name)):
+		selected = unit
+		_toggle_loadout(unit)
 
 func _select(unit : BoatStats) -> void:
 	selected = unit

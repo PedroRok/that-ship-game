@@ -32,7 +32,7 @@ func process_physics(delta: float) -> void:
 		return
 	
 	var target : Node2D = radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)
-	if not target:
+	if not target or !(parent as AirEntity).can_engage():
 		Transitioned.emit(self, "airmove")
 		return
 	

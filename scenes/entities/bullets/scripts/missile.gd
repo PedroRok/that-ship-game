@@ -4,7 +4,13 @@ extends Bullet
 @export var initial_speed: float = 200
 @export var turn_speed: float = 5.0
 
+var launch_forward : bool = false
+
 func set_direction(new_direction: Vector2) -> void:
+	if (launch_forward and new_direction != Vector2.ZERO):
+		self.direction = new_direction.normalized() * initial_speed
+		rotation = direction.angle()
+		return
 	self.direction = Vector2(0, -1) * initial_speed
 	rotation = direction.angle()
 

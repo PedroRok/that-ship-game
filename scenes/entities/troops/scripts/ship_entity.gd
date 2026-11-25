@@ -4,6 +4,10 @@ extends Entity
 
 const DIVE_DEPTH : float = 75.0
 const DIVE_TIME : float = 4.5
+const SURFACE_TIME : float = 2.5
+const NEAR_SURFACE_OFFSET : float = 12.0
+const NEAR_SURFACE_TINT : Color = Color(0.6, 0.78, 0.95, 0.85)
+const SURFACE_CHECK : float = 0.4
 
 @onready
 var sprite: Sprite2D = $BoatSprite
@@ -12,6 +16,9 @@ var dive_depth : float = DIVE_DEPTH
 var submerged : bool = false
 var dive_offset : float = 0.0
 var _spawn_x : float = NAN
+var _initial_dive_done : bool = false
+var _dive_tween : Tween
+var _surface_clock : float = 0.0
 
 func _ready() -> void:
 	super._ready()
@@ -69,10 +76,12 @@ func _physics_process(delta: float) -> void:
 	if (!is_instance_valid(self) or is_queued_for_deletion()):
 		return
 	_keep_afloat(delta)
+	var stats : BoatStats = entity_stats as BoatStats
+	if (stats and stats.surfaces_for_air and _initial_dive_done and is_nan(entry_x)):
+		_update_surfacing(delta, stats)
 	if (submerged):
 		return
-	var stats : BoatStats = entity_stats as BoatStats
-	if (!stats or !stats.can_submerge or !is_nan(entry_x)):
+	if (!stats or !stats.can_submerge or !is_nan(entry_x) or _initial_dive_done):
 		return
 	if (is_nan(_spawn_x)):
 		_spawn_x = global_position.x
@@ -95,11 +104,69 @@ func start_submerged(from_offset : float) -> void:
 
 func _dive(stats : BoatStats, from_offset : float = 0.0) -> void:
 	submerged = true
+	_initial_dive_done = true
 	if (from_offset != 0.0):
 		_set_dive_offset(from_offset)
 	if (stats.submerged_sprite):
 		sprite.texture = stats.submerged_sprite
 	$HitboxComponent.submerged = true
-	var tween : Tween = create_tween().set_parallel(true)
-	tween.tween_method(_set_dive_offset, from_offset, dive_depth, DIVE_TIME)
-	tween.tween_property(sprite, "modulate", Color(0.3, 0.5, 0.85, 0.55), DIVE_TIME)
+	_apply_air_gun_state()
+	_kill_dive_tween()
+	_dive_tween = create_tween().set_parallel(true)
+	_dive_tween.tween_method(_set_dive_offset, dive_offset, dive_depth, DIVE_TIME)
+	_dive_tween.tween_property(sprite, "modulate", Color(0.3, 0.5, 0.85, 0.55), DIVE_TIME)
+
+func _surface(stats : BoatStats) -> void:
+	submerged = false
+	if (stats.sprite):
+		sprite.texture = stats.sprite
+	$HitboxComponent.submerged = false
+	_apply_air_gun_state()
+	_kill_dive_tween()
+	_dive_tween = create_tween().set_parallel(true)
+	_dive_tween.tween_method(_set_dive_offset, dive_offset, NEAR_SURFACE_OFFSET, SURFACE_TIME)
+	_dive_tween.tween_property(sprite, "modulate", NEAR_SURFACE_TINT, SURFACE_TIME)
+
+func _kill_dive_tween() -> void:
+	if (_dive_tween and _dive_tween.is_valid()):
+		_dive_tween.kill()
+
+func _apply_air_gun_state() -> void:
+	var stats : BoatStats = entity_stats as BoatStats
+	if (!stats or !stats.surfaces_for_air):
+		return
+	for gun : Gun in guns:
+		var anti_air : bool = !gun.hits_surface
+		gun.disabled = submerged if anti_air else !submerged
+		gun.visible = anti_air and !submerged
+
+func _update_surfacing(delta : float, stats : BoatStats) -> void:
+	_surface_clock -= delta
+	if (_surface_clock > 0.0):
+		return
+	_surface_clock = SURFACE_CHECK
+	var radar : RadarComponent = get_node_or_null("RadarComponent") as RadarComponent
+	if (!radar):
+		return
+	var air_target : bool = false
+	var surface_threat : bool = false
+	for item : Variant in radar.enemy_hitbox:
+		var hitbox : SimpleHitboxComponent = item as SimpleHitboxComponent
+		if (!is_instance_valid(hitbox) or !hitbox.enabled):
+			continue
+		var target : Node2D = hitbox.get_hitbox_parent()
+		if (!target):
+			continue
+		var is_air : bool = target is Entity and (target as Entity).entity_stats is AirPlaneState
+		for gun : Gun in guns:
+			if (!gun.can_target(target) or gun.target_distance(target) > gun.effective_range()):
+				continue
+			if (is_air):
+				air_target = true
+			else:
+				surface_threat = true
+	var want_surface : bool = air_target and !surface_threat
+	if (want_surface and submerged):
+		_surface(stats)
+	elif (!want_surface and !submerged):
+		_dive(stats)

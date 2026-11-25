@@ -24,7 +24,7 @@ func _ready() -> void:
 
 func spawn_entity(entity_name : EntityStats) -> void:
 	if (base.enqueue_ship(entity_name)):
-		screw_label.change_value(-entity_name.price)
+		screw_label.change_value(-Global.screw_cost(entity_name))
 
 
 func _on_temporary_button_button_up() -> void:
@@ -40,4 +40,4 @@ func collect_gear(value_collected : int) -> void:
 	Global.player_stats.gear += value_collected
 
 func refund_entity(entity : EntityStats) -> void:
-	screw_label.change_value(entity.price)
+	screw_label.change_value(Global.screw_cost(entity))

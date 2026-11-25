@@ -18,6 +18,8 @@ var submerged_sprite : Texture2D
 var dive_distance : float = 110.0
 @export
 var hide_guns : bool = false
+@export
+var surfaces_for_air : bool = false
 
 @export_group("Rect Properties")
 @export_subgroup("Water Colision Shape")

@@ -6,9 +6,9 @@ const BOATS_DIR : String = "res://core/resources/boats/"
 
 const FLOOR_POOLS : Array[Array] = [
 	["mini", "small", "torpedo"],
-	["medium", "flak", "plane"],
-	["destroyer", "submarine", "bomber", "frigate"],
-	["tank", "cruiser"],
+	["medium", "flak", "plane", "interceptor", "heli_scout", "sub_scout"],
+	["destroyer", "submarine", "bomber", "frigate", "missile_plane", "heli_heavy", "sub_hunter"],
+	["tank", "cruiser", "twin_bomber", "sub_sam"],
 ]
 
 static func floor_of(entry : Dictionary) -> int:
@@ -73,8 +73,12 @@ static func expected_enemies(entry : Dictionary) -> Array[Dictionary]:
 	var objective : int = int(entry["objective"])
 	var pool : Array[BoatStats] = pool_for(entry)
 	var names : Array[String] = []
+	var has_sub : bool = false
+	var has_air : bool = false
 	for unit : BoatStats in pool:
 		names.append(unit.name)
+		has_sub = has_sub or unit.can_submerge
+		has_air = has_air or unit is AirPlaneState
 	if (objective == RunData.Objective.ESCORT):
 		result.append({"key": "escort", "label": "run.allied_escort"})
 	if (objective == RunData.Objective.DEFEAT_BOSS):
@@ -85,9 +89,9 @@ static func expected_enemies(entry : Dictionary) -> Array[Dictionary]:
 		result.append({"key": "destroyer", "label": "run.warships"})
 	elif (names.has("medium") or names.has("flak") or names.has("torpedo") or names.has("small") or names.has("mini")):
 		result.append({"key": "destroyer", "label": "run.patrol_boats"})
-	if (names.has("submarine")):
+	if (has_sub):
 		result.append({"key": "submarine", "label": "run.submarine"})
-	if (names.has("bomber") or names.has("plane")) and objective != RunData.Objective.SHOOT_DOWN_BOMBER:
+	if has_air and objective != RunData.Objective.SHOOT_DOWN_BOMBER:
 		result.append({"key": "bomber", "label": "run.bomber"})
 	while (result.size() > 3):
 		result.pop_back()

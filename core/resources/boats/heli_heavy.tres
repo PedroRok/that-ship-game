@@ -1,0 +1,49 @@
+[gd_resource type="Resource" script_class="HelicopterStats" format=3]
+
+[ext_resource type="Script" path="res://core/resources/gun_slot.gd" id="s_slot"]
+[ext_resource type="Script" path="res://core/resources/helicopter_stats.gd" id="s_main"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/heavy/body.png" id="body"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/heavy/rotor_1.png" id="rotor_1"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/heavy/rotor_2.png" id="rotor_2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/heavy/rotor_3.png" id="rotor_3"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/helicopter/heavy/rotor_4.png" id="rotor_4"]
+
+[sub_resource type="Resource" id="slot_0"]
+script = ExtResource("s_slot")
+position = Vector2(19, 7)
+allowed_types = Array[int]([13])
+with_base = true
+max_size = 1
+
+[sub_resource type="Resource" id="slot_1"]
+script = ExtResource("s_slot")
+position = Vector2(9, 7)
+allowed_types = Array[int]([14, 15])
+with_base = true
+max_size = 1
+type_positions = {14: Vector2(5, 7), 15: Vector2(13, 7)}
+
+[sub_resource type="RectangleShape2D" id="hit"]
+size = Vector2(28, 10)
+
+[sub_resource type="RectangleShape2D" id="part"]
+size = Vector2(10, 6)
+
+[resource]
+script = ExtResource("s_main")
+name = "heli_heavy"
+health = 22.0
+speed = 55.0
+radar_distance = 400
+price = 24
+produce_cd = 7
+unit_class = 2
+unlock_cost = 160
+sprite = ExtResource("body")
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0"), SubResource("slot_1")])
+hitbox_colision_shape = SubResource("hit")
+particles_shape = SubResource("part")
+body_frames = Array[Texture2D]([ExtResource("body")])
+rotor_frames = Array[Texture2D]([ExtResource("rotor_1"), ExtResource("rotor_2"), ExtResource("rotor_3"), ExtResource("rotor_4")])
+cruise_height = 115.0
+hover_offset = 56.0

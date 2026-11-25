@@ -117,7 +117,7 @@ func _free_dummies() -> void:
 
 func _sprite_of(value: EntityStats) -> Texture2D:
 	if value is AirPlaneState and not (value as AirPlaneState).body_frames.is_empty():
-		return (value as AirPlaneState).body_frames[0]
+		return UnitIcon.of(value as AirPlaneState)
 	var boat: BoatStats = value as BoatStats
 	if boat and boat.can_submerge and boat.submerged_sprite:
 		return boat.submerged_sprite

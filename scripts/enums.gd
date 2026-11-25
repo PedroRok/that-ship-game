@@ -18,7 +18,7 @@ enum UpgradeOp { ADD, MULTIPLY }
 
 enum GunSize { SMALL, MEDIUM, LARGE }
 
-enum Guns { SMALL_GUN, SMALL_MISSILE, MEDIUM_GUN, LARGE_GUN, MEDIUM_MISSILE, LARGE_MISSILE, SMALL_AA, MEDIUM_AA, SMALL_TORPEDO, MEDIUM_TORPEDO, BOMB, DEPTH_BOMB }
+enum Guns { SMALL_GUN, SMALL_MISSILE, MEDIUM_GUN, LARGE_GUN, MEDIUM_MISSILE, LARGE_MISSILE, SMALL_AA, MEDIUM_AA, SMALL_TORPEDO, MEDIUM_TORPEDO, BOMB, DEPTH_BOMB, ROTARY_SMALL, ROTARY_TWIN, HELI_DEPTH, HOMING_MISSILE, TWIN_CANNON, AIR_MISSILE, AIR_BOMB, SAM_VERTICAL, SAM_HEAVY }
 
 const gun_sizes : Dictionary = {
 	Guns.SMALL_GUN : GunSize.SMALL,
@@ -32,8 +32,25 @@ const gun_sizes : Dictionary = {
 	Guns.SMALL_TORPEDO : GunSize.SMALL,
 	Guns.MEDIUM_TORPEDO : GunSize.MEDIUM,
 	Guns.BOMB : GunSize.SMALL,
-	Guns.DEPTH_BOMB : GunSize.SMALL
+	Guns.DEPTH_BOMB : GunSize.SMALL,
+	Guns.ROTARY_SMALL : GunSize.SMALL,
+	Guns.ROTARY_TWIN : GunSize.MEDIUM,
+	Guns.HELI_DEPTH : GunSize.MEDIUM,
+	Guns.HOMING_MISSILE : GunSize.MEDIUM,
+	Guns.TWIN_CANNON : GunSize.SMALL,
+	Guns.AIR_MISSILE : GunSize.SMALL,
+	Guns.AIR_BOMB : GunSize.SMALL,
+	Guns.SAM_VERTICAL : GunSize.SMALL,
+	Guns.SAM_HEAVY : GunSize.SMALL
 }
+
+const gun_screw_cost : Dictionary = {
+	Guns.HOMING_MISSILE : 4,
+	Guns.SAM_HEAVY : 3,
+}
+
+func gun_extra_cost(gun_type : int) -> int:
+	return int(gun_screw_cost.get(gun_type, 0))
 
 const guns : Dictionary = {
 	Guns.SMALL_GUN : "res://scenes/entities/guns/simple_gun.tscn",
@@ -47,12 +64,23 @@ const guns : Dictionary = {
 	Guns.SMALL_TORPEDO : "res://scenes/entities/guns/torpedo_small.tscn",
 	Guns.MEDIUM_TORPEDO : "res://scenes/entities/guns/torpedo_medium.tscn",
 	Guns.BOMB : "res://scenes/entities/guns/bomb_gun.tscn",
-	Guns.DEPTH_BOMB : "res://scenes/entities/guns/depth_bomb_gun.tscn"
+	Guns.DEPTH_BOMB : "res://scenes/entities/guns/depth_bomb_gun.tscn",
+	Guns.ROTARY_SMALL : "res://scenes/entities/guns/rotary_small.tscn",
+	Guns.ROTARY_TWIN : "res://scenes/entities/guns/rotary_twin.tscn",
+	Guns.HELI_DEPTH : "res://scenes/entities/guns/heli_depth.tscn",
+	Guns.HOMING_MISSILE : "res://scenes/entities/guns/homing_missile.tscn",
+	Guns.TWIN_CANNON : "res://scenes/entities/guns/twin_cannon.tscn",
+	Guns.AIR_MISSILE : "res://scenes/entities/guns/air_missile.tscn",
+	Guns.AIR_BOMB : "res://scenes/entities/guns/air_bomb.tscn",
+	Guns.SAM_VERTICAL : "res://scenes/entities/guns/sam_vertical.tscn",
+	Guns.SAM_HEAVY : "res://scenes/entities/guns/sam_heavy.tscn"
 }
 
 const gun_info : Dictionary = {
 	Guns.BOMB : ["weapon.surface_bomb", "weapon.explodes_on_the_water_surface"],
-	Guns.DEPTH_BOMB : ["weapon.depth_bomb", "weapon.sinks_into_the_water_and"]
+	Guns.DEPTH_BOMB : ["weapon.depth_bomb", "weapon.sinks_into_the_water_and"],
+	Guns.HELI_DEPTH : ["weapon.heli_depth", "weapon.sinks_into_the_water_and"],
+	Guns.AIR_BOMB : ["weapon.surface_bomb", "weapon.explodes_on_the_water_surface"]
 }
 
 func gun_name(gun_type : int) -> String:
