@@ -23,6 +23,22 @@ signal entity_destroy(pos : Vector2, ship_stats : EntityStats, team_stats : Team
 func rotates_with_body() -> bool:
 	return false
 
+var _facing : float = 0.0
+
+func facing() -> float:
+	if (_facing != 0.0):
+		return _facing
+	return 1.0 if (!team_stats or team_stats.direction >= 0) else -1.0
+
+func set_facing(value : float) -> void:
+	var wanted : float = 1.0 if value >= 0.0 else -1.0
+	if (wanted == facing()):
+		return
+	_facing = wanted
+	for gun : Gun in guns:
+		gun.position.x = -gun.position.x
+		gun.flip()
+
 func get_guns() -> Array[Gun]:
 	return guns
 
@@ -95,6 +111,7 @@ func _exit_tree() -> void:
 func _ready() -> void:
 	if !Engine.is_editor_hint():
 		BattleContext.of(self).add_entity(self)
+		entity_destroy.connect(_mark_destroyed)
 	if state_machine:
 		state_machine.init(self)
 	for gun_slot_index in range(entity_stats.gun_slots.size()):
@@ -107,12 +124,23 @@ func _ready() -> void:
 			continue
 		var gun_scene : PackedScene = Enums.gun_scene(gun_type)
 		add_gun(gun_scene.instantiate(), gun_slot)
+	var radar : RadarComponent = get_node_or_null("RadarComponent") as RadarComponent
+	if (radar and !Engine.is_editor_hint() and uses_box_radar()):
+		radar.use_bomb_box()
 		
 
 const OUTLINE_SHADER : Shader = preload("res://shaders/team_outline.gdshader")
 const OUTLINE_ALLY : Color = Color(0.35, 0.65, 1.0, 0.55)
 const OUTLINE_ENEMY : Color = Color(1.0, 0.3, 0.3, 0.55)
+const OUTLINE_ESCORT : Color = Color(0.3, 1.0, 0.4, 0.95)
 const OUTLINE_THICKNESS : int = 1
+
+var destroyed : bool = false
+
+func _outline_color() -> Color:
+	if (entity_stats and entity_stats.name == "escort"):
+		return OUTLINE_ESCORT
+	return OUTLINE_ALLY if team_stats.team_id == 1 else OUTLINE_ENEMY
 
 static var _padded_cache : Dictionary = {}
 
@@ -152,7 +180,7 @@ func apply_team_outline(item : Node2D) -> void:
 	var mat : ShaderMaterial = ShaderMaterial.new()
 	mat.shader = OUTLINE_SHADER
 	mat.set_shader_parameter("thickness", OUTLINE_THICKNESS)
-	mat.set_shader_parameter("outline_color", OUTLINE_ALLY if team_stats.team_id == 1 else OUTLINE_ENEMY)
+	mat.set_shader_parameter("outline_color", _outline_color())
 	var node : Node2D = AnimatedSprite2D.new() if item is AnimatedSprite2D else Sprite2D.new()
 	node.material = mat
 	node.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -194,6 +222,9 @@ func _sync_one_outline(entry : Dictionary) -> void:
 		so.offset = s.offset
 		so.centered = s.centered
 
+func _mark_destroyed(_pos : Vector2, _stats : EntityStats, _team : TeamStats) -> void:
+	destroyed = true
+
 func add_new_gun(new_gun : Gun) -> void:
 	if (guns.size() >= entity_stats.gun_slots.size()):
 		push_error("Trying to add new weapong when is already full")
@@ -214,7 +245,29 @@ func add_new_gun(new_gun : Gun) -> void:
 	add_gun(new_gun, selected_gun_slot)
 		
 		
+const AIRCRAFT_SMALL_GUN_BASE_MULT : float = 0.35
+
+func uses_box_radar() -> bool:
+	var boat : BoatStats = entity_stats as BoatStats
+	return only_bombs() or (boat != null and boat.box_radar)
+
+func only_bombs() -> bool:
+	if (guns.is_empty()):
+		return false
+	for gun : Gun in guns:
+		if (!(gun is BombGun)):
+			return false
+	return true
+
 func add_gun(gun : Gun, gun_slot : GunSlot) -> void:
+	if (entity_stats is AirPlaneState and gun.gun_type == Enums.Guns.SMALL_GUN):
+		gun.base_damage_mult = AIRCRAFT_SMALL_GUN_BASE_MULT
+	var role : BoatStats = entity_stats as BoatStats
+	if (role and role.base_damage_override >= 0.0):
+		gun.base_damage_mult = role.base_damage_override
+	if (role):
+		gun.time_to_shoot = roundi(gun.time_to_shoot * role.fire_interval_mult)
+		gun.damage_scale *= role.damage_mult
 	gun.connect("fired_bullet", Callable(self, "handle_bullet_fired"))
 	gun._set_show_base_texture(gun_slot.with_base)
 	add_child(gun)
@@ -239,6 +292,9 @@ func get_center_pos() -> Vector2:
 func handle_bullet_fired(bullet : Bullet, direction : Vector2, position : Vector2, rotation : float) -> void:
 	bullet.team = team_stats.team_id
 	bullet.attacker_class = entity_stats.unit_class
+	var role : BoatStats = entity_stats as BoatStats
+	if (role):
+		bullet.surface_damage_mult = role.surface_damage_mult
 	if (team_stats.team_id == 1 and bullet.damage):
 		bullet.damage = bullet.damage.duplicate()
 		bullet.damage.damage = Global.modify(Enums.UpgradeTarget.GUN, &"damage", bullet.damage.damage)

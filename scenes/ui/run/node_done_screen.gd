@@ -40,6 +40,7 @@ func _build() -> void:
 	if (bonus > 0):
 		bonus_note = Loc.t("run.includes_risk_bonus") % bonus
 	row.add_child(_stat_panel("run.screws_earned", "+%d" % int(result.get("screws", 0)), bonus_note, AMBER, _screw_icon()))
+	row.add_child(_stat_panel("run.gears", "+%d" % int(result.get("gears", 0)), "", TEXT, _gear_icon()))
 	row.add_child(_stat_panel("run.relic", "run.offer" if offered else "-",
 			"run.pick_one_on_the_next" if offered else "run.no_relic_this_time", Color("#9bbeeb")))
 	var damage : int = int(result.get("damage", 0))

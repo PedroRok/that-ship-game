@@ -13,6 +13,7 @@ gun_type = 6
 time_to_shoot = 25
 projectile_texture = ExtResource("6")
 hits_surface = false
+speed_spread = true
 damage_scale = 1.0
 bullet_speed_scale = 1.2
 barrel_texture = NodePath("Barrel")

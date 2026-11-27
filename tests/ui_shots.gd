@@ -3,6 +3,7 @@ extends Node
 const OUT_DIR : String = "res://extras/art_preview/campaign_run_v01/ingame/"
 
 func _ready() -> void:
+	SaveManager.use_test_directory()
 	get_window().size = Vector2i(1280, 720)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_DIR))
 	Global.player_stats = Global.player_stats.duplicate()

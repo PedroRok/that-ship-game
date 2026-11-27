@@ -16,6 +16,7 @@ func _check(ok : bool, label : String) -> void:
 	print("PASS  " if ok else "FAIL  ", label)
 
 func _ready() -> void:
+	SaveManager.use_test_directory()
 	_check_assets()
 	Global.run = null
 	Global.player_stats = Global.player_stats.duplicate()
@@ -220,5 +221,7 @@ func _dense_battle(game : GameRound, audio : BattleAudio) -> void:
 		for unit_name : String in ["small", "medium", "flak", "torpedo"]:
 			var stats : BoatStats = Global.CATALOG.find_unit(unit_name)
 			manager.handle_ship_spawn(Vector2(mid + 240.0 + randf() * 160.0, game.enemy_base.get_spawn_point().y), stats, foe)
+		if (step % 4 == 0):
+			manager.handle_ship_spawn(Vector2(mid + 120.0, 100.0), Global.CATALOG.find_unit("plane"), foe)
 		game.camera.actual_h_pos = mid
 		await _wait(3.0, audio)

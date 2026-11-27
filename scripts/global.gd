@@ -3,12 +3,14 @@ extends Node
 var center_camera_pos : Vector2
 
 var test_enemy_all_units : bool = true
-var dev_mode : bool = false
+var creative_mode : bool:
+	get:
+		return player_stats != null and player_stats.creative
 var test_grant_gears : bool = false
 
 var test_unlock_all_weapons : bool:
 	get:
-		return dev_mode
+		return creative_mode
 
 var stats_template : PlayerStats
 
@@ -21,11 +23,12 @@ func load_slot(index : int) -> void:
 	SaveManager.slot = index
 	player_stats = stats_template.duplicate()
 	SaveManager.load_into(player_stats, CATALOG)
-	for starter : String in ["mini", "small"]:
+	for starter : String in ["mini", "small", "torpedo"]:
 		if (!player_stats.has_boat(starter)):
 			player_stats.add_entity(CATALOG.find_unit(starter))
-	if (dev_mode):
+	if (creative_mode):
 		player_stats.gear = maxi(player_stats.gear, 99999)
+		player_stats.boss_coin = maxi(player_stats.boss_coin, 99)
 		for item : Variant in CATALOG.units:
 			var unit : EntityStats = item
 			if (!player_stats.has_boat(unit.name)):
@@ -46,6 +49,7 @@ var player_stats : PlayerStats = preload("res://core/resources/player/player_sta
 
 enum StartMode { NONE, CAMPAIGN, CLASSIC }
 var start_mode : StartMode = StartMode.NONE
+var fleet_visit : bool = false
 var start_new_campaign : bool = true
 
 var run : RunState
@@ -102,8 +106,6 @@ func counter_multiplier(attacker : Enums.UnitClass, target : Enums.UnitClass) ->
 	return COUNTERS.get(Vector2i(attacker, target), 1.0)
 
 func save_game() -> void:
-	if (dev_mode):
-		return
 	SaveManager.save(player_stats)
 
 enum Menu {

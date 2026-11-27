@@ -46,7 +46,7 @@ func _explode() -> void:
 			continue
 		if (abs(entity.global_position.x - global_position.x) <= radius and abs(entity.global_position.y - global_position.y) <= radius * 1.5):
 			var hit : Damage = base_damage.duplicate()
-			hit.damage *= Global.counter_multiplier(attacker_class, entity.entity_stats.unit_class)
+			hit.damage *= damage_mult_against(entity)
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
@@ -54,7 +54,7 @@ func _explode() -> void:
 	for base_node : Node in BattleContext.of(self).bases:
 		var base : Base = base_node as Base
 		if (base and base.team_stats.team_id != team and abs(base.get_center_pos().x - global_position.x) <= radius * 1.5):
-			base.health_component.handle_hit(base_damage)
+			base.health_component.handle_hit(damage_to_base())
 			struck = true
 	if (struck):
 		play_impact_sfx()

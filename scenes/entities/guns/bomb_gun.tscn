@@ -1,14 +1,18 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scenes/entities/guns/scripts/bomb_gun.gd" id="1"]
 [ext_resource type="PackedScene" path="res://scenes/entities/bullets/bomb.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/entities/bullets/depth_bomb.tscn" id="9"]
 
 [node name="BombGun" type="Node2D" node_paths=PackedStringArray("end_barrel")]
 script = ExtResource("1")
 gun_type = 10
 time_to_shoot = 45
 damage_scale = 2.8
+base_damage_mult = 1.25
 bullet = ExtResource("2")
+depth_bullet = ExtResource("9")
+hits_submerged = true
 end_barrel = NodePath("EndBarrel")
 
 [node name="EndBarrel" type="Marker2D" parent="."]

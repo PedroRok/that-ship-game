@@ -136,6 +136,10 @@ func _build_info_panel() -> Control:
 	confirm_button = _button("run.select_a_node")
 	confirm_button.pressed.connect(_on_confirm)
 	box.add_child(confirm_button)
+	var fleet_button : Button = _button("run.manage_fleet", false, 12)
+	fleet_button.custom_minimum_size.y = 34
+	fleet_button.pressed.connect(_on_fleet)
+	box.add_child(fleet_button)
 	box.add_child(_divider())
 	box.add_child(_label("run.relics_collected", 12, TEXT_SOFT, true))
 	relic_row = HBoxContainer.new()
@@ -153,6 +157,13 @@ func _on_node_activated(id : int) -> void:
 	_refresh()
 	if (run.is_reachable(id)):
 		_defer_focus(confirm_button)
+
+func _on_fleet() -> void:
+	RunFlow.persist()
+	Global.fleet_visit = true
+	Global.start_mode = Global.StartMode.CAMPAIGN
+	Global.start_new_campaign = false
+	Global.change_scene(Global.Menu.SHOP)
 
 func _on_confirm() -> void:
 	if (run.confirm_focus()):
@@ -210,8 +221,12 @@ func _refresh_info() -> void:
 	head.add_child(names)
 	info_box.add_child(head)
 	info_box.add_child(_divider())
-	info_box.add_child(_label("run.objective" if is_fight else "run.details", 12, TEXT_SOFT, true))
-	info_box.add_child(_wrapped(_describe(entry, is_fight), 12))
+	var warning : String = RunBattleConfig.capability_warning(objective) if is_fight else ""
+	if (warning != ""):
+		info_box.add_child(_wrapped(warning, 12, DANGER))
+	else:
+		info_box.add_child(_label("run.objective" if is_fight else "run.details", 12, TEXT_SOFT, true))
+		info_box.add_child(_wrapped(_describe(entry, is_fight), 12))
 	info_box.add_child(_divider())
 	var weather : int = run.node_weather(id)
 	var weather_row : HBoxContainer = HBoxContainer.new()

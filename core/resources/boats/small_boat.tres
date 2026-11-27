@@ -21,6 +21,7 @@ size = Vector2(30, 9)
 [resource]
 script = ExtResource("1_d0lg6")
 name = "small"
+damage_mult = 1.2
 speed = 400.0
 price = 5
 health = 10.0

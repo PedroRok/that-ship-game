@@ -24,10 +24,11 @@ size = Vector2(8, 6)
 [resource]
 script = ExtResource("s_main")
 name = "missile_plane"
+surface_damage_mult = 0.8
 health = 9.0
 speed = 105.0
 radar_distance = 520
-price = 16
+price = 9
 produce_cd = 5
 unit_class = 2
 unlock_cost = 120

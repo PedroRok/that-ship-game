@@ -37,7 +37,7 @@ func _update_props() -> void:
 	pass
 
 func _update_body_frame() -> void:
-	var left : bool = team_stats.direction < 0
+	var left : bool = facing() < 0.0
 	animated_sprite.flip_h = left
 	animated_blades.flip_h = left
 

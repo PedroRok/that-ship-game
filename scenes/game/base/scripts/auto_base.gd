@@ -1,6 +1,8 @@
 class_name AutoBase
 extends Base
 
+const MIN_BASE_HEALTH : float = 100.0
+
 @export
 var ships : Array[BoatStats]
 
@@ -30,6 +32,11 @@ var spawn_interval : float = 5.0
 var pending_boss : BoatStats
 var turrets : Array[BaseTurret] = []
 var active : bool = false
+var live_cap : int = 0
+var sub_cap : int = 0
+var boss_skip_chance : float = 0.0
+var budget_mode : bool = false
+var roster_override : Array[BoatStats] = []
 
 func _ready() -> void:
 	super._ready()
@@ -44,7 +51,7 @@ func _ready() -> void:
 		(dock_timers[dock_type] as Timer).timeout.connect(_on_dock_timer.bind(dock_type))
 
 func apply_wave(wave : WaveData) -> void:
-	ships = wave.ships
+	ships = wave.ships if roster_override.is_empty() else roster_override
 	stat_mult = wave.stat_mult
 	spawn_interval = wave.spawn_interval
 	if (wave.base_tier):
@@ -52,8 +59,10 @@ func apply_wave(wave : WaveData) -> void:
 	if (wave.boss):
 		pending_boss = _scaled(wave.boss, wave.boss_health_mult, true)
 		pending_boss.boss_coin_reward = wave.boss_coin_reward
-	show_docks_for(Global.CATALOG.units if Global.test_enemy_all_units else ships)
+	show_docks_for(Global.CATALOG.units if Global.test_enemy_all_units and !budget_mode else ships)
 	active = true
+	if (budget_mode):
+		return
 	for dock_type : int in dock_timers:
 		(dock_timers[dock_type] as Timer).start(_dock_interval(dock_type))
 		_on_dock_timer(dock_type)
@@ -64,8 +73,9 @@ func apply_tier(tier : BaseTier) -> void:
 	if (!tier.turret_offsets.is_empty()):
 		turret_offsets = tier.turret_offsets
 	production_mult = tier.production_interval_mult
-	health_component.health = tier.base_health
-	health_component.label.text = str(tier.base_health)
+	health_component.health = maxf(tier.base_health, MIN_BASE_HEALTH)
+	health_component.label.text = str(health_component.health)
+	_max_health = maxf(health_component.health, 1.0)
 	_set_turrets(tier.turret_count)
 
 func set_director(interval_mult : float, skip_chance : float) -> void:
@@ -89,6 +99,8 @@ func _on_dock_timer(dock_type : int) -> void:
 		return
 	if (director_skip_chance > 0.0 and pending_boss == null and randf() < director_skip_chance):
 		return
+	if (pending_boss == null and over_limits(dock_type)):
+		return
 	if (pending_boss and dock_type_of(pending_boss) == dock_type):
 		if (start_build_ship(pending_boss)):
 			pending_boss = null
@@ -99,6 +111,39 @@ func _on_dock_timer(dock_type : int) -> void:
 	if (candidates.is_empty()):
 		return
 	start_build_ship(_scaled(candidates.pick_random(), stat_mult, false))
+
+func scaled_copy(stats : BoatStats) -> BoatStats:
+	return _scaled(stats, stat_mult, false)
+
+func over_limits(dock_type : int) -> bool:
+	if (live_cap <= 0 and sub_cap <= 0 and boss_skip_chance <= 0.0):
+		return false
+	var context : BattleContext = BattleContext.of(self)
+	if (context == null):
+		return false
+	var live : int = 0
+	var subs : int = 0
+	var boss_alive : bool = false
+	for node : Entity in context.entities:
+		if (!is_instance_valid(node) or node.is_queued_for_deletion() or node.team_stats.team_id != team_stats.team_id):
+			continue
+		live += 1
+		var boat : BoatStats = node.entity_stats as BoatStats
+		if (boat and boat.can_submerge):
+			subs += 1
+		if (node.entity_stats.is_boss):
+			boss_alive = true
+	for dock : int in constructors:
+		var pending : BoatStats = (constructors[dock] as ShipConstructor).boat_stats
+		if (pending):
+			live += 1
+			if (pending.can_submerge):
+				subs += 1
+	if (live_cap > 0 and live >= live_cap):
+		return true
+	if (sub_cap > 0 and dock_type == BaseDock.Type.SUB and subs >= sub_cap):
+		return true
+	return boss_alive and boss_skip_chance > 0.0 and randf() < boss_skip_chance
 
 func _scaled(stats : BoatStats, mult : float, boss : bool) -> BoatStats:
 	var copy : BoatStats = stats.duplicate()

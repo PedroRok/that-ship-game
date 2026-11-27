@@ -110,6 +110,12 @@ func _write_back(count : int) -> void:
 		if absf(_y[i] - node.position.y) >= WRITE_EPSILON:
 			node.position.y = _y[i]
 
+func surface_offset(global_x : float) -> float:
+	if (springs.is_empty()):
+		return 0.0
+	var index : int = clampi(int(round(to_local(Vector2(global_x, global_position.y)).x / distance_between_springs)), 0, springs.size() - 1)
+	return (springs[index] as Node2D).position.y - _target[index]
+
 func splash(index : int, speed : float) -> void:
 	if index>= 0 and index < springs.size():
 		_v[index] += speed

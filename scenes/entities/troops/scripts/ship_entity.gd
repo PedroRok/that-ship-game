@@ -8,6 +8,8 @@ const SURFACE_TIME : float = 2.5
 const NEAR_SURFACE_OFFSET : float = 12.0
 const NEAR_SURFACE_TINT : Color = Color(0.6, 0.78, 0.95, 0.85)
 const SURFACE_CHECK : float = 0.4
+const TURN_SPEED : float = 15.0
+const TURN_DELAY : float = 0.35
 
 @onready
 var sprite: Sprite2D = $BoatSprite
@@ -19,6 +21,9 @@ var _spawn_x : float = NAN
 var _initial_dive_done : bool = false
 var _dive_tween : Tween
 var _surface_clock : float = 0.0
+var _turn_clock : float = 0.0
+var _retreat_left : float = 0.0
+var _retreat_speed : float = 0.0
 
 func _ready() -> void:
 	super._ready()
@@ -76,6 +81,8 @@ func _physics_process(delta: float) -> void:
 	if (!is_instance_valid(self) or is_queued_for_deletion()):
 		return
 	_keep_afloat(delta)
+	_update_retreat(delta)
+	_update_facing(delta)
 	var stats : BoatStats = entity_stats as BoatStats
 	if (stats and stats.surfaces_for_air and _initial_dive_done and is_nan(entry_x)):
 		_update_surfacing(delta, stats)
@@ -152,7 +159,7 @@ func _update_surfacing(delta : float, stats : BoatStats) -> void:
 	var surface_threat : bool = false
 	for item : Variant in radar.enemy_hitbox:
 		var hitbox : SimpleHitboxComponent = item as SimpleHitboxComponent
-		if (!is_instance_valid(hitbox) or !hitbox.enabled):
+		if (!is_instance_valid(hitbox) or !hitbox.enabled or !radar.reaches(hitbox)):
 			continue
 		var target : Node2D = hitbox.get_hitbox_parent()
 		if (!target):
@@ -170,3 +177,58 @@ func _update_surfacing(delta : float, stats : BoatStats) -> void:
 		_surface(stats)
 	elif (!want_surface and !submerged):
 		_dive(stats)
+
+func damp_factor(delta : float) -> float:
+	var damp : float = linear_damp + float(ProjectSettings.get_setting("physics/2d/default_linear_damp", 0.1))
+	return 1.0 - damp * delta
+
+func cruise_speed(delta : float) -> float:
+	var step : float = (entity_stats as BoatStats).deceleration * delta
+	var keep : float = damp_factor(delta)
+	return keep * step * entity_stats.speed / (1.0 - keep * (1.0 - step) * (1.0 - step))
+
+func _update_retreat(delta : float) -> void:
+	var stats : BoatStats = entity_stats as BoatStats
+	if (!stats or !stats.retreats_from_ships or destroyed or !enabled or !is_nan(entry_x)):
+		_retreat_left = 0.0
+		return
+	if (_under_ship_fire()):
+		_retreat_left = RunData.FLAK_RETREAT_HOLD
+	if (_retreat_left <= 0.0):
+		_retreat_speed = 0.0
+		return
+	_retreat_left -= delta
+	var dir : float = signf(team_stats.direction)
+	var half : float = cruise_speed(delta) * RunData.FLAK_RETREAT_SPEED
+	if (_behind_floor(dir)):
+		half = 0.0
+	_retreat_speed = move_toward(_retreat_speed, half, cruise_speed(delta) * delta)
+	linear_velocity.x = -dir * _retreat_speed / damp_factor(delta)
+
+func _under_ship_fire() -> bool:
+	for other : Entity in BattleContext.of(self).entities:
+		if (!(other is ShipEntity) or !other.enabled or other.destroyed or other.team_stats.team_id == team_stats.team_id):
+			continue
+		for gun : Gun in other.get_guns():
+			if (gun.enemy == self and !gun.disabled and gun.can_target(self) and gun.target_distance(self) <= gun.effective_range()):
+				return true
+	return false
+
+func _behind_floor(dir : float) -> bool:
+	for base : Base in BattleContext.of(self).bases:
+		if (base.team_stats.team_id == team_stats.team_id):
+			return (global_position.x - base.global_position.x) * dir <= RunData.FLAK_RETREAT_FLOOR
+	return false
+
+func set_facing(value : float) -> void:
+	super.set_facing(value)
+	sprite.flip_h = facing() < 0.0
+
+func _update_facing(delta : float) -> void:
+	if (destroyed or !enabled or entity_stats.name == "escort" or _retreat_left > 0.0 or !is_nan(entry_x) or absf(linear_velocity.x) < TURN_SPEED or signf(linear_velocity.x) == facing()):
+		_turn_clock = 0.0
+		return
+	_turn_clock += delta
+	if (_turn_clock >= TURN_DELAY):
+		_turn_clock = 0.0
+		set_facing(signf(linear_velocity.x))

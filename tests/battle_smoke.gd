@@ -8,6 +8,7 @@ var auto_player : bool = false
 var _auto_clock : float = 0.0
 
 func _ready() -> void:
+	SaveManager.use_test_directory()
 	get_window().size = Vector2i(1280, 720)
 	Global.player_stats = Global.player_stats.duplicate()
 	for starter : String in ["mini", "small"]:

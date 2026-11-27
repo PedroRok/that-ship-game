@@ -9,6 +9,12 @@ uniform float dot_strength = 1.0;
 uniform float scan_strength = 1.0;
 uniform float band_strength = 1.0;
 
+varying float fade;
+
+void vertex() {
+	fade = COLOR.a;
+}
+
 void fragment() {
 	vec2 px = floor(UV * rect_size);
 	vec3 col = base_color.rgb;
@@ -36,5 +42,5 @@ void fragment() {
 	if ((bx < 1.0 && by < 7.0) || (by < 1.0 && bx < 7.0)) {
 		col = line_color.rgb;
 	}
-	COLOR = vec4(col, 1.0);
+	COLOR = vec4(col, fade);
 }

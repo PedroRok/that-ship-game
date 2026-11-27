@@ -5,6 +5,7 @@ var first_button : Button
 var _busy : bool = false
 var _pending_delete : int = -1
 var _delete_buttons : Dictionary = {}
+var _creative_checks : Dictionary = {}
 
 func requires_run() -> bool:
 	return false
@@ -30,7 +31,6 @@ func _build() -> void:
 		row.add_child(_slot_card(index))
 	content.add_child(_spacer())
 	content.add_child(_divider())
-	content.add_child(_dev_panel())
 	var options : Button = _button("menu.options")
 	options.custom_minimum_size.x = 220
 	options.pressed.connect(Global.open_options)
@@ -65,10 +65,14 @@ func _slot_card(index : int) -> Control:
 		stats.add_child(_centered(Loc.t("menu.troops_unlocked") % int(summary["units"]), TEXT))
 		stats.add_child(_centered(Loc.t("menu.best_wave_2") % int(summary["best_wave"]), TEXT_SOFT))
 		stats.add_child(_centered(_run_text(summary["run"]), TEXT_SOFT))
+		if (bool(summary["creative"])):
+			stats.add_child(_centered("menu.creative_mode", AMBER))
 	else:
 		stats.add_child(_centered("menu.empty_save", TEXT_DIM))
 		stats.add_child(_centered("menu.starts_with_the_basic_troops", TEXT_DIM))
 	box.add_child(_divider())
+	if (!exists):
+		box.add_child(_creative_check(index))
 	var play : Button = _button("result.play" if exists else "menu.new_save")
 	play.pressed.connect(_on_play.bind(index))
 	box.add_child(play)
@@ -94,31 +98,29 @@ func _run_text(run_state : Variant) -> String:
 	return Loc.t("menu.campaign_floor_base") % [
 			mini(state.floors_cleared() + 1, RunData.COLUMNS), RunData.COLUMNS, state.base_hp, state.base_max_hp]
 
-func _dev_panel() -> Control:
-	var panel : PanelContainer = _panel(8)
-	var row : HBoxContainer = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 16)
-	panel.add_child(row)
+func _creative_check(index : int) -> CheckBox:
 	var check : CheckBox = CheckBox.new()
-	check.text = "menu.dev_mode"
-	check.button_pressed = Global.dev_mode
+	check.text = "menu.creative_mode"
+	check.tooltip_text = "menu.creative_mode_hint"
 	check.focus_mode = Control.FOCUS_ALL
+	check.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	check.add_theme_font_override("font", FONT)
-	check.add_theme_font_size_override("font_size", PixelText.snap(16))
+	check.add_theme_font_size_override("font_size", PixelText.snap(8))
 	for key : String in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color", "font_focus_color"]:
 		check.add_theme_color_override(key, AMBER)
-	check.toggled.connect(func(on : bool) -> void: Global.dev_mode = on)
-	row.add_child(check)
-	var note : Label = _wrapped("menu.starts_with_99999_gears_and", 12, TEXT_SOFT)
-	note.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	row.add_child(note)
-	return panel
+	_creative_checks[index] = check
+	return check
 
 func _on_play(index : int) -> void:
 	if (_busy):
 		return
 	_busy = true
 	Global.load_slot(index)
+	var check : CheckBox = _creative_checks.get(index) as CheckBox
+	if (check and check.button_pressed):
+		Global.player_stats.creative = true
+		Global.save_game()
+		Global.load_slot(index)
 	Global.change_scene(Global.Menu.CAMPAIGN_SELECT)
 
 func _on_delete(index : int) -> void:

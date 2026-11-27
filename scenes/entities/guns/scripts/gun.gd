@@ -22,6 +22,10 @@ var hits_submerged : bool = false
 var bullet_speed_scale : float = 1.0
 @export
 var range_override : float = 0.0
+@export
+var column_range : bool = false
+@export
+var base_damage_mult : float = 1.0
 @export 
 var bullet : PackedScene
 @export
@@ -82,6 +86,8 @@ func effective_range() -> float:
 func target_distance(target : Node2D) -> float:
 	if (target is Base):
 		return (target as Base).distance_from(global_position)
+	if (column_range and target is Entity):
+		return absf((target as Entity).get_center_pos().x - global_position.x)
 	if (target.has_method("get_center_pos")):
 		return global_position.distance_to(target.get_center_pos())
 	return global_position.distance_to(target.global_position)
@@ -127,6 +133,7 @@ func _fire(direction : Vector2) -> void:
 func _make_bullet() -> Bullet:
 	var bullet_instance : Bullet = bullet.instantiate()
 	bullet_instance.target = enemy
+	bullet_instance.base_damage_mult = base_damage_mult
 	if bullet_instance.damage:
 		bullet_instance.damage = bullet_instance.damage.duplicate()
 		bullet_instance.damage.damage *= damage_scale

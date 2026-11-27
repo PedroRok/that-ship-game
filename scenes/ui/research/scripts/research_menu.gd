@@ -67,6 +67,7 @@ const STAT_ICONS : Dictionary = {
 	&"queue_naval": ICON12_NAVAL,
 	&"queue_sub": ICON12_SUB,
 	&"queue_air": ICON12_AIR,
+	&"auto_collect": ICON_ECONOMY,
 }
 
 enum NodeState { LOCKED, AVAILABLE, UNAFFORDABLE, MAXED }

@@ -8,6 +8,10 @@ var gear : int = 10
 
 var best_wave : int = 0
 
+var campaigns_started : int = 0
+
+var creative : bool = false
+
 var round_num : int = 0
 
 var round_group_num : int = 0

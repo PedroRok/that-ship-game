@@ -19,7 +19,7 @@ func get_wave(index : int) -> WaveData:
 		wave.base_tier = tier
 		if (boss):
 			wave.boss = boss
-			wave.boss_health_mult = 3.0
+			wave.boss_health_mult = RunData.BOMBER_HEALTH_MULT if boss.name == RunData.BOMBER_BOSS_NAME else 3.0
 	elif (index == 2 and extra_boss):
 		wave.boss = extra_boss
 		wave.boss_health_mult = 3.0

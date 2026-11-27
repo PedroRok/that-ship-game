@@ -65,7 +65,7 @@ func build_ship(boat_stats : BoatStats, time_mult : float = 1.0) -> void:
 			material,
 			"shader_parameter/build_progress",
 			1.0,
-			boat_stats.produce_cd * time_mult
+			boat_stats.produce_cd * boat_stats.build_time_mult * time_mult
 		)
 	tween.finished.connect(Callable(self, "_on_build_complete"))
 	self.boat_stats = boat_stats

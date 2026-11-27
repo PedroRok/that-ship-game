@@ -62,6 +62,7 @@ var _hole_param : String = ""
 var _sea_material : ShaderMaterial
 var _door : Sprite2D
 var _water : Sprite2D
+var _dry : Sprite2D
 var _water_mat : ShaderMaterial
 var _door_mat : ShaderMaterial
 var _tween : Tween
@@ -125,6 +126,17 @@ func _find_sea_material() -> ShaderMaterial:
 		return (polygon as Polygon2D).material as ShaderMaterial
 	return null
 
+func damage_sprites() -> Array[Sprite2D]:
+	var sprites : Array[Sprite2D] = [_background]
+	if (_dry):
+		sprites.append(_dry)
+	return sprites
+
+func water_area() -> Rect2:
+	if (!_water):
+		return Rect2()
+	return Rect2(_hole_rect.x, _hole_rect.y, _hole_rect.z - _hole_rect.x, _hole_rect.w - _hole_rect.y)
+
 func has_door() -> bool:
 	return _door != null
 
@@ -145,6 +157,7 @@ func _setup_door_and_water(def : Dictionary, center : Vector2) -> void:
 
 	var dry : Sprite2D = _make_sprite_tex(inner_tex, center, -716)
 	dry.modulate = Color(0.07, 0.1, 0.12)
+	_dry = dry
 	_visual_sources[dry] = inner_tex
 
 	var sx : float = -1.0 if mirrored else 1.0

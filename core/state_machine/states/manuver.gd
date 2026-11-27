@@ -30,7 +30,7 @@ func process_physics(delta: float) -> void:
 		Transitioned.emit(self, "AirDeath")
 		return
 	
-	if (avoid_base_climb()):
+	if (turn_back_at_limit() or avoid_base_climb()):
 		return
 	if distance_warn_component.enemy_hitbox.size() < 1 && can_change && !distance_warn_component.is_too_low:
 		Transitioned.emit(self, "AirMove")

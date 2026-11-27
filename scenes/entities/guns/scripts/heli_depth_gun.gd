@@ -12,6 +12,7 @@ func shoot_gun(_direction : Vector2) -> void:
 	if (!enemy or !can_target(enemy)):
 		return
 	var target_pos : Vector2 = enemy.get_center_pos() if enemy.has_method("get_center_pos") else enemy.global_position
+	target_pos.x += BulletDepthBomb.lead_x(enemy)
 	if (absf(target_pos.x - global_position.x) > DROP_WINDOW or target_pos.y < global_position.y):
 		return
 	current_time_to_shoot = time_to_shoot
@@ -19,6 +20,7 @@ func shoot_gun(_direction : Vector2) -> void:
 	var vx : float = carrier.linear_velocity.x if carrier else 0.0
 	var bomb : Bullet = bullet.instantiate()
 	bomb.target = enemy
+	bomb.base_damage_mult = base_damage_mult
 	bomb.damage = bomb.damage.duplicate()
 	bomb.damage.damage *= damage_scale
 	fired_bullet.emit(bomb, end_barrel.global_position, Vector2(vx * 0.5, 12.0), 0.0)

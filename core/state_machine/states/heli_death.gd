@@ -1,6 +1,6 @@
 extends "res://core/state_machine/states/air_death.gd"
 
-const GLIDE_GRAVITY : float = 38.0
+const GLIDE_GRAVITY : float = 65.0
 const MIN_GLIDE_SPEED : float = 26.0
 const FALL_TILT : float = 0.45
 
@@ -16,6 +16,7 @@ func enter() -> void:
 	parent.entity_destroy.emit(parent.global_position, parent.entity_stats, parent.team_stats)
 	death_deespawn_delay = 500
 	decay_rate = 0.998
+	_join_wrecks()
 
 func process_physics(delta : float) -> void:
 	death_deespawn_delay -= 1
@@ -24,12 +25,15 @@ func process_physics(delta : float) -> void:
 	if (death_deespawn_delay == -180):
 		parent.free()
 		return
+	if (_collide_with_wrecks() or initial_velocity == Vector2.ZERO):
+		parent.linear_velocity = Vector2.ZERO
+		return
 	var heli : AirEntity = parent as AirEntity
 	heli.animated_blades.speed_scale = lerpf(heli.animated_blades.speed_scale, 0.0, delta * 1.5)
 	if (hitbox_component.is_on_water):
 		decay_rate = 0.95
 	initial_velocity.x *= decay_rate
-	initial_velocity.y = minf(initial_velocity.y + GLIDE_GRAVITY * delta, 140.0)
+	initial_velocity.y = minf(initial_velocity.y + GLIDE_GRAVITY * delta, 180.0)
 	_sink_in_water()
 	parent.linear_velocity = initial_velocity
 	var dir : float = signf(initial_velocity.x) if initial_velocity.x != 0.0 else 1.0

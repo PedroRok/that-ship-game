@@ -7,7 +7,7 @@
 [sub_resource type="Resource" id="slot_0"]
 script = ExtResource("s_slot")
 position = Vector2(-38, 1)
-allowed_types = Array[int]([3, 2, 0])
+allowed_types = Array[int]([23])
 with_base = true
 max_size = 2
 
@@ -39,7 +39,7 @@ script = ExtResource("s_boat")
 name = "boss_dreadnought"
 speed = 200.0
 price = 0
-health = 60.0
+health = 40.0
 unit_class = 1
 unlock_cost = 0
 deceleration = 0.8

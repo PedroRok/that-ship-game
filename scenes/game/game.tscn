@@ -213,5 +213,5 @@ script = ExtResource("9_ucfpf")
 [node name="ItemManager" type="Node" parent="." node_paths=PackedStringArray("game_ui")]
 script = ExtResource("13_thedk")
 game_ui = NodePath("../CanvasLayer/GameUI")
-chance_to_spawn = 0.2
+chance_to_spawn = 0.26
 amout_to_spawn = 2

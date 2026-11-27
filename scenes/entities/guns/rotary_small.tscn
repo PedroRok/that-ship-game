@@ -12,6 +12,7 @@ gun_type = 12
 time_to_shoot = 12
 sfx_event = &"light_cannon"
 damage_scale = 0.6
+base_damage_mult = 0.25
 range_override = 190.0
 barrel_texture = NodePath("Barrel")
 barrel_frames = Array[Texture2D]([ExtResource("4"), ExtResource("5")])

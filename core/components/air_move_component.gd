@@ -23,18 +23,18 @@ func process_physics(delta: float) -> void:
 	if distance_warn_component.enemy_hitbox.size() > 1 || distance_warn_component.is_too_low:
 		Transitioned.emit(self, "manuver")
 		
-	if (avoid_base_climb()):
+	if (turn_back_at_limit() or avoid_base_climb()):
 		return
-	if (radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction) and (parent as AirEntity).can_engage()):
+	if (engage_target(radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)) and (parent as AirEntity).can_engage()):
 		Transitioned.emit(self, "AirAttack")
 		return
 		
-	var target_angle : float = -0.1
+	var target_angle : float = patrol_heading() if patrol_context() else -0.1
 	var current_angle : float = fmod(to_heading(parent.rotation) + PI, PI * 2) - PI
 	
 	var angle_diff : float = angle_difference(current_angle, target_angle)
 	if abs(angle_diff) > 0.01:
-		parent.angular_velocity = sign(angle_diff) * 3 * mirror_sign()
+		steer(current_angle, target_angle, 3.0)
 	else:
 		parent.angular_velocity = 0
 	

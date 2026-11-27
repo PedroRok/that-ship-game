@@ -32,7 +32,7 @@ turret_count = 0
 script = ExtResource("s_tier")
 base_health = 70
 production_interval_mult = 0.85
-turret_count = 1
+turret_count = 0
 sprite = ExtResource("t_base2")
 turret_offsets = Array[Vector2]([Vector2(0, -50)])
 
@@ -40,7 +40,7 @@ turret_offsets = Array[Vector2]([Vector2(0, -50)])
 script = ExtResource("s_tier")
 base_health = 110
 production_interval_mult = 0.7
-turret_count = 2
+turret_count = 0
 sprite = ExtResource("t_base3")
 turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50)])
 
@@ -48,7 +48,7 @@ turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50)])
 script = ExtResource("s_tier")
 base_health = 160
 production_interval_mult = 0.55
-turret_count = 3
+turret_count = 0
 sprite = ExtResource("t_base4")
 turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50), Vector2(-12, -19)])
 

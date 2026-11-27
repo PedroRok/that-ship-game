@@ -6,6 +6,19 @@ extends Bullet
 
 var launch_forward : bool = false
 
+const LIFETIME_MULT : float = 2.0
+const GROUP : StringName = &"missiles"
+
+func decoy(angle : float) -> void:
+	target = null
+	hits_air = false
+	direction = direction.rotated(angle)
+	rotation = direction.angle()
+
+func _ready() -> void:
+	add_to_group(GROUP)
+	bullet_stats.killTime = int(bullet_stats.killTime * LIFETIME_MULT)
+
 func set_direction(new_direction: Vector2) -> void:
 	if (launch_forward and new_direction != Vector2.ZERO):
 		self.direction = new_direction.normalized() * initial_speed

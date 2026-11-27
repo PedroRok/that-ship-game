@@ -11,6 +11,7 @@ var support : TextureRect
 var glyph : TextureRect
 var overlay : TextureRect
 var checkmark : TextureRect
+var alert : Label
 var corners : TextureRect
 var marker : TextureRect
 var caption : Label
@@ -34,6 +35,17 @@ func setup(new_run : RunState, id : int) -> void:
 	marker = _rect(Vector2(16, -14), Vector2(16, 8))
 	marker.texture = load("res://assets/ui/run_map/current_marker_v01.png") as Texture2D
 	checkmark.texture = load("res://assets/ui/run_map/checkmark_v01.png") as Texture2D
+	alert = Label.new()
+	alert.add_theme_font_override("font", FONT)
+	alert.add_theme_font_size_override("font_size", 16)
+	alert.add_theme_color_override("font_color", Color("#ff8a80"))
+	alert.add_theme_color_override("font_outline_color", Color("#090f15"))
+	alert.add_theme_constant_override("outline_size", 6)
+	alert.text = "!"
+	alert.position = Vector2(-6, -8)
+	alert.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	alert.visible = false
+	add_child(alert)
 	caption = Label.new()
 	caption.add_theme_font_override("font", FONT)
 	caption.add_theme_font_size_override("font_size", 8)
@@ -69,6 +81,7 @@ func refresh() -> void:
 	if (shows_overlay):
 		overlay.texture = RunData.objective_overlay(int(entry["objective"]))
 	checkmark.visible = state == "done"
+	alert.visible = shows_overlay and state != "done" and RunBattleConfig.capability_warning(int(entry["objective"])) != ""
 	marker.visible = state == "current"
 	corners.visible = state == "current" or (is_focus and state == "normal")
 	if (state == "current"):

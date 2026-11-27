@@ -19,10 +19,13 @@ size = Vector2(5, 5)
 [resource]
 script = ExtResource("2_air")
 name = "plane"
-health = 6.0
+surface_damage_mult = 0.2
+base_damage_override = 0.2
+prefers_air = true
+health = 3.0
 speed = 110.0
 radar_distance = 500
-price = 8
+price = 5
 produce_cd = 3
 unit_class = 2
 unlock_cost = 50

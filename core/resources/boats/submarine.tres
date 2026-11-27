@@ -24,7 +24,7 @@ size = Vector2(36, 6)
 [resource]
 script = ExtResource("s_boat")
 name = "submarine"
-speed = 170.0
+speed = 285.0
 price = 13
 health = 20.0
 unit_class = 4

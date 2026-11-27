@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/entities/guns/scripts/homing_missile_gun.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/entities/bullets/missile.tscn" id="2"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/guns/heli_homing_missile_pod.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/game/troops/guns/projectiles/missile_medium_projectile.png" id="4"]
+
+[node name="Gun" type="Node2D" node_paths=PackedStringArray("end_barrel", "base")]
+script = ExtResource("1")
+gun_type = 21
+time_to_shoot = 90
+damage_scale = 3.0
+bullet_speed_scale = 1.5
+range_override = 300.0
+hits_air = false
+base_damage_mult = 0.25
+projectile_texture = ExtResource("4")
+bullet = ExtResource("2")
+end_barrel = NodePath("EndBarrel")
+base = NodePath("Base")
+
+[node name="Base" type="Sprite2D" parent="."]
+texture = ExtResource("3")
+
+[node name="EndBarrel" type="Marker2D" parent="."]
+position = Vector2(6, 2)
+gizmo_extents = 0.0

@@ -15,6 +15,7 @@ uniform float mist_y = 356.0;
 uniform float mist_scale = 0.6;
 uniform float mist_bias = -0.04;
 uniform float mist_speed = 0.9;
+uniform float fade : hint_range(0.0, 1.0) = 1.0;
 
 void fragment() {
 	vec2 px = floor(UV * rect_size);
@@ -43,5 +44,5 @@ void fragment() {
 			out_col = vec4(mm.rgb / mm.a, mm.a);
 		}
 	}
-	COLOR = out_col;
+	COLOR = vec4(out_col.rgb, out_col.a * fade);
 }

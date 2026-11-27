@@ -1,5 +1,6 @@
 extends Node
 func _ready() -> void:
+	SaveManager.use_test_directory()
 	Global.run = null
 	Global.player_stats = Global.player_stats.duplicate()
 	for starter : String in ["mini", "small"]:

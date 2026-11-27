@@ -13,6 +13,8 @@ var bullet_manager : BulletManager
 @export
 var item_manager : ItemManager
 
+var gear_drops : bool = true
+
 
 func _ready() -> void:
 	for base in bases:
@@ -67,5 +69,6 @@ func handle_ship_destroy(pos : Vector2, _entity_stats : EntityStats, team_stats 
 	if (_entity_stats.is_boss):
 		boss_defeated.emit(_entity_stats)
 	item_manager.award_kill_screws(_entity_stats, pos)
-	item_manager.handle_random_spawn(pos, true)
+	if (gear_drops):
+		item_manager.handle_random_spawn(pos, true)
 	pass

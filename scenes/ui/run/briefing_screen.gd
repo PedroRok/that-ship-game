@@ -60,6 +60,9 @@ func _build_mission_panel() -> Control:
 	head.add_child(_label(Loc.t(RunData.OBJECTIVES[objective]["name"]), 24, TEXT, true))
 	box.add_child(head)
 	box.add_child(_wrapped(Loc.t(RunData.OBJECTIVES[objective]["text"]), 12, TEXT))
+	var warning : String = RunBattleConfig.capability_warning(objective)
+	if (warning != ""):
+		box.add_child(_wrapped(warning, 12, DANGER))
 	box.add_child(_divider())
 	weather_info = VBoxContainer.new()
 	box.add_child(weather_info)

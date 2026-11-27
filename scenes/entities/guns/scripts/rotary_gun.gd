@@ -17,9 +17,7 @@ var _frame : int = 0
 
 func _facing() -> float:
 	var entity : Entity = get_parent() as Entity
-	if (entity and entity.team_stats):
-		return 1.0 if entity.team_stats.direction >= 0 else -1.0
-	return 1.0
+	return entity.facing() if entity else 1.0
 
 func _aim_vector() -> Vector2:
 	return enemy.get_center_pos() - end_barrel.global_position

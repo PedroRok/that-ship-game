@@ -89,7 +89,8 @@ func _build() -> void:
 		var summary : Dictionary = run.end_summary
 		box.add_child(style._header("run.run_won" if won else "run.run_lost", "icon_pause_v01.png" if won else "icon_alert_v01.png"))
 		box.add_child(style._inset(_text(run.end_reason, TEXT_COLOR_OF(won), 40)))
-		lines = [Loc.t("run.gears") + ": +%d" % int(summary.get("gears", 0)),
+		var mission_gears : int = int(run.node_result.get("gears", 0)) if won else 0
+		lines = [Loc.t("run.gears") + ": +%d" % (int(summary.get("gears", 0)) + mission_gears),
 				Loc.t("run.boss_coins") + ": +%d" % int(summary.get("boss_coins", 0)),
 				Loc.t("run.floors") + ": %02d / %02d" % [int(summary.get("floors", 0)), RunData.COLUMNS]]
 	else:
@@ -101,6 +102,7 @@ func _build() -> void:
 				else Loc.t("run.the_objective_was_lost_the") % RunData.FAIL_BASE_DAMAGE
 		box.add_child(style._inset(_text(reason, TEXT_COLOR_OF(success), 40)))
 		lines = [Loc.t("run.screws_earned") + ": +%d" % int(result.get("screws", 0)),
+				Loc.t("run.gears") + ": +%d" % int(result.get("gears", 0)),
 				Loc.t("run.base_damage") + ": -%d HP" % int(result.get("damage", 0)),
 				Loc.t("run.hp_left") % [run.base_hp, run.base_max_hp]]
 		if (offered):

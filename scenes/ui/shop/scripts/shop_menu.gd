@@ -209,7 +209,10 @@ func _icon_value(icon : Texture2D, text : String, color : Color = TEXT) -> HBoxC
 	return row
 
 func _start_screws() -> int:
-	return int(Global.modify(Enums.UpgradeTarget.BASE, &"start_screw", Global.player_stats.start_screw))
+	var value : float = Global.modify(Enums.UpgradeTarget.BASE, &"start_screw", Global.player_stats.start_screw)
+	if (Global.fleet_visit and Global.run):
+		value = Global.run.modify(RunData.T_BASE, &"start_screw", value)
+	return int(value)
 
 func _is_available(unit : BoatStats) -> bool:
 	var stats : PlayerStats = Global.player_stats
@@ -277,7 +280,7 @@ func _build_header() -> PanelContainer:
 	row.add_child(start)
 	row.add_child(_spacer())
 	for entry : Dictionary in [
-			{"text": "shop.change_mode", "width": 150, "action": func() -> void: Global.change_scene(Global.Menu.CAMPAIGN_SELECT)},
+			{"text": "run.back_to_map" if Global.fleet_visit else "shop.change_mode", "width": 150, "action": _on_leave_pressed},
 			{"text": "research.research", "width": 130, "action": func() -> void: Global.change_scene(Global.Menu.RESEARCH)},
 			{"text": "menu.options", "width": 130, "action": Global.open_options}]:
 		var button : Button = Button.new()
@@ -928,12 +931,27 @@ func _toggle_loadout(unit : EntityStats) -> void:
 		Global.save_game()
 	_refresh_all()
 
+func _on_leave_pressed() -> void:
+	if (Global.fleet_visit):
+		_return_to_map()
+		return
+	Global.change_scene(Global.Menu.CAMPAIGN_SELECT)
+
+func _return_to_map() -> void:
+	Global.fleet_visit = false
+	RunFlow.continue_run()
+
 func _start_text() -> String:
+	if (Global.fleet_visit):
+		return "run.back_to_map"
 	if (Global.start_mode == Global.StartMode.CAMPAIGN):
 		return "menu.continue_campaign" if !Global.start_new_campaign else "shop.start_campaign"
 	return "shop.start_endless"
 
 func _on_start_pressed() -> void:
+	if (Global.fleet_visit):
+		_return_to_map()
+		return
 	if (Global.start_mode == Global.StartMode.CAMPAIGN):
 		if (Global.start_new_campaign):
 			RunFlow.start_new_run()

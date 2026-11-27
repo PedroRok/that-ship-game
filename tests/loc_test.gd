@@ -1,6 +1,7 @@
 extends Node
 
 func _ready() -> void:
+	SaveManager.use_test_directory()
 	var en : Dictionary = Loc.languages()[0]["entries"]
 	for lang : Dictionary in Loc.languages():
 		var missing : int = 0

@@ -17,9 +17,6 @@ var enemy_base : Base
 const WIN_SCREEN = preload("res://scenes/ui/game/win_screen/win_screen.tscn")
 const WAVE_TABLE = preload("res://core/resources/waves/wave_table.tres")
 
-const GEARS_PER_WAVE : int = 2
-const VICTORY_BONUS : int = 10
-
 @onready
 var canvas_layer : CanvasLayer = $CanvasLayer
 
@@ -27,7 +24,8 @@ var game_ended : bool = false
 var wave_manager : WaveManager
 var skill_manager : SkillManager
 var wave_label : Label
-var boss_coins_in_round : int = 0
+var endless : EndlessDirector
+var _warning_label : Label
 var campaign : CampaignBattle
 
 var base_distance : float = RunData.CLASSIC_DISTANCE
@@ -64,6 +62,7 @@ func _ready() -> void:
 	audio.name = "BattleAudio"
 	audio.camera = camera
 	add_child(audio)
+	add_child(DebugOverlay.new())
 	var legacy_ui : Control = $CanvasLayer/GameUI as Control
 	legacy_ui.hide()
 	legacy_ui.process_mode = Node.PROCESS_MODE_INHERIT
@@ -75,7 +74,7 @@ func _ready() -> void:
 	if (!campaign_mode):
 		ally_base.death_event.connect(base_death_event)
 		enemy_base.death_event.connect(base_death_event)
-		$ShipsManager.boss_defeated.connect(_on_boss_defeated)
+		$ShipsManager.gear_drops = false
 
 		wave_manager = WaveManager.new()
 		wave_manager.table = WAVE_TABLE
@@ -98,6 +97,12 @@ func _ready() -> void:
 		campaign = CampaignBattle.new()
 		campaign.setup(self, run)
 	else:
+		endless = EndlessDirector.new()
+		endless.name = "EndlessDirector"
+		endless.setup(self, randi())
+		endless.unit_unlocked.connect(_on_unit_unlocked)
+		add_child(endless)
+		wave_manager.wave_started.connect(func(_number : int, wave : WaveData) -> void: endless.on_wave(wave))
 		wave_manager.start()
 
 func _unhandled_input(event : InputEvent) -> void:
@@ -117,9 +122,25 @@ func _on_wave_started(number : int, wave : WaveData) -> void:
 		text += "  - BOSS"
 	wave_label.text = text
 
-func _on_boss_defeated(boss_stats : EntityStats) -> void:
-	boss_coins_in_round += boss_stats.boss_coin_reward
-	Global.player_stats.boss_coin += boss_stats.boss_coin_reward
+func _on_unit_unlocked(unit : BoatStats) -> void:
+	if (_warning_label == null):
+		_warning_label = Label.new()
+		_warning_label.name = "ThreatWarning"
+		_warning_label.add_theme_font_override("font", load("res://assets/fonts/dogicabold.ttf") as Font)
+		_warning_label.add_theme_font_size_override("font_size", 16)
+		_warning_label.add_theme_color_override("font_color", Color("#ffb4a8"))
+		_warning_label.add_theme_color_override("font_outline_color", Color("#090f15"))
+		_warning_label.add_theme_constant_override("outline_size", 8)
+		_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_warning_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_warning_label.position = Vector2(240, 150)
+		_warning_label.size = Vector2(800, 24)
+		canvas_layer.add_child(_warning_label)
+	_warning_label.text = (Loc.t("battle.enemy_new_unit") % Loc.named("unit", unit.name)).to_upper()
+	_warning_label.modulate.a = 1.0
+	var tween : Tween = _warning_label.create_tween()
+	tween.tween_interval(3.0)
+	tween.tween_property(_warning_label, "modulate:a", 0.0, 0.5)
 
 func base_death_event(team_stats: TeamStats) -> void:
 	if (game_ended):
@@ -129,19 +150,13 @@ func base_death_event(team_stats: TeamStats) -> void:
 	skill_manager.stop()
 	var victory : bool = team_stats.team_id != 1
 	var waves_reached : int = max(wave_manager.current_wave_number() - 1, 0)
-	var wave_gears : int = int(waves_reached * Global.modify(Enums.UpgradeTarget.BASE, &"gears_per_wave", GEARS_PER_WAVE))
-	var bonus : int = VICTORY_BONUS if victory else 0
-
 	var win_screen : Node = WIN_SCREEN.instantiate()
 	win_screen.title = "battle.victory" if victory else "battle.defeat"
+	win_screen.rewards = false
 	win_screen.rows = [
-		{"label": Loc.t("battle.waves_reached") % waves_reached, "value": wave_gears},
-		{"label": "battle.gears_collected", "value": gears_collected_in_round},
-		{"label": "battle.victory_bonus", "value": bonus},
-		{"label": "battle.boss_coins", "value": boss_coins_in_round},
+		{"label": "battle.waves_survived", "value": waves_reached},
+		{"label": "battle.threat_level", "value": endless.level},
 	]
-	win_screen.total = wave_gears + bonus + gears_collected_in_round
-	Global.player_stats.gear += wave_gears + bonus
 	Global.player_stats.best_wave = max(Global.player_stats.best_wave, waves_reached)
 	Global.save_game()
 	canvas_layer.call_deferred("add_child", win_screen)

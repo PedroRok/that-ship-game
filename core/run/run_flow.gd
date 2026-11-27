@@ -25,6 +25,10 @@ static func has_saved_run() -> bool:
 static func start_new_run() -> void:
 	SaveManager.delete_run()
 	Global.run = RunState.create()
+	if (Global.player_stats.campaigns_started == 0):
+		Global.run.soften_first_floor()
+	Global.player_stats.campaigns_started += 1
+	Global.save_game()
 	advance()
 
 static func continue_run() -> void:

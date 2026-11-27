@@ -36,6 +36,14 @@ static func create(new_seed : int = 0) -> RunState:
 	run.base_hp = run.base_max_hp
 	return run
 
+func soften_first_floor() -> void:
+	var easy : Array[int] = [RunData.Objective.DESTROY_BASE, RunData.Objective.DEFEND, RunData.Objective.ESCORT]
+	for id : int in map.first_ids():
+		var entry : Dictionary = map.get_node(id)
+		var objective : int = int(entry["objective"])
+		if (objective == RunData.Objective.HUNT_SUBMARINE or objective == RunData.Objective.SHOOT_DOWN_BOMBER):
+			entry["objective"] = easy[absi(seed_value + id) % easy.size()]
+
 func is_active() -> bool:
 	return result == RunData.Result.NONE and stage != RunData.Stage.ENDED
 
@@ -129,7 +137,7 @@ func _effect_sources() -> Array[Dictionary]:
 	for risk_id : StringName in risks:
 		for effect : Dictionary in RunData.RISKS[risk_id]["effects"]:
 			effects.append(effect)
-	if (stage == RunData.Stage.BATTLE and current_node >= 0):
+	if (stage == RunData.Stage.BATTLE and pending_node >= 0):
 		for effect : Dictionary in RunData.WEATHER[battle_weather()]["effects"]:
 			effects.append(effect)
 	return effects
@@ -222,7 +230,7 @@ func start_battle() -> bool:
 	stage = RunData.Stage.BATTLE
 	return true
 
-func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, boss_defeated : bool) -> void:
+func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, boss_defeated : bool, enemy_base_destroyed : bool = false) -> void:
 	if (stage != RunData.Stage.BATTLE):
 		return
 	var node : Dictionary = map.get_node(pending_node)
@@ -239,10 +247,14 @@ func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, bo
 			_end_run(RunData.Result.LOST, "run.the_objective_failed_and_the")
 			return
 	var gained : int = 0
+	var mission_gears : int = 0
 	var offer : bool = false
 	if (success):
 		gained = expected_screws(pending_node)
 		screws += gained
+		mission_gears = RunData.GEARS_BASE_DESTROYED if enemy_base_destroyed else RunData.GEARS_PER_MISSION
+		Global.player_stats.gear += mission_gears
+		Global.save_game()
 		var heal : int = int(modify(RunData.T_RUN, &"heal_after_battle", 0.0))
 		base_hp = mini(base_hp + heal, base_max_hp)
 		var chance : float = 1.0 if int(node["type"]) == RunData.NodeType.ELITE else RunData.RELIC_CHANCE_BATTLE
@@ -253,7 +265,7 @@ func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, bo
 	if (boss_defeated):
 		boss_coins += RunData.BOSS_COINS_ON_VICTORY
 	node_result = {
-		"node": pending_node, "success": success, "screws": gained, "damage": maxi(damage, 0),
+		"node": pending_node, "success": success, "screws": gained, "gears": mission_gears, "damage": maxi(damage, 0),
 		"base_hp": base_hp, "relic_offered": offer, "relic": &"", "risk_bonus": equipped_risks_bonus(),
 	}
 	if (offer):
@@ -426,7 +438,8 @@ func pay_rewards() -> void:
 	if (rewards_paid):
 		return
 	rewards_paid = true
-	var gears : int = history.size() * RunData.GEARS_PER_NODE
+	var war_bonds : float = Global.modify(Enums.UpgradeTarget.BASE, &"gears_per_wave", 0.0) * RunData.WAR_BONDS_NODE_MULT
+	var gears : int = history.size() * (RunData.GEARS_PER_NODE + int(war_bonds))
 	var coins : int = boss_coins
 	if (result == RunData.Result.WON):
 		gears += RunData.GEARS_VICTORY_BONUS

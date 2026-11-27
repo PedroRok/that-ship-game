@@ -30,8 +30,9 @@ size = Vector2(28, 8)
 [resource]
 script = ExtResource("s_boat")
 name = "flak"
+retreats_from_ships = true
 speed = 400.0
-price = 7
+price = 12
 health = 14.0
 unit_class = 3
 unlock_cost = 35

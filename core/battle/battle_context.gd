@@ -8,6 +8,13 @@ var bases: Array[Base] = []
 var bullets: BulletManager
 var audio_enabled: bool = true
 var audio: BattleAudio
+var patrol_x: float = NAN
+
+func has_patrol() -> bool:
+	return not is_nan(patrol_x)
+
+func outside_patrol(node: Node2D) -> bool:
+	return has_patrol() and absf(node.global_position.x - patrol_x) > RunData.PATROL_RADIUS + RunData.PATROL_SLACK
 
 static func of(node: Node) -> BattleContext:
 	var viewport: Viewport = node.get_viewport()

@@ -11,17 +11,23 @@
 [sub_resource type="Resource" id="slot_0"]
 script = ExtResource("s_slot")
 position = Vector2(19, 7)
-allowed_types = Array[int]([13])
+allowed_types = Array[int]([22])
 with_base = true
 max_size = 1
 
 [sub_resource type="Resource" id="slot_1"]
 script = ExtResource("s_slot")
-position = Vector2(9, 7)
-allowed_types = Array[int]([14, 15])
+position = Vector2(12, 7)
+allowed_types = Array[int]([22])
 with_base = true
 max_size = 1
-type_positions = {14: Vector2(5, 7), 15: Vector2(13, 7)}
+
+[sub_resource type="Resource" id="slot_2"]
+script = ExtResource("s_slot")
+position = Vector2(5, 7)
+allowed_types = Array[int]([14])
+with_base = true
+max_size = 1
 
 [sub_resource type="RectangleShape2D" id="hit"]
 size = Vector2(28, 10)
@@ -32,15 +38,16 @@ size = Vector2(10, 6)
 [resource]
 script = ExtResource("s_main")
 name = "heli_heavy"
-health = 22.0
-speed = 55.0
+prefers_submerged = true
+health = 23.4
+speed = 66.0
 radar_distance = 400
 price = 24
 produce_cd = 7
 unit_class = 2
 unlock_cost = 160
 sprite = ExtResource("body")
-gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0"), SubResource("slot_1")])
+gun_slots = Array[ExtResource("s_slot")]([SubResource("slot_0"), SubResource("slot_1"), SubResource("slot_2")])
 hitbox_colision_shape = SubResource("hit")
 particles_shape = SubResource("part")
 body_frames = Array[Texture2D]([ExtResource("body")])

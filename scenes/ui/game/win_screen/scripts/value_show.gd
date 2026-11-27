@@ -12,6 +12,8 @@ var delay_to_show : int = 0
 @export
 var show_time : int = 0
 
+var with_icon : bool = true
+
 @onready
 var label : Label = $ValueLabel
 
@@ -55,7 +57,7 @@ func generate_aligned_text(left_text: String, right_text: String, total_width: i
 	
 
 func show_icon(show_icon : bool = true) ->void:
-	if show_icon:
+	if show_icon and with_icon:
 		icon.modulate.a = 1
 	else:
 		icon.modulate.a = 0

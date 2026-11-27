@@ -18,7 +18,7 @@ enum UpgradeOp { ADD, MULTIPLY }
 
 enum GunSize { SMALL, MEDIUM, LARGE }
 
-enum Guns { SMALL_GUN, SMALL_MISSILE, MEDIUM_GUN, LARGE_GUN, MEDIUM_MISSILE, LARGE_MISSILE, SMALL_AA, MEDIUM_AA, SMALL_TORPEDO, MEDIUM_TORPEDO, BOMB, DEPTH_BOMB, ROTARY_SMALL, ROTARY_TWIN, HELI_DEPTH, HOMING_MISSILE, TWIN_CANNON, AIR_MISSILE, AIR_BOMB, SAM_VERTICAL, SAM_HEAVY }
+enum Guns { SMALL_GUN, SMALL_MISSILE, MEDIUM_GUN, LARGE_GUN, MEDIUM_MISSILE, LARGE_MISSILE, SMALL_AA, MEDIUM_AA, SMALL_TORPEDO, MEDIUM_TORPEDO, BOMB, DEPTH_BOMB, ROTARY_SMALL, ROTARY_TWIN, HELI_DEPTH, HOMING_MISSILE, TWIN_CANNON, AIR_MISSILE, AIR_BOMB, SAM_VERTICAL, SAM_HEAVY, HELI_ASM, HEAVY_ASM, DEPTH_LAUNCHER }
 
 const gun_sizes : Dictionary = {
 	Guns.SMALL_GUN : GunSize.SMALL,
@@ -41,7 +41,10 @@ const gun_sizes : Dictionary = {
 	Guns.AIR_MISSILE : GunSize.SMALL,
 	Guns.AIR_BOMB : GunSize.SMALL,
 	Guns.SAM_VERTICAL : GunSize.SMALL,
-	Guns.SAM_HEAVY : GunSize.SMALL
+	Guns.SAM_HEAVY : GunSize.SMALL,
+	Guns.HELI_ASM : GunSize.SMALL,
+	Guns.HEAVY_ASM : GunSize.MEDIUM,
+	Guns.DEPTH_LAUNCHER : GunSize.SMALL
 }
 
 const gun_screw_cost : Dictionary = {
@@ -73,7 +76,10 @@ const guns : Dictionary = {
 	Guns.AIR_MISSILE : "res://scenes/entities/guns/air_missile.tscn",
 	Guns.AIR_BOMB : "res://scenes/entities/guns/air_bomb.tscn",
 	Guns.SAM_VERTICAL : "res://scenes/entities/guns/sam_vertical.tscn",
-	Guns.SAM_HEAVY : "res://scenes/entities/guns/sam_heavy.tscn"
+	Guns.SAM_HEAVY : "res://scenes/entities/guns/sam_heavy.tscn",
+	Guns.HELI_ASM : "res://scenes/entities/guns/heli_asm.tscn",
+	Guns.HEAVY_ASM : "res://scenes/entities/guns/heavy_asm.tscn",
+	Guns.DEPTH_LAUNCHER : "res://scenes/entities/guns/depth_launcher.tscn"
 }
 
 const gun_info : Dictionary = {

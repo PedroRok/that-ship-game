@@ -36,15 +36,22 @@ var build_boost_mult : float = 1.0
 var _destroyed : bool = false
 var _max_health : float = 1.0
 var _damage_material : ShaderMaterial
+var _dock_materials : Array[ShaderMaterial] = []
 
 const DAMAGE_SHADER : Shader = preload("res://shaders/damage.tres")
 const DAMAGE_MIN_DISSOLVE : float = 0.93
 const DAMAGE_NOISE_SIZE : int = 128
 const DAMAGE_NOISE_FREQUENCY : float = 0.22
-const FIRE_MAX_AMOUNT : int = 90
-const FIRE_MIN_RATIO : float = 0.3
+const FIRE_MAX_AMOUNT : int = 270
+const FIRE_MIN_RATIO : float = 0.02
+const FIRE_CURVE : float = 3.5
 
 var _fire : GPUParticles2D
+var _fire_area_dirty : bool = true
+
+const FIRE_POINT_STEP : int = 3
+const FIRE_WATER_MARGIN : float = 6.0
+const FIRE_RISE : float = 40.0
 
 signal death_event(team_stats : TeamStats)
 
@@ -77,6 +84,16 @@ func _ready() -> void:
 		var constructor : ShipConstructor = constructors[dock_type]
 		constructor.ship_build_finish.connect(_ship_build_finish.bind(constructor))
 		queues[dock_type] = []
+	var damaged_layers : Array[Sprite2D] = []
+	var naval_dock : Sprite2D = get_node_or_null("BaseSprite/dock") as Sprite2D
+	if (naval_dock):
+		damaged_layers.append(naval_dock)
+	for dock : BaseDock in docks.values():
+		damaged_layers.append_array(dock.damage_sprites())
+	for sprite : Sprite2D in damaged_layers:
+		var material : ShaderMaterial = _make_dock_material(sprite)
+		sprite.material = material
+		_dock_materials.append(material)
 
 func _process(_delta : float) -> void:
 	for dock_type : int in queues:
@@ -151,6 +168,17 @@ func _setup_damage_visual() -> void:
 		sprite.material = _damage_material
 	_setup_fire()
 
+func _make_dock_material(sprite : Sprite2D) -> ShaderMaterial:
+	var material : ShaderMaterial = _damage_material.duplicate() as ShaderMaterial
+	var base_noise : NoiseTexture2D = _damage_material.get_shader_parameter("Noise") as NoiseTexture2D
+	var noise : NoiseTexture2D = base_noise.duplicate() as NoiseTexture2D
+	var texel : float = _base_sprites[1].get_rect().size.x * absf(_base_sprites[1].scale.x) / float(DAMAGE_NOISE_SIZE)
+	var size : Vector2 = sprite.get_rect().size * sprite.scale.abs()
+	noise.width = maxi(roundi(size.x / texel), 1)
+	noise.height = maxi(roundi(size.y / texel), 1)
+	material.set_shader_parameter("Noise", noise)
+	return material
+
 func _setup_fire() -> void:
 	var shape_node : CollisionShape2D = get_node_or_null("BaseHitboxComponent/CollisionShape2D") as CollisionShape2D
 	var rect : RectangleShape2D = shape_node.shape as RectangleShape2D if shape_node else null
@@ -184,15 +212,81 @@ func _setup_fire() -> void:
 	_fire.visibility_rect = Rect2(-200, -200, 400, 400)
 	add_child(_fire)
 
+func _update_fire_area() -> void:
+	var process : ParticleProcessMaterial = _fire.process_material as ParticleProcessMaterial
+	var water : Array[Rect2] = []
+	var naval : Sprite2D = get_node_or_null("BaseSprite/dock") as Sprite2D
+	if (naval):
+		var bounds : Rect2 = naval.get_global_transform() * naval.get_rect()
+		var top : float = ShipEntity.WATER_LEVEL - FIRE_WATER_MARGIN
+		water.append(Rect2(bounds.position.x, top, bounds.size.x, maxf(bounds.end.y + FIRE_RISE - top, 0.0)))
+	var sprites : Array[Sprite2D] = [_base_sprites[1]]
+	var dock_sprites : Array[Sprite2D] = []
+	if (naval and naval.is_visible_in_tree()):
+		dock_sprites.append(naval)
+	for dock : BaseDock in docks.values():
+		if (!dock.active):
+			continue
+		dock_sprites.append_array(dock.damage_sprites())
+		if (dock.water_area().has_area()):
+			water.append(dock.water_area().grow_individual(0.0, 0.0, 0.0, FIRE_RISE))
+	var points : PackedVector2Array = PackedVector2Array()
+	for sprite : Sprite2D in sprites:
+		_collect_fire_points(sprite, water, INF, points)
+	for sprite : Sprite2D in dock_sprites:
+		var lowest : float = ShipEntity.WATER_LEVEL - FIRE_WATER_MARGIN
+		for dock : BaseDock in docks.values():
+			if (dock.type == BaseDock.Type.SUB and dock.damage_sprites().has(sprite)):
+				lowest = INF
+		_collect_fire_points(sprite, water, lowest, points)
+	if (points.is_empty()):
+		return
+	var data : Image = Image.create_empty(points.size(), 1, false, Image.FORMAT_RGBF)
+	for i : int in points.size():
+		data.set_pixel(i, 0, Color(points[i].x, points[i].y, 0.0))
+	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINTS
+	process.emission_point_texture = ImageTexture.create_from_image(data)
+	process.emission_point_count = points.size()
+	_fire.position = Vector2.ZERO
+	_fire.visibility_rect = Rect2(-700, -700, 1400, 1400)
+	_fire_area_dirty = false
+
+func _collect_fire_points(sprite : Sprite2D, water : Array[Rect2], lowest : float, points : PackedVector2Array) -> void:
+	if (!sprite.texture):
+		return
+	var image : Image = sprite.texture.get_image()
+	if (image.is_compressed()):
+		image.decompress()
+	var camera : Camera2D = get_viewport().get_camera_2d()
+	var size : Vector2 = Vector2(image.get_size())
+	var origin : Vector2 = sprite.offset - (size * 0.5 if sprite.centered else Vector2.ZERO)
+	var step : int = maxi(roundi(FIRE_POINT_STEP / absf(sprite.global_scale.x)), 1)
+	for y : int in range(0, image.get_height(), step):
+		for x : int in range(0, image.get_width(), step):
+			if (image.get_pixel(image.get_width() - 1 - x if sprite.flip_h else x, y).a < 0.5):
+				continue
+			var world : Vector2 = sprite.to_global(origin + Vector2(x, y))
+			if (world.y >= lowest or (camera and (world.x < camera.limit_left or world.x > camera.limit_right or world.y > camera.limit_bottom))):
+				continue
+			if (water.any(func(area : Rect2) -> bool: return area.has_point(world))):
+				continue
+			points.append(to_local(world))
+
 func update_damage_visual() -> void:
 	if (_damage_material == null):
 		return
 	var ratio : float = clampf(health_component.health / _max_health, 0.0, 1.0)
-	_damage_material.set_shader_parameter("dissolve", lerpf(1.0, DAMAGE_MIN_DISSOLVE, 1.0 - ratio))
+	var dissolve : float = lerpf(1.0, DAMAGE_MIN_DISSOLVE, 1.0 - ratio)
+	_damage_material.set_shader_parameter("dissolve", dissolve)
+	for material : ShaderMaterial in _dock_materials:
+		material.set_shader_parameter("dissolve", dissolve)
 	if (_fire):
+		if (_fire_area_dirty and ratio < 1.0):
+			_update_fire_area()
 		var damaged : bool = ratio < 1.0
 		_fire.emitting = damaged
-		_fire.amount_ratio = lerpf(FIRE_MIN_RATIO, 1.0, 1.0 - ratio) if damaged else 0.0
+		var growth : float = (exp(FIRE_CURVE * (1.0 - ratio)) - 1.0) / (exp(FIRE_CURVE) - 1.0)
+		_fire.amount_ratio = lerpf(FIRE_MIN_RATIO, 1.0, growth) if damaged else 0.0
 
 func _death_event() -> void:
 	if (!_destroyed):
@@ -270,6 +364,7 @@ func set_base_texture(texture : Texture2D) -> void:
 	refresh_base_art()
 
 func refresh_base_art() -> void:
+	_fire_area_dirty = true
 	var active_docks : Array[BaseDock] = []
 	for dock : BaseDock in docks.values():
 		if (dock.active):

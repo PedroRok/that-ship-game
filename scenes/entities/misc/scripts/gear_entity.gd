@@ -12,6 +12,9 @@ var target_control : Control
 var amount : int = 1
 var _flying : bool = false
 
+const AUTO_COLLECT_DELAY : float = 0.5
+var _auto_left : float = -1.0
+
 func _start_flight() -> void:
 	_flying = true
 	desapier = true
@@ -25,6 +28,8 @@ func _start_flight() -> void:
 
 func _ready() -> void:
 	add_to_group(&"collectible")
+	if (Global.modify(Enums.UpgradeTarget.BASE, &"auto_collect", 0.0) > 0.0):
+		_auto_left = AUTO_COLLECT_DELAY
 
 func collect_instantly() -> void:
 	if (desapier):
@@ -58,7 +63,15 @@ var is_glowing : bool = false
 var time_to_desapier : int = 60
 var desapier : bool = false
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	if (_auto_left > 0.0 and !desapier):
+		_auto_left -= delta
+		if (_auto_left <= 0.0):
+			if (is_instance_valid(target_control)):
+				_start_flight()
+			else:
+				collect_instantly()
+			return
 	time_to_change -= 1
 	if (time_to_change <= 0):
 		time_to_change = 30

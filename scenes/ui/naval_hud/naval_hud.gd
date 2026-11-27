@@ -5,6 +5,7 @@ signal open_menu
 const DEMO := preload("res://scenes/ui/naval_hud/battle_sandbox.gd")
 const FONT := preload("res://assets/fonts/dogicabold.ttf")
 const PIXEL_FONT := preload("res://assets/fonts/dogicapixel.ttf")
+const CLOCK_SCALE := 2.0
 const SCREW := preload("res://assets/game/misc/screw.png")
 const GEAR := preload("res://assets/game/misc/gear.png")
 const PANEL := Color("#151f25")
@@ -54,6 +55,8 @@ var enemy_hp: ProgressBar
 var ally_caption: Label
 var enemy_caption: Label
 var wave_caption: Label
+var wave_clock: Control
+var clock_color: Color = Color("#a3bec8")
 var queue_rows: Dictionary = {}
 var queue_titles: Dictionary = {}
 var queue_slots: Dictionary = {}
@@ -171,14 +174,37 @@ func _make_header() -> void:
 	top_panel = panel
 	add_child(panel)
 	panel.set_anchors_and_offsets_preset(PRESET_TOP_WIDE)
-	panel.offset_bottom = 38
-	var row := _row(_margin(panel, 5), 14)
+	var frame := StyleBoxTexture.new()
+	frame.texture = preload("res://assets/ui/pause/panel_frame_v01.png")
+	for side: String in ["left", "right", "top", "bottom"]:
+		frame.set("texture_margin_" + side, 16.0)
+		frame.set("content_margin_" + side, 0.0)
+	panel.add_theme_stylebox_override("panel", frame)
+	panel.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	panel.offset_bottom = 44
+	var inset := _margin(panel, 11)
+	for side: String in ["left", "right"]:
+		inset.add_theme_constant_override("margin_" + side, 20)
+	inset.add_theme_constant_override("margin_top", 14)
+	inset.add_theme_constant_override("margin_bottom", 8)
+	var row := _row(inset, 14)
 	ally_hp = _hp_bar(row, CYAN)
+	_make_segmented(ally_hp, CYAN)
 	ally_caption = ally_hp.get_meta("caption")
+	var middle := _row(row, 6)
+	middle.custom_minimum_size.x = 215
+	middle.alignment = BoxContainer.ALIGNMENT_CENTER
+	wave_clock = Control.new()
+	wave_clock.custom_minimum_size = Vector2(8, 8) * CLOCK_SCALE
+	wave_clock.size_flags_vertical = SIZE_SHRINK_CENTER
+	wave_clock.mouse_filter = MOUSE_FILTER_IGNORE
+	wave_clock.visible = false
+	wave_clock.draw.connect(_draw_clock)
+	middle.add_child(wave_clock)
 	wave_caption = _label("", true)
-	wave_caption.custom_minimum_size.x = 215
-	row.add_child(wave_caption)
+	middle.add_child(wave_caption)
 	enemy_hp = _hp_bar(row, Color("#eb6862"))
+	_make_segmented(enemy_hp, Color("#eb6862"))
 	enemy_caption = enemy_hp.get_meta("caption")
 	minimap = BattleMinimap.new()
 	minimap.round_scene = round_scene
@@ -202,6 +228,29 @@ func _hp_bar(row: HBoxContainer, color: Color) -> ProgressBar:
 	column.add_child(bar)
 	bar.set_meta("caption", caption)
 	return bar
+
+func _make_segmented(bar: ProgressBar, color: Color) -> void:
+	var empty: Texture2D = preload("res://assets/ui/hud/progress_empty_v01.png")
+	var full: Image = (preload("res://assets/ui/hud/progress_full_v01.png") as Texture2D).get_image()
+	full.convert(Image.FORMAT_RGBA8)
+	for y: int in full.get_height():
+		for x: int in full.get_width():
+			var pixel: Color = full.get_pixel(x, y)
+			full.set_pixel(x, y, Color(color.r * pixel.v, color.g * pixel.v, color.b * pixel.v, pixel.a))
+	var filled: Texture2D = ImageTexture.create_from_image(full)
+	bar.add_theme_stylebox_override("background", StyleBoxEmpty.new())
+	bar.add_theme_stylebox_override("fill", StyleBoxEmpty.new())
+	bar.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	bar.step = 0.0
+	bar.draw.connect(func() -> void:
+		var count: int = ceili(clampf(bar.value / maxf(bar.max_value, 0.001), 0.0, 1.0) * ObjectiveHud.SEGMENTS)
+		var width: float = bar.size.x / ObjectiveHud.SEGMENTS
+		for i: int in ObjectiveHud.SEGMENTS:
+			var left: float = roundf(i * width)
+			var area := Rect2(left, 0.0, roundf((i + 1) * width) - left, bar.size.y)
+			bar.draw_texture_rect(filled if i < count else empty, area, false))
+	bar.value_changed.connect(func(_value: float) -> void: bar.queue_redraw())
+	bar.changed.connect(bar.queue_redraw)
 
 func _make_console() -> void:
 	bottom_panel = _panel()
@@ -368,6 +417,11 @@ func _make_queues(col: VBoxContainer) -> void:
 		queue_screens[kind] = screens
 		queue_wells[kind] = wells
 		queue_percents[kind] = percents
+
+func _input(event: InputEvent) -> void:
+	var key := event as InputEventKey
+	if key and (key.keycode == KEY_TAB or key.physical_keycode == KEY_TAB):
+		get_viewport().set_input_as_handled()
 
 func _unit_icon(stats: EntityStats) -> Texture2D:
 	return UnitIcon.of(stats)
@@ -728,8 +782,10 @@ func _process(_delta: float) -> void:
 	_update_base_warning(round_scene.ally_base.health_component.health, ally_max)
 	if round_scene.wave_manager:
 		wave_caption.text = Loc.t("hud.wave") % round_scene.wave_manager.current_wave_number()
-	elif Global.run:
-		wave_caption.text = Loc.t("hud.floor") % (int(Global.run.map.get_node(Global.run.pending_node)["col"]) + 1)
+		if round_scene.endless:
+			wave_caption.text += "  " + Loc.t("hud.threat") % round_scene.endless.level
+	elif round_scene.campaign:
+		_update_clock(round_scene.campaign.hud)
 	if int(round_scene.get("boss_notice_until")) > Time.get_ticks_msec():
 		wave_caption.text += "  BOSS"
 	for kind: int in queue_rows:
@@ -740,6 +796,28 @@ func _process(_delta: float) -> void:
 		var label: String = Loc.named("unit", roster[selected].name).to_upper()
 		demo_title.text = "%s: %s" % [label.to_upper(), stat_buttons[&"targets"].tooltip_text] if key == &"targets" else label.to_upper()
 	menu.disabled = round_scene.game_ended
+
+func _update_clock(objective: ObjectiveHud) -> void:
+	if not wave_caption.has_theme_font_override("font"):
+		wave_caption.add_theme_font_override("font", FONT)
+		wave_caption.add_theme_font_size_override("font_size", 16)
+	var seconds: float = objective.time_left_seconds if objective.time_left_seconds >= 0.0 else objective.countdown
+	wave_clock.visible = seconds >= 0.0
+	var whole: int = ceili(seconds)
+	wave_caption.text = "%d:%02d" % [whole / 60, whole % 60] if seconds >= 0.0 else ""
+	var color: Color = Color("#dfa0a2") if seconds >= 0.0 and seconds <= 30.0 else Color("#a3bec8")
+	if color == clock_color:
+		return
+	clock_color = color
+	wave_caption.add_theme_color_override("font_color", color)
+	wave_clock.queue_redraw()
+
+func _draw_clock() -> void:
+	wave_clock.draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE * CLOCK_SCALE)
+	for rect: Rect2 in [Rect2(2, 0, 4, 1), Rect2(2, 7, 4, 1), Rect2(0, 2, 1, 4), Rect2(7, 2, 1, 4),
+			Rect2(1, 1, 1, 1), Rect2(6, 1, 1, 1), Rect2(1, 6, 1, 1), Rect2(6, 6, 1, 1),
+			Rect2(3, 2, 1, 3), Rect2(4, 4, 2, 1)]:
+		wave_clock.draw_rect(rect, clock_color)
 
 func _update_hp(bar: ProgressBar, caption: Label, title: String, current: float, full: float) -> void:
 	bar.max_value = maxf(1, full)
@@ -788,5 +866,8 @@ func _update_queue(kind: int) -> void:
 		slot.tooltip_text = Loc.t("hud.click_to_cancel_and_refund") % Loc.named("unit", stats.name).to_upper() if filled else ""
 
 func covers_point(point: Vector2) -> bool:
+	for blocker: Node in get_tree().get_nodes_in_group(BattleInfoPanel.BLOCKER_GROUP):
+		if (blocker as Control).get_global_rect().has_point(point):
+			return true
 	return top_panel.get_global_rect().has_point(point) or bottom_panel.get_global_rect().has_point(point) or minimap.get_global_rect().has_point(point)
 

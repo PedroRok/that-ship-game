@@ -15,6 +15,7 @@ func current_screen() -> Node:
 	return manager.menu_scene
 
 func _ready() -> void:
+	SaveManager.use_test_directory()
 	SaveManager.slot = 3
 	SaveManager.delete_slot(3)
 	manager = (load("res://scenes/ui/rounds_scene_manager/rounds_scene_manager.tscn") as PackedScene).instantiate()

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ShopCatalog" load_steps=45 format=3]
+[gd_resource type="Resource" script_class="ShopCatalog" load_steps=44 format=3]
 
 [ext_resource type="Script" path="res://core/resources/shop_catalog.gd" id="s_cat"]
 [ext_resource type="Script" path="res://core/resources/upgrade_stats.gd" id="s_up"]
@@ -88,11 +88,11 @@ gear_cost = Array[int]([15, 30, 45, 65, 90])
 script = ExtResource("s_up")
 id = &"gun_damage"
 name_key = "shop.heavy_shells"
-description_key = "shop.1_damage_for_all_guns"
+description_key = "shop.15_damage_for_all_guns"
 target = 2
 stat = &"damage"
-op = 0
-value_per_level = 1
+op = 1
+value_per_level = 0.15
 max_level = 3
 gear_cost = Array[int]([30, 60, 100])
 
@@ -340,11 +340,11 @@ tree_position = Vector2(4, 3)
 script = ExtResource("s_up")
 id = &"r_gun1"
 name_key = "shop.gunpowder_mix"
-description_key = "shop.1_damage_for_all_guns"
+description_key = "shop.15_damage_for_all_guns"
 target = 2
 stat = &"damage"
-op = 0
-value_per_level = 1
+op = 1
+value_per_level = 0.15
 max_level = 2
 gear_cost = Array[int]([60, 120])
 boss_coin_cost = Array[int]([0, 1])
@@ -367,11 +367,11 @@ tree_position = Vector2(6, 0)
 script = ExtResource("s_up")
 id = &"r_gun4"
 name_key = "shop.heavy_shells_ii"
-description_key = "shop.1_damage_for_all_guns"
+description_key = "shop.15_damage_for_all_guns"
 target = 2
 stat = &"damage"
-op = 0
-value_per_level = 1
+op = 1
+value_per_level = 0.15
 max_level = 1
 gear_cost = Array[int]([150])
 boss_coin_cost = Array[int]([2])
@@ -449,38 +449,6 @@ gear_cost = Array[int]([40, 70, 110])
 boss_coin_cost = Array[int]([0, 0, 1])
 tree_position = Vector2(8, 0)
 
-[sub_resource type="Resource" id="r_wpn_depth"]
-script = ExtResource("s_up")
-id = &"r_wpn_depth"
-name_key = "shop.depth_bombs"
-description_key = "shop.bomber_can_use_depth_bombs"
-target = 4
-stat = &"weapon_unlock"
-op = 0
-value_per_level = 1
-only_for = Array[String](["bomber"])
-unlocks_gun = 11
-max_level = 1
-gear_cost = Array[int]([120])
-requires = Array[ExtResource("s_up")]([SubResource("r_gun1")])
-tree_position = Vector2(5, 2)
-
-[sub_resource type="Resource" id="r_wpn_homing"]
-script = ExtResource("s_up")
-id = &"r_wpn_homing"
-name_key = "shop.homing_missiles"
-description_key = "shop.heavy_helicopter_can_use_homing"
-target = 4
-stat = &"weapon_unlock"
-op = 0
-value_per_level = 1
-only_for = Array[String](["heli_heavy"])
-unlocks_gun = 15
-max_level = 1
-gear_cost = Array[int]([140])
-requires = Array[ExtResource("s_up")]([SubResource("r_gun1")])
-tree_position = Vector2(6, 2)
-
 [sub_resource type="Resource" id="r_wpn_sam_heavy"]
 script = ExtResource("s_up")
 id = &"r_wpn_sam_heavy"
@@ -496,6 +464,20 @@ max_level = 1
 gear_cost = Array[int]([140])
 requires = Array[ExtResource("s_up")]([SubResource("r_gun1")])
 tree_position = Vector2(7, 2)
+
+[sub_resource type="Resource" id="r_auto_collect"]
+script = ExtResource("s_up")
+id = &"r_auto_collect"
+name_key = "shop.auto_collect"
+description_key = "shop.drops_are_collected_alone"
+target = 0
+stat = &"auto_collect"
+op = 0
+value_per_level = 1
+max_level = 1
+gear_cost = Array[int]([120])
+requires = Array[ExtResource("s_up")]([SubResource("r_eco3")])
+tree_position = Vector2(1, 2)
 
 [sub_resource type="Resource" id="r_queue_naval"]
 script = ExtResource("s_up")
@@ -542,4 +524,4 @@ tree_position = Vector2(2, 3)
 script = ExtResource("s_cat")
 units = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_tank"), ExtResource("b_torpedo"), ExtResource("b_flak"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_plane"), ExtResource("b_cruiser"), ExtResource("b_bomber"), ExtResource("b_sub"), ExtResource("b_sub_scout"), ExtResource("b_sub_hunter"), ExtResource("b_sub_sam"), ExtResource("b_interceptor"), ExtResource("b_missile_plane"), ExtResource("b_twin_bomber"), ExtResource("b_heli_scout"), ExtResource("b_heli_heavy")])
 upgrades = Array[ExtResource("s_up")]([SubResource("up_start_screw"), SubResource("up_base_health"), SubResource("up_screw_income"), SubResource("up_build_speed"), SubResource("up_unit_health"), SubResource("up_gun_damage"), SubResource("up_gun_rate")])
-research = Array[ExtResource("s_up")]([SubResource("r_eco1"), SubResource("r_eco5"), SubResource("r_eco2"), SubResource("r_eco3"), SubResource("r_eco4"), SubResource("r_base1"), SubResource("r_base2"), SubResource("r_base3"), SubResource("r_unit1"), SubResource("r_unit2"), SubResource("r_unit3"), SubResource("r_unit4"), SubResource("r_unit5"), SubResource("r_unit6"), SubResource("r_unit7"), SubResource("r_unit8"), SubResource("r_gun1"), SubResource("r_gun2"), SubResource("r_gun4"), SubResource("r_gun3"), SubResource("r_skill1"), SubResource("r_skill2"), SubResource("r_skill3"), SubResource("r_skill4"), SubResource("r_wpn_depth"), SubResource("r_wpn_homing"), SubResource("r_wpn_sam_heavy"), SubResource("r_queue_naval"), SubResource("r_queue_sub"), SubResource("r_queue_air")])
+research = Array[ExtResource("s_up")]([SubResource("r_eco1"), SubResource("r_eco5"), SubResource("r_eco2"), SubResource("r_eco3"), SubResource("r_eco4"), SubResource("r_auto_collect"), SubResource("r_base1"), SubResource("r_base2"), SubResource("r_base3"), SubResource("r_unit1"), SubResource("r_unit2"), SubResource("r_unit3"), SubResource("r_unit4"), SubResource("r_unit5"), SubResource("r_unit6"), SubResource("r_unit7"), SubResource("r_unit8"), SubResource("r_gun1"), SubResource("r_gun2"), SubResource("r_gun4"), SubResource("r_gun3"), SubResource("r_skill1"), SubResource("r_skill2"), SubResource("r_skill3"), SubResource("r_skill4"), SubResource("r_wpn_sam_heavy"), SubResource("r_queue_naval"), SubResource("r_queue_sub"), SubResource("r_queue_air")])

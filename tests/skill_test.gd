@@ -8,6 +8,7 @@ func check(ok : bool, label : String) -> void:
 		failures += 1
 
 func _ready() -> void:
+	SaveManager.use_test_directory()
 	Global.run = null
 	Global.player_stats = Global.player_stats.duplicate()
 	Global.player_stats.upgrade_levels = {}

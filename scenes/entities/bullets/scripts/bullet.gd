@@ -15,6 +15,8 @@ var attacker_class : Enums.UnitClass = Enums.UnitClass.STRUCTURE
 
 var hits_air : bool = true
 var hits_submerged : bool = false
+var base_damage_mult : float = 1.0
+var surface_damage_mult : float = -1.0
 
 var already_hit : Array[Area2D]
 
@@ -49,23 +51,38 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 			return
 		if (ship.entity_stats is AirPlaneState and !hits_air):
 			return
+		if (surface_damage_mult == 0.0 and !(ship.entity_stats is AirPlaneState)):
+			return
 		if (ship.team_stats.team_id != team):
 			if (area.enabled):
 				already_hit.append(area)
 				var scaled : Damage = damage.duplicate()
-				scaled.damage *= Global.counter_multiplier(attacker_class, ship.entity_stats.unit_class)
+				scaled.damage *= damage_mult_against(ship)
 				area.handle_hit(scaled, direction.x)
 				play_impact_sfx(ship.is_submerged())
 				if (bullet_stats.piercing <= already_hit.size()):
 					remove_bullet()
 	if (area is BaseHitboxComponent):
 		var base : Base = area.base
-		if (base.team_stats.team_id != team):
+		if (base.team_stats.team_id != team and surface_damage_mult != 0.0):
 			already_hit.append(area)
-			area.handle_hit(damage, direction.x)
+			area.handle_hit(damage_to_base(), direction.x)
 			if (bullet_stats.piercing <= already_hit.size()):
 				remove_bullet()
 	pass
+
+func damage_mult_against(victim : Entity) -> float:
+	if (surface_damage_mult >= 0.0 and !(victim.entity_stats is AirPlaneState)):
+		return surface_damage_mult
+	var mult : float = Global.counter_multiplier(attacker_class, victim.entity_stats.unit_class)
+	if (attacker_class == Enums.UnitClass.AIR and victim.entity_stats.name == "escort"):
+		mult *= RunData.ESCORT_AIR_DAMAGE
+	return mult
+
+func damage_to_base() -> Damage:
+	var scaled : Damage = damage.duplicate()
+	scaled.damage *= base_damage_mult
+	return scaled
 
 func play_impact_sfx(underwater : bool = false) -> void:
 	BattleAudio.play_at(self, &"hull_impact", global_position, null, underwater)

@@ -1,10 +1,20 @@
 class_name BulletDepthBomb
 extends BulletBomb
 
-const SINK_SPEED : float = 60.0
-const MAX_DEPTH : float = 90.0
+const SINK_SPEED : float = 35.0
+const MAX_DEPTH : float = 110.0
+const WATER_DRAG : float = 240.0
 
 var _entered_water : bool = false
+
+static func lead_x(target : Node2D) -> float:
+	var unit : Entity = target as Entity
+	if (!unit or !unit.is_submerged()):
+		return 0.0
+	return unit.linear_velocity.x * maxf(unit.get_center_pos().y - WATER_Y, 0.0) / SINK_SPEED
+
+static func water_drift(carrier_speed : float) -> float:
+	return carrier_speed * carrier_speed / (2.0 * WATER_DRAG)
 
 func _physics_process(delta : float) -> void:
 	if (exploded):
@@ -14,7 +24,7 @@ func _physics_process(delta : float) -> void:
 		if (!_entered_water):
 			_entered_water = true
 			BattleAudio.play_at(self, &"water_impact", Vector2(global_position.x, WATER_Y))
-		velocity.x = move_toward(velocity.x, 0.0, 240.0 * delta)
+		velocity.x = move_toward(velocity.x, 0.0, WATER_DRAG * delta)
 		velocity.y = minf(velocity.y, SINK_SPEED)
 		if (global_position.y >= WATER_Y + MAX_DEPTH or _at_submarine_depth()):
 			_area_blast()
@@ -22,12 +32,22 @@ func _physics_process(delta : float) -> void:
 	global_position += velocity * delta
 	rotation = velocity.angle()
 
+func _draw() -> void:
+	var light : Color = Color("3f4b53")
+	var shade : Color = Color("262f38")
+	var dark : Color = Color("14181d")
+	draw_rect(Rect2(-1.5, -1.5, 3, 1), light)
+	draw_rect(Rect2(-2.5, -0.5, 5, 1), light)
+	draw_rect(Rect2(-1.5, -0.5, 1, 1), shade)
+	draw_rect(Rect2(0.5, -0.5, 1, 1), shade)
+	draw_rect(Rect2(-1.5, 0.5, 3, 1), dark)
+
 func _at_submarine_depth() -> bool:
 	for node : Node in BattleContext.of(self).entities:
 		var entity : Entity = node as Entity
 		if (!entity or !entity.enabled or entity.team_stats.team_id == team or !entity.is_submerged()):
 			continue
-		if (abs(entity.global_position.x - global_position.x) <= radius and global_position.y >= entity.global_position.y):
+		if (abs(entity.global_position.x - global_position.x) <= radius and global_position.y >= entity.get_center_pos().y):
 			return true
 	return false
 
@@ -39,9 +59,9 @@ func _area_blast() -> void:
 		var entity : Entity = node as Entity
 		if (!entity or !entity.enabled or entity.team_stats.team_id == team or entity.entity_stats is AirPlaneState):
 			continue
-		if (abs(entity.global_position.x - global_position.x) <= radius and abs(entity.global_position.y - global_position.y) <= radius * 1.5):
+		if (abs(entity.global_position.x - global_position.x) <= radius and abs(_depth_of(entity) - global_position.y) <= radius * 1.5):
 			var hit : Damage = base_damage.duplicate()
-			hit.damage *= Global.counter_multiplier(attacker_class, entity.entity_stats.unit_class)
+			hit.damage *= damage_mult_against(entity)
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
@@ -55,7 +75,7 @@ func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : 
 		return
 	if (area is HitboxComponent):
 		var ship : Entity = area.entity
-		if (ship.team_stats.team_id != team and area.enabled and !(ship.entity_stats is AirPlaneState)):
+		if (ship.team_stats.team_id != team and area.enabled and !ship.is_submerged() and !(ship.entity_stats is AirPlaneState)):
 			_hit_target(ship)
 	elif (area is BaseHitboxComponent):
 		if (area.base.team_stats.team_id != team):
@@ -64,7 +84,7 @@ func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : 
 func _hit_target(ship : Entity) -> void:
 	exploded = true
 	var hit : Damage = damage.duplicate()
-	hit.damage *= Global.counter_multiplier(attacker_class, ship.entity_stats.unit_class)
+	hit.damage *= damage_mult_against(ship)
 	var hitbox : HitboxComponent = ship.get_node_or_null("HitboxComponent") as HitboxComponent
 	if (hitbox):
 		hitbox.handle_hit(hit, 0.0)
@@ -73,9 +93,12 @@ func _hit_target(ship : Entity) -> void:
 
 func _hit_base(base : Base) -> void:
 	exploded = true
-	base.health_component.handle_hit(damage.duplicate())
+	base.health_component.handle_hit(damage_to_base())
 	play_impact_sfx()
 	_blast()
+
+func _depth_of(entity : Entity) -> float:
+	return entity.get_center_pos().y if entity.is_submerged() else entity.global_position.y
 
 func _blast() -> void:
 	var flash : BulletBomb.BombBlast = BulletBomb.BombBlast.new()

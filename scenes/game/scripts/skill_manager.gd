@@ -3,14 +3,14 @@ extends Node
 
 signal bomb_dropped(position : Vector2)
 
-const BOMB_COST : int = 12
+const BOMB_COST : int = SkillCatalog.BOMB_COST
 const BOMB_COOLDOWN : float = 25.0
 const BOMB_COUNT : int = 5
 const BOMB_RADIUS : float = 70.0
 const BOMB_SPREAD : float = 130.0
 const BOMB_DAMAGE : float = 4.0
 
-const BOOST_COST : int = 8
+const BOOST_COST : int = SkillCatalog.BOOST_COST
 const BOOST_COOLDOWN : float = 30.0
 const BOOST_DURATION : float = 8.0
 const BOOST_BUILD_MULT : float = 0.5

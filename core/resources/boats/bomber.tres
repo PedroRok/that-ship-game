@@ -18,7 +18,7 @@
 [sub_resource type="Resource" id="slot_1"]
 script = ExtResource("s_slot")
 position = Vector2(9, 0)
-allowed_types = Array[int]([10, 11])
+allowed_types = Array[int]([10])
 with_base = false
 max_size = 0
 
@@ -32,7 +32,7 @@ size = Vector2(6, 6)
 script = ExtResource("s_air")
 name = "bomber"
 health = 14.0
-speed = 90.0
+speed = 105.0
 radar_distance = 500
 price = 15
 produce_cd = 5

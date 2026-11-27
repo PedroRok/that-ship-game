@@ -24,10 +24,13 @@ size = Vector2(6, 6)
 [resource]
 script = ExtResource("s_main")
 name = "interceptor"
+surface_damage_mult = 0.0
+base_damage_override = 0.0
+air_hunter = true
 health = 7.0
 speed = 140.0
 radar_distance = 500
-price = 12
+price = 9
 produce_cd = 4
 unit_class = 2
 unlock_cost = 90

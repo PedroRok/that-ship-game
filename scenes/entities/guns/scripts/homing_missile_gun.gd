@@ -16,7 +16,7 @@ func _heading() -> Vector2:
 	if (plane_heading):
 		return Vector2.from_angle(projectile_rotation_spawn)
 	var entity : Entity = get_parent() as Entity
-	var facing : float = 1.0 if (!entity or entity.team_stats.direction >= 0) else -1.0
+	var facing : float = entity.facing() if entity else 1.0
 	return Vector2(facing, 0.4).normalized()
 
 func shoot_gun(_direction : Vector2) -> void:
@@ -39,6 +39,15 @@ func shoot_gun(_direction : Vector2) -> void:
 	var dir : Vector2 = (_heading() + aim.normalized()).normalized()
 	fired_bullet.emit(missile, end_barrel.global_position, dir, dir.angle())
 	play_effects()
+	_stagger_twins()
+
+func _stagger_twins() -> void:
+	var carrier : Entity = get_parent() as Entity
+	if (!carrier):
+		return
+	for gun : Gun in carrier.get_guns():
+		if (gun != self and gun.gun_type == gun_type):
+			gun.current_time_to_shoot = maxi(gun.current_time_to_shoot, time_to_shoot >> 1)
 
 func _physics_process(_delta : float) -> void:
 	if (current_time_to_shoot > 0):

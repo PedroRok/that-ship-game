@@ -5,6 +5,8 @@ const MIN_ALTITUDE : float = 70.0
 const MAX_ALTITUDE : float = 300.0
 const BOB_AMPLITUDE : float = 5.0
 const BASE_APPROACH : float = 60.0
+const TURN_SPEED : float = 12.0
+const TURN_DEAD_ZONE : float = 20.0
 
 @export
 var health_component : HealthComponent
@@ -44,7 +46,7 @@ func process_physics(delta : float) -> void:
 	var heli : HelicopterEntity = parent as HelicopterEntity
 	var stats : HelicopterStats = parent.entity_stats as HelicopterStats
 	var dir : float = 1.0 if parent.team_stats.direction >= 0 else -1.0
-	var target : Node2D = radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction)
+	var target : Node2D = engage_target(radar_component.check_radar(parent.team_stats.team_id, parent.team_stats.direction))
 	if (target != on_radar_enemy):
 		set_target(target)
 	_clock += delta
@@ -54,6 +56,7 @@ func process_physics(delta : float) -> void:
 	var attack_bias : float = 0.0
 	if (target):
 		var target_pos : Vector2 = target.get_center_pos()
+		target_pos.x += BulletDepthBomb.lead_x(target)
 		var ahead : float = (target_pos.x - parent.global_position.x) * dir
 		var standoff : float = standoff_for(target)
 		if (target is Base):
@@ -65,12 +68,35 @@ func process_physics(delta : float) -> void:
 		if (target is Entity and (target as Entity).entity_stats is AirPlaneState):
 			wanted_y = target_pos.y + 14.0
 		attack_bias = dir * 0.07 * clampf(1.0 - absf(error) / 90.0, 0.0, 1.0)
+	var context : BattleContext = patrol_context()
+	if (context and !target):
+		var offset : float = (parent.global_position.x - context.patrol_x) * dir
+		if (offset > RunData.PATROL_RADIUS):
+			heli.turning_back = true
+		elif (offset < -RunData.PATROL_RADIUS):
+			heli.turning_back = false
+		wanted_vx = dir * speed * (-0.6 if heli.turning_back else 0.6)
+		if (offset > RunData.PATROL_RADIUS + RunData.PATROL_SLACK):
+			wanted_vx = -dir * speed * 0.6
+		elif (offset < -RunData.PATROL_RADIUS - RunData.PATROL_SLACK):
+			wanted_vx = dir * speed
 	wanted_y = clampf(wanted_y, MIN_ALTITUDE, MAX_ALTITUDE) + sin(_clock * 1.3 + _phase) * BOB_AMPLITUDE
 	var velocity : Vector2 = parent.linear_velocity
-	velocity.x = move_toward(velocity.x, wanted_vx, ACCEL * delta)
+	var accel : float = ACCEL
+	if (heli.evade_left > 0.0):
+		wanted_vx = heli.evade_dir * speed * RunData.HELI_EVADE_SPEED_MULT
+		accel = RunData.HELI_EVADE_ACCEL
+	velocity.x = move_toward(velocity.x, wanted_vx, accel * delta)
 	velocity.y = clampf((wanted_y - parent.global_position.y) * 1.6, -speed * 0.7, speed * 0.7)
 	parent.linear_velocity = velocity
-	heli.tilt_towards(velocity.x, attack_bias, delta)
+	if (is_nan(heli.entry_x)):
+		if (target):
+			var offset_x : float = target.get_center_pos().x - parent.global_position.x
+			if (absf(offset_x) > TURN_DEAD_ZONE):
+				heli.set_facing(signf(offset_x))
+		elif (absf(velocity.x) > TURN_SPEED):
+			heli.set_facing(signf(velocity.x))
+	heli.tilt_towards(velocity.x, attack_bias * dir * heli.facing(), delta)
 	for gun : Gun in parent.get_guns():
 		if (gun.enemy):
-			gun.shoot_gun(Vector2(dir, 0.0))
+			gun.shoot_gun(Vector2(heli.facing(), 0.0))

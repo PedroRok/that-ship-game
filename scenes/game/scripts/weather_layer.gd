@@ -55,44 +55,39 @@ func _process(delta : float) -> void:
 			tween.tween_property(flash, "modulate:a", 1.0, 0.05)
 			tween.tween_property(flash, "modulate:a", 0.0, 0.35)
 
-func show_banner(parent : CanvasLayer) -> void:
-	var data : Dictionary = RunData.WEATHER[weather]
-	var plate : PanelContainer = PanelContainer.new()
-	var box : StyleBoxTexture = StyleBoxTexture.new()
-	box.texture = load(DIR + "weather_banner_v01.png") as Texture2D
-	for side : String in ["left", "right", "top", "bottom"]:
-		box.set("texture_margin_" + side, 4)
-	box.content_margin_left = 12
-	box.content_margin_right = 16
-	box.content_margin_top = 6
-	box.content_margin_bottom = 6
-	plate.add_theme_stylebox_override("panel", box)
-	plate.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+static func create_panel(kind : int, text_width : float) -> PanelContainer:
+	var data : Dictionary = RunData.WEATHER[kind]
+	var panel : PanelContainer = PanelContainer.new()
+	panel.name = "WeatherPanel"
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	panel.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	var style : StyleBoxTexture = MenuBackground.make_box()
+	style.set_content_margin_all(12)
+	panel.add_theme_stylebox_override("panel", style)
 	var row : HBoxContainer = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
+	row.add_theme_constant_override("separation", 8)
+	panel.add_child(row)
 	var icon : TextureRect = TextureRect.new()
-	icon.texture = RunData.weather_icon(weather)
+	icon.texture = RunData.weather_icon(kind)
 	icon.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(icon)
+	var box : VBoxContainer = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 6)
+	row.add_child(box)
+	var title : Label = _panel_label(Loc.t("battle.weather") % Loc.t(str(data["name"])), Color("#eaf3f5"), text_width)
+	box.add_child(title)
+	box.add_child(_panel_label(Loc.t(str(data["text"])), Color("#a3bec8"), text_width))
+	return panel
+
+static func _panel_label(text : String, color : Color, width : float) -> Label:
 	var label : Label = Label.new()
-	label.text = Loc.t("battle.weather") % Loc.t(str(data["name"])).to_upper()
+	label.text = text.to_upper()
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.custom_minimum_size = Vector2(width, 0)
 	label.add_theme_font_override("font", FONT)
-	label.add_theme_font_size_override("font_size", 16)
-	label.add_theme_color_override("font_color", Color("#eaf3f5"))
-	row.add_child(label)
-	var sub : Label = Label.new()
-	sub.text = Loc.t(str(data["text"])).to_upper()
-	sub.add_theme_font_override("font", load("res://assets/fonts/dogicapixel.ttf") as Font)
-	sub.add_theme_font_size_override("font_size", 8)
-	sub.add_theme_color_override("font_color", Color("#a3bec8"))
-	row.add_child(sub)
-	plate.add_child(row)
-	parent.add_child(plate)
-	plate.position = Vector2(640.0 - 250.0, 104.0)
-	plate.modulate.a = 0.0
-	var tween : Tween = plate.create_tween()
-	tween.tween_property(plate, "modulate:a", 1.0, 0.3)
-	tween.tween_interval(2.6)
-	tween.tween_property(plate, "modulate:a", 0.0, 0.5)
-	tween.tween_callback(plate.queue_free)
+	label.add_theme_font_size_override("font_size", 8)
+	label.add_theme_color_override("font_color", color)
+	return label

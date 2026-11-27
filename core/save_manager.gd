@@ -5,14 +5,20 @@ const LEGACY_SAVE_PATH : String = "user://save.json"
 const LEGACY_RUN_PATH : String = "user://run.json"
 const VERSION : int = 1
 const SLOT_COUNT : int = 3
+const TEST_DIRECTORY : String = "user://test_saves/"
 
 static var slot : int = 1
+static var directory : String = "user://"
+
+static func use_test_directory() -> void:
+	directory = TEST_DIRECTORY
+	DirAccess.make_dir_recursive_absolute(directory)
 
 static func save_path(index : int = slot) -> String:
-	return "user://save_%d.json" % index
+	return directory + "save_%d.json" % index
 
 static func run_path(index : int = slot) -> String:
-	return "user://run_%d.json" % index
+	return directory + "run_%d.json" % index
 
 static func migrate_legacy() -> void:
 	if (FileAccess.file_exists(LEGACY_SAVE_PATH) and !FileAccess.file_exists(save_path(1))):
@@ -24,7 +30,7 @@ static func slot_exists(index : int) -> bool:
 	return FileAccess.file_exists(save_path(index)) or FileAccess.file_exists(run_path(index))
 
 static func slot_summary(index : int) -> Dictionary:
-	var summary : Dictionary = {"exists": slot_exists(index), "gear": 0, "boss_coin": 0, "units": 0, "best_wave": 0, "run": null}
+	var summary : Dictionary = {"exists": slot_exists(index), "gear": 0, "boss_coin": 0, "units": 0, "best_wave": 0, "run": null, "creative": false}
 	if (FileAccess.file_exists(save_path(index))):
 		var parsed : Variant = JSON.parse_string(FileAccess.get_file_as_string(save_path(index)))
 		if (typeof(parsed) == TYPE_DICTIONARY):
@@ -32,6 +38,7 @@ static func slot_summary(index : int) -> Dictionary:
 			summary["gear"] = int(data.get("gear", 0))
 			summary["boss_coin"] = int(data.get("boss_coin", 0))
 			summary["best_wave"] = int(data.get("best_wave", 0))
+			summary["creative"] = bool(data.get("creative", false))
 			summary["units"] = (data.get("unlocked_entities", []) as Array).size()
 	if (FileAccess.file_exists(run_path(index))):
 		var run_data : Variant = JSON.parse_string(FileAccess.get_file_as_string(run_path(index)))
@@ -53,6 +60,8 @@ static func save(stats : PlayerStats) -> void:
 		"gear": stats.gear,
 		"boss_coin": stats.boss_coin,
 		"best_wave": stats.best_wave,
+		"campaigns_started": stats.campaigns_started,
+		"creative": stats.creative,
 		"upgrade_levels": stats.upgrade_levels,
 		"unlocked_entities": names,
 		"loadout": stats.loadout,
@@ -75,6 +84,8 @@ static func load_into(stats : PlayerStats, catalog : ShopCatalog) -> bool:
 	stats.gear = int(data.get("gear", stats.gear))
 	stats.boss_coin = int(data.get("boss_coin", 0))
 	stats.best_wave = int(data.get("best_wave", 0))
+	stats.campaigns_started = int(data.get("campaigns_started", 0))
+	stats.creative = bool(data.get("creative", false))
 	stats.upgrade_levels = {}
 	var levels : Dictionary = data.get("upgrade_levels", {})
 	for key : Variant in levels:
