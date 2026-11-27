@@ -15,4 +15,7 @@ func _ready() -> void:
 	var ok : bool = game.campaign == null and game.wave_manager != null and game.wave_manager.running
 	print("PASS  " if ok else "FAIL  ", "classic mode uses the wave manager (wave %d)" % game.wave_manager.current_wave_number())
 	print("PASS  " if Global.test_enemy_all_units == flag else "FAIL  ", "debug spawn flag untouched outside the campaign")
-	get_tree().quit(0 if ok else 1)
+	var shown : float = float(game.get("enemy_max_hp"))
+	var bar_ok : bool = is_equal_approx(shown, game.enemy_base.health_component.health)
+	print("PASS  " if bar_ok else "FAIL  ", "enemy health bar maximum matches the base (%.0f)" % shown)
+	get_tree().quit(0 if ok and bar_ok else 1)

@@ -35,7 +35,7 @@ func _ready() -> void:
 func _on_wave_started(number: int, wave: WaveData) -> void:
 	super._on_wave_started(number, wave)
 	if wave.base_tier:
-		enemy_max_hp = wave.base_tier.base_health
+		enemy_max_hp = maxf(wave.base_tier.base_health, AutoBase.MIN_BASE_HEALTH)
 	if wave.boss:
 		boss_notice_until = Time.get_ticks_msec() + 4500
 
