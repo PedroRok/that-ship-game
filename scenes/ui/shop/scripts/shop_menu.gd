@@ -44,6 +44,7 @@ const FILTERS : Array[String] = ["shop.all", "hud.naval", "hud.air", "hud.sub", 
 const CARD_COLUMNS : int = 4
 
 var selected : BoatStats
+var selected_skill : SkillStats
 var filter : String = "shop.all"
 
 var gear_label : Label
@@ -62,6 +63,8 @@ var _weapon_scroll : ScrollContainer
 var stats_expanded : bool = false
 var detail_title : Label
 var dock_slot : HBoxContainer
+var skill_info : MarginContainer
+var skill_info_label : Label
 
 func _ready() -> void:
 	texture_filter = TEXTURE_FILTER_NEAREST
@@ -357,6 +360,18 @@ func _build_detail() -> PanelContainer:
 	sim_tag = _label("", DISPLAY_LIGHT)
 	sim_tag.position = Vector2(8, 6)
 	stage.add_child(sim_tag)
+	skill_info = MarginContainer.new()
+	skill_info.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for side : String in ["left", "right", "top", "bottom"]:
+		skill_info.add_theme_constant_override("margin_" + side, 16)
+	skill_info_label = _label("", DisplayPalette.of_skill().text)
+	skill_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	skill_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	skill_info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	skill_info.add_child(skill_info_label)
+	skill_info.hide()
+	stage.add_child(skill_info)
+	skill_info.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	sim_well.add_child(stage)
 	col.add_child(sim_well)
 	return panel
@@ -499,9 +514,10 @@ func _make_skill_card(skill : SkillStats) -> Button:
 	button.custom_minimum_size = Vector2(0, 112)
 	button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var pal : DisplayPalette = DisplayPalette.of_skill()
-	_skin(button, pal.rest if slot < 0 else pal.text, Color("#2a2036"))
+	_skin(button, CYAN if skill == selected_skill else (pal.rest if slot < 0 else pal.text), Color("#2a2036"))
 	button.tooltip_text = skill.description
-	button.pressed.connect(_toggle_loadout.bind(skill))
+	button.pressed.connect(_select_skill.bind(skill))
+	button.gui_input.connect(_skill_card_input.bind(skill))
 	button.set_drag_forwarding(
 		func(_at : Vector2) -> Variant: return _unit_drag_data(skill.name, slot, button),
 		func(_at : Vector2, _data : Variant) -> bool: return false,
@@ -608,15 +624,54 @@ func _make_card(unit : BoatStats) -> Button:
 	col.add_child(_make_portrait(unit, available, 60, 2, "", true, true, corner, corner_color))
 	return button
 
+func _refresh_skill_detail() -> void:
+	var skill : SkillStats = selected_skill
+	detail_title.text = Loc.named("unit", skill.name).to_upper()
+	_clear(dock_slot)
+	dock_slot.add_child(_silhouette(SKILL_ICON_12, DIM))
+	sim.show_unit(null)
+	sim_unit = null
+	sim_tag.text = ""
+	sim_well.modulate = Color.WHITE
+	if (sim_overlay):
+		var overlay_material : ShaderMaterial = sim_overlay.material as ShaderMaterial
+		DisplayPalette.of_skill().apply_overlay(overlay_material)
+		overlay_material.set_shader_parameter("band_strength", 0.0)
+	skill_info_label.text = PixelText.fit(skill.description, 8)
+	skill_info.show()
+	var cost_panel : PanelContainer = _panel(ROW, ROW)
+	var cost : HBoxContainer = HBoxContainer.new()
+	cost.add_theme_constant_override("separation", 10)
+	_margin(cost_panel, 4).add_child(cost)
+	cost.add_child(_label("shop.build_cost", DIM))
+	cost.add_child(_spacer())
+	cost.add_child(_screw_value(skill.price, TEXT))
+	detail_box.add_child(cost_panel)
+	var filler : Control = Control.new()
+	filler.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	detail_box.add_child(filler)
+	var equipped : bool = Global.player_stats.in_loadout(skill.name)
+	var action : Button = Button.new()
+	action.custom_minimum_size = Vector2(0, 30)
+	action.text = "shop.remove_from_loadout" if equipped else "shop.add_to_loadout"
+	action.disabled = !equipped and Global.player_stats.loadout_count() >= loadout_limit()
+	_skin(action, CYAN, Color("#1f4448"))
+	action.pressed.connect(_toggle_loadout.bind(skill))
+	detail_box.add_child(action)
+
 func _refresh_detail() -> void:
+	while (detail_box.get_child_count() > 2):
+		var stale : Node = detail_box.get_child(2)
+		detail_box.remove_child(stale)
+		stale.queue_free()
+	skill_info.hide()
+	if (selected_skill):
+		_refresh_skill_detail()
+		return
 	detail_title.text = Loc.named("unit", selected.name).to_upper() if selected else "shop.no_unit"
 	_clear(dock_slot)
 	if (selected != null):
 		dock_slot.add_child(_silhouette(_dock_icon_12(_dock_of(selected)), DIM))
-	while (detail_box.get_child_count() > 2):
-		var old : Node = detail_box.get_child(2)
-		detail_box.remove_child(old)
-		old.queue_free()
 	if (selected == null):
 		sim.show_unit(null)
 		sim_unit = null
@@ -911,11 +966,25 @@ func _card_input(event : InputEvent, unit : BoatStats) -> void:
 	var click : InputEventMouseButton = event as InputEventMouseButton
 	if (click and click.pressed and click.double_click and click.button_index == MOUSE_BUTTON_LEFT and Global.player_stats.has_boat(unit.name)):
 		selected = unit
+		selected_skill = null
 		_toggle_loadout(unit)
 
 func _select(unit : BoatStats) -> void:
 	selected = unit
+	selected_skill = null
 	_refresh_all()
+
+func _select_skill(skill : SkillStats) -> void:
+	selected_skill = skill
+	selected = null
+	_refresh_all()
+
+func _skill_card_input(event : InputEvent, skill : SkillStats) -> void:
+	var click : InputEventMouseButton = event as InputEventMouseButton
+	if (click and click.pressed and click.double_click and click.button_index == MOUSE_BUTTON_LEFT):
+		selected_skill = skill
+		selected = null
+		_toggle_loadout(skill)
 
 func _buy_unit(unit : BoatStats) -> void:
 	if (!Global.player_stats.buy(unit.unlock_cost, unit)):

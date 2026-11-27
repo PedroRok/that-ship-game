@@ -641,6 +641,7 @@ func _select(index: int) -> void:
 	(demo_overlay.material as ShaderMaterial).set_shader_parameter("band_strength", 1.0 if stats else 0.0)
 	demo_unavailable.visible = skill != null
 	if skill:
+		demo_unavailable.text = Loc.t(skill.description).to_upper()
 		demo_title.text = Loc.named("unit", skill.name).to_upper()
 	else:
 		demo_title.text = Loc.named("unit", stats.name).to_upper() if stats else "hud.hover_a_unit"
