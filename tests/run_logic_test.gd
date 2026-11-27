@@ -62,7 +62,7 @@ func play_node(run : RunState, id : int, success : bool = true, hp : int = -1) -
 	check(run.confirm_focus(), "confirm node %d" % id)
 	if (run.stage == RunData.Stage.BRIEFING):
 		check(run.start_battle(), "start battle at node %d" % id)
-		run.resolve_battle(success, run.base_hp if hp < 0 else hp, false, false)
+		run.resolve_battle(success, run.base_hp if hp < 0 else hp, false, 0)
 
 func test_flow() -> void:
 	var run : RunState = new_run()
@@ -106,7 +106,7 @@ func test_flow() -> void:
 				run.leave_shipyard()
 			_:
 				run.start_battle()
-				run.resolve_battle(true, run.base_hp, false, node_type == RunData.NodeType.BOSS)
+				run.resolve_battle(true, run.base_hp, false, int(node_type == RunData.NodeType.BOSS))
 		if (run.stage == RunData.Stage.NODE_DONE):
 			run.continue_after_node()
 		if (run.stage == RunData.Stage.RELIC):
@@ -127,11 +127,11 @@ func test_once_only() -> void:
 	run.set_focus(node)
 	run.confirm_focus()
 	run.start_battle()
-	run.resolve_battle(true, 80, false, false)
+	run.resolve_battle(true, 80, false, 0)
 	var screws : int = run.screws
 	var hp : int = run.base_hp
-	run.resolve_battle(true, 10, false, false)
-	run.resolve_battle(false, 1, true, false)
+	run.resolve_battle(true, 10, false, 0)
+	run.resolve_battle(false, 1, true, 0)
 	check(run.screws == screws and run.base_hp == hp and run.result == RunData.Result.NONE,
 			"resolving a battle twice (double click / re-created scene) changes nothing")
 	check(!run.start_battle(), "cannot start a second battle from the node-complete screen")
@@ -182,6 +182,7 @@ func test_risks() -> void:
 		if (int(run.map.get_node(id)["type"]) == RunData.NodeType.BATTLE):
 			node = id
 			break
+	run.map.get_node(node)["objective"] = RunData.Objective.DESTROY_BASE
 	run.set_focus(node)
 	run.confirm_focus()
 	var plain : int = run.expected_screws(node)
@@ -198,7 +199,7 @@ func test_risks() -> void:
 	check(is_equal_approx(dmg, 1.25), "fragile base raises damage taken in battle (%.2f)" % dmg)
 	var table : RunWaveTable = RunBattleConfig.build_table(run, run.map.get_node(node))
 	check(is_equal_approx(table.base_health_mult, RunData.ENEMY_HEALTH_MULT[0] * 1.25), "armored enemies scale the wave table")
-	run.resolve_battle(true, run.base_hp, false, false)
+	run.resolve_battle(true, run.base_hp, false, 0)
 	check(run.node_result["screws"] == boosted, "paid screws match the briefing preview (%d)" % int(run.node_result["screws"]))
 	check(run.risks.is_empty(), "risks are consumed by the battle")
 	check(Global.modify(Enums.UpgradeTarget.BASE, &"damage_taken", 1.0) == 1.0, "no run effects outside a battle")
@@ -229,7 +230,7 @@ func test_failure_and_defeat() -> void:
 	run.confirm_focus()
 	run.start_battle()
 	var hp : int = run.base_hp
-	run.resolve_battle(false, hp, false, false)
+	run.resolve_battle(false, hp, false, 0)
 	check(run.stage == RunData.Stage.NODE_DONE and run.base_hp == hp - RunData.FAIL_BASE_DAMAGE and run.screws == 0,
 			"failed objective costs base HP and pays nothing")
 	run.continue_after_node()
@@ -244,7 +245,7 @@ func test_failure_and_defeat() -> void:
 	lost.confirm_focus()
 	lost.start_battle()
 	var gears : int = Global.player_stats.gear
-	lost.resolve_battle(false, 0, true, false)
+	lost.resolve_battle(false, 0, true, 0)
 	check(lost.result == RunData.Result.LOST and lost.stage == RunData.Stage.ENDED, "base destroyed ends the run as lost")
 	check(lost.rewards_paid and Global.player_stats.gear >= gears, "defeat pays its (small) reward once")
 

@@ -147,8 +147,9 @@ static func boss_for(entry : Dictionary) -> BoatStats:
 			return load(BOATS_DIR + "boss_dreadnought.tres") as BoatStats
 	return null
 
-static func extra_boss() -> BoatStats:
-	return load(BOATS_DIR + "boss_dreadnought.tres") as BoatStats
+static func extra_boss(objective : int = -1) -> BoatStats:
+	var file : String = "boss_heavy_bomber.tres" if objective == RunData.Objective.SHOOT_DOWN_BOMBER else "boss_dreadnought.tres"
+	return load(BOATS_DIR + file) as BoatStats
 
 static func build_table(run : RunState, entry : Dictionary) -> RunWaveTable:
 	var table : RunWaveTable = RunWaveTable.new()
@@ -158,11 +159,12 @@ static func build_table(run : RunState, entry : Dictionary) -> RunWaveTable:
 		health *= RunData.ELITE_HEALTH_MULT
 	health = run.modify(RunData.T_RUN, &"enemy_health", health)
 	table.base_health_mult = health
+	table.boss_risk_mult = run.modify(RunData.T_RUN, &"enemy_health", 1.0)
 	table.base_interval = RunData.ENEMY_SPAWN_INTERVAL[floor_index]
 	table.pool = roster_for(entry, player_ship_count(), run.seed_value + int(entry.get("id", run.pending_node)))
 	table.tier = tier_for(entry)
 	table.boss = boss_for(entry)
-	table.extra_boss = extra_boss() if run.modify(RunData.T_RUN, &"extra_boss", 0.0) >= 1.0 else null
+	table.extra_boss = extra_boss(int(entry["objective"])) if run.modify(RunData.T_RUN, &"extra_boss", 0.0) >= 1.0 else null
 	table.wave_duration = RunData.WAVE_DURATION
 	return table
 

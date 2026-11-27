@@ -29,7 +29,7 @@ class Waves extends EnemyCommander:
 	var held : float = 0.0
 
 	func tick(delta : float) -> void:
-		if (releasing or alert >= 2 or base == null or base.pending_boss != null or opening_strike and opening_unit == ""):
+		if (releasing or alert >= 2 or base == null or !base.pending_bosses.is_empty() or opening_strike and opening_unit == ""):
 			super.tick(delta)
 			if (bank < 5.0):
 				releasing = false

@@ -8,6 +8,7 @@ var health : float = 100
 var label : Label
 
 signal death_event
+signal damaged
 
 var is_dead : bool = false
 
@@ -25,6 +26,7 @@ func handle_hit(damage : Damage) -> void:
 	var base : Base = get_parent() as Base
 	if (base):
 		base.update_damage_visual()
+	damaged.emit()
 	
 
 func _damage_taken_mult() -> float:

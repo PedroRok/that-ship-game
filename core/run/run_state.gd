@@ -209,8 +209,22 @@ func back_to_map() -> void:
 		pending_node = -1
 		risks.clear()
 
+func risk_applies(risk_id : StringName) -> bool:
+	if (pending_node < 0):
+		return false
+	var node : Dictionary = map.get_node(pending_node)
+	var objective : int = int(node["objective"])
+	match risk_id:
+		&"less_time":
+			return objective != RunData.Objective.DEFEND
+		&"more_bosses":
+			return objective == RunData.Objective.SHOOT_DOWN_BOMBER or objective == RunData.Objective.DEFEAT_BOSS
+		&"forced_storm":
+			return int(node["weather"]) == RunData.Weather.CLEAR
+	return true
+
 func risk_available(risk_id : StringName) -> bool:
-	return !risks.has(risk_id) and risks.size() < RunData.MAX_RISKS
+	return risk_applies(risk_id) and !risks.has(risk_id) and risks.size() < RunData.MAX_RISKS
 
 func toggle_risk(risk_id : StringName) -> bool:
 	if (stage != RunData.Stage.BRIEFING or !RunData.RISKS.has(risk_id)):
@@ -218,7 +232,7 @@ func toggle_risk(risk_id : StringName) -> bool:
 	if (risks.has(risk_id)):
 		risks.erase(risk_id)
 		return true
-	if (risks.size() >= RunData.MAX_RISKS):
+	if (!risk_available(risk_id)):
 		return false
 	risks.append(risk_id)
 	return true
@@ -230,7 +244,7 @@ func start_battle() -> bool:
 	stage = RunData.Stage.BATTLE
 	return true
 
-func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, boss_defeated : bool, enemy_base_destroyed : bool = false) -> void:
+func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, bosses_killed : int, enemy_base_destroyed : bool = false) -> void:
 	if (stage != RunData.Stage.BATTLE):
 		return
 	var node : Dictionary = map.get_node(pending_node)
@@ -262,8 +276,7 @@ func resolve_battle(success : bool, base_hp_now : int, base_destroyed : bool, bo
 	node["done"] = true
 	history.append(pending_node)
 	current_node = pending_node
-	if (boss_defeated):
-		boss_coins += RunData.BOSS_COINS_ON_VICTORY
+	boss_coins += RunData.BOSS_COINS_ON_VICTORY * bosses_killed
 	node_result = {
 		"node": pending_node, "success": success, "screws": gained, "gears": mission_gears, "damage": maxi(damage, 0),
 		"base_hp": base_hp, "relic_offered": offer, "relic": &"", "risk_bonus": equipped_risks_bonus(),

@@ -18,6 +18,8 @@
 		"battle.warn_air": "AIR ATTACK INCOMING",
 		"battle.warn_sub": "SUBMARINES APPROACHING",
 		"battle.alive": "ALIVE",
+		"common.yes": "YES",
+		"common.no": "NO",
 		"battle.base": "Base",
 		"battle.base_destroyed": "BASE DESTROYED",
 		"battle.bomber": "BOMBER",

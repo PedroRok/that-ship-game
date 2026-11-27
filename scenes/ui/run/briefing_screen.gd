@@ -221,6 +221,8 @@ func _refresh_list() -> void:
 		child.queue_free()
 	risk_buttons.clear()
 	for risk_id : StringName in RunData.RISKS:
+		if (!run.risk_applies(risk_id)):
+			continue
 		var button : Button = _risk_button(risk_id)
 		list_grid.add_child(button)
 		risk_buttons[risk_id] = button

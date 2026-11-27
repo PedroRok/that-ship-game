@@ -18,6 +18,8 @@
 		"battle.warn_air": "ATAQUE AÉREO CHEGANDO",
 		"battle.warn_sub": "SUBMARINOS SE APROXIMANDO",
 		"battle.alive": "VIVO",
+		"common.yes": "SIM",
+		"common.no": "NÃO",
 		"battle.base": "Base",
 		"battle.base_destroyed": "BASE DESTRUÍDA",
 		"battle.bomber": "BOMBARDEIRO",

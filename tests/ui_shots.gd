@@ -42,7 +42,7 @@ func _shoot_all() -> void:
 	run.set_focus(node)
 	run.confirm_focus()
 	run.start_battle()
-	run.resolve_battle(true, 74, false, false)
+	run.resolve_battle(true, 74, false, 0)
 	run.continue_after_node()
 	run.relic_offer.clear()
 	run.stage = RunData.Stage.MAP

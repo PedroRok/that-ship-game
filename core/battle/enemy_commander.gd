@@ -125,9 +125,7 @@ func tick(delta : float) -> void:
 	var slow : float = RunData.OPENING_SLOW_MULT if slow_left > 0.0 else 1.0
 	slow_left = maxf(slow_left - delta, 0.0)
 	bank = minf(bank + base_rate * rate_mult * slow * delta, RunData.SUPPLY_MAX_BANK)
-	if (base.pending_boss):
-		if (base.start_build_ship(base.pending_boss)):
-			base.pending_boss = null
+	base.build_pending_bosses()
 	_planned_age += delta
 	if (_planned == null or _planned_age > RunData.PLAN_SECONDS or (_planned.air_hunter and !_player_has_air())):
 		_planned = _pick()

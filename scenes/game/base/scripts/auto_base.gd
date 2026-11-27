@@ -29,7 +29,7 @@ var director_interval_mult : float = 1.0
 var director_skip_chance : float = 0.0
 var stat_mult : float = 1.0
 var spawn_interval : float = 5.0
-var pending_boss : BoatStats
+var pending_bosses : Array[BoatStats] = []
 var turrets : Array[BaseTurret] = []
 var active : bool = false
 var live_cap : int = 0
@@ -57,8 +57,7 @@ func apply_wave(wave : WaveData) -> void:
 	if (wave.base_tier):
 		apply_tier(wave.base_tier)
 	if (wave.boss):
-		pending_boss = _scaled(wave.boss, wave.boss_health_mult, true)
-		pending_boss.boss_coin_reward = wave.boss_coin_reward
+		pending_bosses.append(boss_copy(wave.boss, wave.boss_health_mult, wave.boss_coin_reward))
 	show_docks_for(Global.CATALOG.units if Global.test_enemy_all_units and !budget_mode else ships)
 	active = true
 	if (budget_mode):
@@ -97,20 +96,44 @@ func _dock_interval(dock_type : int) -> float:
 func _on_dock_timer(dock_type : int) -> void:
 	if (!active or ships.is_empty()):
 		return
-	if (director_skip_chance > 0.0 and pending_boss == null and randf() < director_skip_chance):
+	if (director_skip_chance > 0.0 and pending_bosses.is_empty() and randf() < director_skip_chance):
 		return
-	if (pending_boss == null and over_limits(dock_type)):
+	if (pending_bosses.is_empty() and over_limits(dock_type)):
 		return
-	if (pending_boss and dock_type_of(pending_boss) == dock_type):
-		if (start_build_ship(pending_boss)):
-			pending_boss = null
-		return
+	for boss : BoatStats in pending_bosses:
+		if (dock_type_of(boss) == dock_type):
+			if (start_build_ship(boss)):
+				pending_bosses.erase(boss)
+			return
 	var pool : Array = Global.CATALOG.units if Global.test_enemy_all_units else ships
 	var candidates : Array = pool.filter(
 		func(stats : EntityStats) -> bool: return !stats.is_boss and dock_type_of(stats) == dock_type)
 	if (candidates.is_empty()):
 		return
 	start_build_ship(_scaled(candidates.pick_random(), stat_mult, false))
+
+func boss_copy(stats : BoatStats, health_mult : float, coin_reward : int) -> BoatStats:
+	var copy : BoatStats = _scaled(stats, health_mult, true)
+	copy.boss_coin_reward = coin_reward
+	return copy
+
+func build_pending_bosses() -> void:
+	for boss : BoatStats in pending_bosses.duplicate():
+		if (start_build_ship(boss)):
+			pending_bosses.erase(boss)
+
+func take_unlaunched_bosses() -> Array[BoatStats]:
+	var result : Array[BoatStats] = pending_bosses.duplicate()
+	pending_bosses.clear()
+	for dock : int in constructors:
+		var constructor : ShipConstructor = constructors[dock]
+		if (constructor.is_building() and constructor.boat_stats.is_boss):
+			result.append(constructor.cancel_build())
+	return result
+
+func launch_now(stats : BoatStats) -> void:
+	var constructor : ShipConstructor = constructors[dock_type_of(stats)]
+	spawn_ship_event.emit(constructor.spawn_position(), stats, team_stats)
 
 func scaled_copy(stats : BoatStats) -> BoatStats:
 	return _scaled(stats, stat_mult, false)

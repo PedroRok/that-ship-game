@@ -2,6 +2,7 @@ class_name CampaignBattle
 extends Node
 
 const BANNER_SECONDS : float = 1.8
+const FORCED_BOSS_SPACING : float = 130.0
 const WARNING_SECONDS : float = 3.0
 const WARNING_COOLDOWN : float = 25.0
 const WARNING_AIR_COUNT : int = 2
@@ -26,6 +27,9 @@ var _director_clock : float = 0.0
 
 var done : bool = false
 var boss_defeated : bool = false
+var bosses_killed : int = 0
+var bosses_required : int = 1
+var objective_bosses_down : int = 0
 var hunted : int = 0
 var elapsed : float = 0.0
 var time_limit : float = 0.0
@@ -52,6 +56,7 @@ var _timeline : Array[Dictionary] = []
 var _timeline_clock : float = 0.0
 var _alert_shown : int = 0
 var _held_boss : BoatStats
+var _bosses_forced : bool = false
 
 func setup(round_node : GameRound, new_run : RunState) -> void:
 	game_round = round_node
@@ -117,8 +122,11 @@ func _build_waves() -> void:
 	wave_manager.wave_started.connect(game_round._on_wave_started)
 	wave_manager.start()
 	if (objective == RunData.Objective.SHOOT_DOWN_BOMBER):
-		_held_boss = enemy_base.pending_boss
-		enemy_base.pending_boss = null
+		_held_boss = enemy_base.pending_bosses.pop_front()
+	if (objective == RunData.Objective.SHOOT_DOWN_BOMBER or objective == RunData.Objective.DEFEAT_BOSS):
+		if ((wave_manager.table as RunWaveTable).extra_boss):
+			bosses_required = 2
+		(enemy_base.health_component as BaseHealthComponent).damaged.connect(_on_enemy_base_damaged)
 	enemy_hp_max = maxf(enemy_base.health_component.health, 1.0)
 	var floor_index : int = clampi(int(entry["col"]), 0, RunData.ENEMY_LIVE_CAP.size() - 1)
 	enemy_base.live_cap = RunData.ENEMY_LIVE_CAP[floor_index]
@@ -175,7 +183,7 @@ func _process(delta : float) -> void:
 		return
 	elapsed += delta
 	if (_held_boss and elapsed >= RunData.BOMBER_ARRIVAL_SECONDS):
-		enemy_base.pending_boss = _held_boss
+		enemy_base.pending_bosses.append(_held_boss)
 		_held_boss = null
 		_show_warning("battle.bomber_incoming")
 	commander.tick(delta)
@@ -195,14 +203,15 @@ func _process(delta : float) -> void:
 			if (hunted >= RunData.HUNT_TARGET):
 				_finish(true)
 		RunData.Objective.SHOOT_DOWN_BOMBER:
-			hud.counter = "%d/1" % int(boss_defeated)
-			var headline : String = Loc.t("battle.bomber_down") % ("YES" if boss_defeated else "NO")
+			hud.counter = "%d/%d" % [objective_bosses_down, bosses_required]
+			var headline : String = Loc.t("battle.bomber_down") % Loc.t("common.yes" if boss_defeated else "common.no")
 			if (_held_boss):
 				headline = Loc.t("battle.bomber_eta") % ceili(maxf(RunData.BOMBER_ARRIVAL_SECONDS - elapsed, 0.0))
 			_update_hud(headline, 1.0 if boss_defeated else 0.0)
 		RunData.Objective.DEFEAT_BOSS:
-			hud.counter = "%d/1" % int(boss_defeated)
-			_update_hud(Loc.t("battle.boss") % ("battle.down" if boss_defeated else "battle.alive"), 1.0 if boss_defeated else 0.0)
+			hud.counter = "%d/%d" % [objective_bosses_down, bosses_required]
+			_update_hud(Loc.t("battle.boss") % Loc.t("battle.down" if boss_defeated else "battle.alive"),
+					float(objective_bosses_down) / float(bosses_required))
 		_:
 			var hp : float = clampf(enemy_base.health_component.health / enemy_hp_max, 0.0, 1.0)
 			_update_hud(Loc.t("battle.enemy_base") % int(round(hp * 100.0)), 1.0 - hp)
@@ -388,13 +397,42 @@ func _update_hud(headline : String, fraction : float) -> void:
 	hud.update_state(headline, fraction, detail, left)
 
 func _on_boss_defeated(stats : EntityStats) -> void:
-	boss_defeated = true
 	if (done):
 		return
-	if (objective == RunData.Objective.SHOOT_DOWN_BOMBER and stats.name == "boss_heavy_bomber"):
+	bosses_killed += 1
+	var bomber : bool = objective == RunData.Objective.SHOOT_DOWN_BOMBER and stats.name == RunData.BOMBER_BOSS_NAME
+	var sector : bool = objective == RunData.Objective.DEFEAT_BOSS and stats.name == "boss_dreadnought"
+	if (!bomber and !sector):
+		return
+	objective_bosses_down += 1
+	if (objective_bosses_down >= bosses_required):
+		boss_defeated = true
 		_finish(true)
-	elif (objective == RunData.Objective.DEFEAT_BOSS and stats.name == "boss_dreadnought"):
-		_finish(true)
+
+func _on_enemy_base_damaged() -> void:
+	if (_bosses_forced or done):
+		return
+	_bosses_forced = true
+	_force_bosses.call_deferred()
+
+func _force_bosses() -> void:
+	if (done):
+		return
+	var bosses : Array[BoatStats] = enemy_base.take_unlaunched_bosses()
+	if (_held_boss):
+		bosses.append(_held_boss)
+		_held_boss = null
+		_show_warning("battle.bomber_incoming")
+	var table : RunWaveTable = wave_manager.table as RunWaveTable
+	if (table.extra_boss and wave_manager.current_wave_number() < 3):
+		var wave : WaveData = table.get_wave(2)
+		bosses.append(enemy_base.boss_copy(wave.boss, wave.boss_health_mult, wave.boss_coin_reward))
+		table.extra_boss = null
+	var back : float = -float(enemy_base.team_stats.direction)
+	for index : int in bosses.size():
+		enemy_base.launch_now(bosses[index])
+		var unit : Entity = ships_manager.get_child(ships_manager.get_child_count() - 1) as Entity
+		unit.global_position.x += back * FORCED_BOSS_SPACING * float(index)
 
 func _on_unit_destroyed(stats : EntityStats, team : TeamStats) -> void:
 	_count(_ally_lost if team.team_id == 1 else _enemy_lost, stats.name)
@@ -426,7 +464,7 @@ func _finish(success : bool, base_destroyed : bool = false) -> void:
 	game_round.skill_manager.stop()
 	var hp : int = 0 if base_destroyed else int(ceil(ally_base.health_component.health))
 	_write_log(success, base_destroyed, hp)
-	run.resolve_battle(success, hp, base_destroyed, boss_defeated, _enemy_base_destroyed)
+	run.resolve_battle(success, hp, base_destroyed, bosses_killed, _enemy_base_destroyed)
 	RunFlow.persist()
 	RUN_END_OVERLAY.show_for(run, game_round)
 
