@@ -26,7 +26,7 @@ func _update_flares(delta : float) -> void:
 	flare_cooldown = maxf(flare_cooldown - delta, 0.0)
 	evade_left = maxf(evade_left - delta, 0.0)
 	var role : BoatStats = entity_stats as BoatStats
-	if (flare_cooldown > 0.0 or !role or role.is_boss):
+	if (flare_cooldown > 0.0 or !role or role.is_boss or !role.uses_flares):
 		return
 	var forward : Vector2 = Vector2.from_angle(rotation)
 	var chasing : Array[BulletMissile] = []

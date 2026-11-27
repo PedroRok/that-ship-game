@@ -82,7 +82,27 @@ func _escort() -> void:
 	await _wait(4.0)
 	_check(escort.global_position.x - from > 40.0, "escort keeps sailing (%.0f px in 4 s)" % (escort.global_position.x - from))
 	await _shot(game, escort.global_position.x, "escort.png")
+	await _smoke(game, escort.global_position.x)
 	await _close(game)
+
+func _puffs(game : GameRound) -> int:
+	var count : int = 0
+	for child : Node in game.get_node("ShipsManager").get_children():
+		if (child is AirPuff and !child.is_queued_for_deletion()):
+			count += 1
+	return count
+
+func _smoke(game : GameRound, x : float) -> void:
+	var source : Node2D = game.campaign.escort
+	var before : int = _puffs(game)
+	AirPuff.flares(source, Vector2(x - 120.0, 160.0), Vector2.RIGHT)
+	for step : int in 30:
+		AirPuff.smoke(source, Vector2(x + 40.0 + 8.0 * step, 130.0))
+	await _wait(3.0)
+	_check(_puffs(game) >= before + 36, "flare and boost smoke stay in the air (%d)" % (_puffs(game) - before))
+	await _shot(game, x, "smoke.png")
+	await _wait(5.0)
+	_check(_puffs(game) == before + 30, "flare smoke is gone after 6 s and boost smoke remains (%d)" % (_puffs(game) - before))
 
 func _defend() -> void:
 	var game : GameRound = _start(RunData.Objective.DEFEND)

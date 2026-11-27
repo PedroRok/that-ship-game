@@ -22,6 +22,7 @@ name = "plane"
 surface_damage_mult = 0.2
 base_damage_override = 0.2
 prefers_air = true
+uses_flares = false
 health = 3.0
 speed = 110.0
 radar_distance = 500

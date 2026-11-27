@@ -21,6 +21,8 @@ var prefers_submerged : bool = false
 @export
 var air_hunter : bool = false
 @export
+var uses_flares : bool = true
+@export
 var retreats_from_ships : bool = false
 @export
 var fire_interval_mult : float = 1.0
