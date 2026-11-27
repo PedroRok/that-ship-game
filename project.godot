@@ -33,6 +33,7 @@ Signal_Debugger="*res://addons/SignalVisualizer/Debugger/SignalDebugger.gd"
 Enums="*res://scripts/enums.gd"
 Global="*res://scripts/global.gd"
 UiSfx="*res://scripts/ui_sfx.gd"
+PlaytestRecorder="*res://playtest_recorder/recorder.gd"
 
 [debug]
 
