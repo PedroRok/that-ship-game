@@ -1,7 +1,7 @@
 extends Node
 
 const FORMAT : int = 1
-const BUILD : String = "2026-11-27l"
+const BUILD : String = "2026-11-27q"
 const SNAPSHOT_SECONDS : float = 3.0
 const FOLDER : String = "playtest/"
 const DATA_FILE : String = "battles.jsonl"
@@ -67,7 +67,12 @@ func _start(game : GameRound) -> void:
 			for index : int in boat.gun_slots.size():
 				guns.append(Global.gun_type_for(boat.name, index, boat.gun_slots[index]))
 		fleet.append([_unit_id(stats.name), Global.screw_cost(stats), guns])
+	var skills : Array[String] = []
+	for entry_name : String in Global.player_stats.loadout:
+		if (SkillCatalog.find(entry_name)):
+			skills.append(entry_name)
 	_record = {"v": FORMAT, "build": BUILD, "at": int(Time.get_unix_time_from_system()), "fleet": fleet,
+			"skills": skills, "creative": Global.creative_mode,
 			"up": Global.player_stats.upgrade_levels.duplicate(), "dist": int(game.base_distance), "ev": [], "res": null}
 	if (_run != null):
 		var entry : Dictionary = _run.map.get_node(_run.pending_node)
