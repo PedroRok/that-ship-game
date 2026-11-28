@@ -52,7 +52,7 @@ func _physics_process(delta: float) -> void:
 func remove_bullet() -> void:
 	if (is_queued_for_deletion()):
 		return
-	BattleAudio.play_at(self, &"missile_explosion", global_position, self, global_position.y >= ShipEntity.WATER_LEVEL)
+	BattleAudio.play_at(self, &"missile_explosion", global_position, null, global_position.y >= ShipEntity.WATER_LEVEL)
 	_explode_particles()
 	queue_free()
 

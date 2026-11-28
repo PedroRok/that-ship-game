@@ -173,7 +173,7 @@ func can_buy(gears_needed : int) -> bool:
 	return false
 
 func get_upgrade_level(upgrade : UpgradeStats) -> int:
-	return upgrade_levels.get(upgrade.id, 0)
+	return mini(int(upgrade_levels.get(upgrade.id, 0)), upgrade.max_level)
 
 func can_buy_upgrade(upgrade : UpgradeStats) -> bool:
 	var level : int = get_upgrade_level(upgrade)

@@ -77,7 +77,7 @@ func _collide_with_wrecks() -> bool:
 	return false
 
 func explode() -> void:
-	BattleAudio.play_at(self, &"small_ship_break", parent.global_position, parent)
+	BattleAudio.play_at(self, &"small_ship_break", parent.global_position)
 	explode_in_place()
 
 func explode_in_place() -> void:
@@ -93,7 +93,7 @@ func _finish() -> void:
 	parent.is_dead = true
 	GrainParticles.wreck(parent.get_parent(), parent.global_position, _wreck_size(), true)
 	if (_at_water()):
-		BattleAudio.play_at(self, &"wreck_splash", Vector2(parent.global_position.x, ShipEntity.WATER_LEVEL), parent)
+		BattleAudio.play_at(self, &"wreck_splash", Vector2(parent.global_position.x, ShipEntity.WATER_LEVEL))
 		GrainParticles.splash(parent.get_parent(), parent.global_position, _wreck_size().x, SPLASH_GRAINS)
 		var depth : float = maxf(parent.global_position.y, ShipEntity.WATER_LEVEL + SUNK_MIN_DEPTH)
 		GrainParticles.sunk_wreck(parent.get_parent(), Vector2(parent.global_position.x, depth), _wreck_size())

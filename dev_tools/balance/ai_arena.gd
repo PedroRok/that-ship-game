@@ -36,12 +36,15 @@ var escort_health_scale : float = 1.0
 var tag : String = "test"
 var shard : int = 0
 var shard_count : int = 1
+var slot_override : int = -1
+var elite : bool = false
+var risk_names : Array[String] = []
 var rows : Array[Dictionary] = []
 var template : PlayerStats
 
 func _ready() -> void:
 	_parse_args()
-	SaveManager.slot = BASE_SLOT + shard
+	SaveManager.slot = slot_override if slot_override >= 90 else BASE_SLOT + shard
 	get_window().size = Vector2i(1280, 720)
 	template = Global.player_stats
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_ROOT + tag))
@@ -92,6 +95,12 @@ func _parse_args() -> void:
 				escort_health = float(value)
 			"gears":
 				gears = int(value)
+			"slot":
+				slot_override = int(value)
+			"elite":
+				elite = value == "1"
+			"risks":
+				risk_names = _strings(value)
 			"tag":
 				tag = value
 			"shard":
@@ -190,6 +199,9 @@ func _play(scenario : Dictionary) -> void:
 			stats.loadout.pop_back()
 			fleet.pop_back()
 		stats.loadout.insert(0, SkillCatalog.PREFIX + skill_name)
+		var skill : SkillStats = SkillCatalog.find(SkillCatalog.PREFIX + skill_name)
+		if (skill.unlock_id != &""):
+			stats.upgrade_levels[skill.unlock_id] = maxi(int(stats.upgrade_levels.get(skill.unlock_id, 0)), 1)
 	Global.player_stats = stats
 	var run : RunState = null
 	if (objective != ENDLESS):
@@ -198,11 +210,14 @@ func _play(scenario : Dictionary) -> void:
 		var entry : Dictionary = run.map.get_node(node_id)
 		entry["objective"] = objective
 		entry["col"] = floor_index
-		entry["type"] = RunData.NodeType.BOSS if objective == RunData.Objective.DEFEAT_BOSS else RunData.NodeType.BATTLE
+		entry["type"] = RunData.NodeType.BOSS if objective == RunData.Objective.DEFEAT_BOSS else (RunData.NodeType.ELITE if elite else RunData.NodeType.BATTLE)
 		entry["weather"] = RunData.Weather.CLEAR
 		run.pending_node = node_id
 		run.focus_node = node_id
 		run.stage = RunData.Stage.BRIEFING
+		for risk_name : String in risk_names:
+			if (!run.toggle_risk(StringName(risk_name))):
+				push_error("ARENA risk not applied: " + risk_name)
 		run.start_battle()
 	Global.run = run
 	var game : GameRound = load("res://scenes/ui/naval_hud/naval_round.tscn").instantiate() as GameRound
@@ -216,6 +231,11 @@ func _play(scenario : Dictionary) -> void:
 	probe.call("start", get_tree())
 	probe.set("air_mult", escort_air)
 	probe.set("health_scale", escort_health_scale)
+	var skill_log : Array = []
+	var first_frame : int = Engine.get_physics_frames()
+	if (game.skill_manager):
+		game.skill_manager.skill_used.connect(func(id : StringName, _where : Vector2) -> void:
+			skill_log.append([snappedf(float(Engine.get_physics_frames() - first_frame) / 60.0, 0.1), String(id)]))
 	var tracker : Dictionary = {"built": {}, "lost": {}, "enemy_built": {}, "enemy_lost": {}, "reason": "", "seen": {}}
 	var ships : ShipManager = game.get_node("ShipsManager") as ShipManager
 	ships.unit_destroyed.connect(func(unit_stats : EntityStats, team : TeamStats) -> void:
@@ -277,6 +297,10 @@ func _play(scenario : Dictionary) -> void:
 		"dmg_with_bomber": snappedf(float(tracker.get("dmg_with_bomber", 0.0)), 0.1),
 		"dmg_other": snappedf(float(tracker.get("dmg_other", 0.0)), 0.1)})
 	row["escort_damage"] = probe.call("report")
+	row.merge({"elite": elite, "risks": risk_names, "skill_log": skill_log, "gears": gears,
+		"supply_screws": int(bot.skills_used["supply"]) * int(Global.modify(Enums.UpgradeTarget.SKILL, &"supply_amount", SkillManager.SUPPLY_AMOUNT)),
+		"bosses_required": game.campaign.bosses_required if game.campaign else 0,
+		"enemy_health_mult": (game.campaign.wave_manager.table as RunWaveTable).base_health_mult if game.campaign else 1.0})
 	row["eco"] = eco
 	row["cancels"] = bot.cancels
 	row.merge({"eair": escort_air, "ehpx": escort_health_scale})

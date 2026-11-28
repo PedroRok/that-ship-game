@@ -12,7 +12,7 @@ const STYLES : Array[String] = ["counter", "swarm", "heavy", "air", "naval", "su
 
 const DEFAULTS : Dictionary = {"decide": 0.5, "review": 18.0, "switch": 0.04, "buys": 2.0, "patience": 1.5,
 	"patience_front": 0.55, "urgent_share": 0.3, "noise": 0.6, "price_exp": 0.5, "health_exp": 0.5, "siege": 0.15,
-	"counter_bias": 0.05, "bomb_value": 15.0, "flak_planes": 2.0, "supply_reserve": 90.0, "repair_units": 2.0, "anti_air": 1.0, "anti_sub": 1.0, "escort_air": 1.0, "use_bomb": 1.0, "use_supply": 1.0, "use_repair": 1.0, "use_flak": 1.0,
+	"counter_bias": 0.05, "bomb_value": 15.0, "flak_planes": 2.0, "supply_reserve": 90.0, "supply_cooldown": 0.0, "repair_units": 2.0, "anti_air": 1.0, "anti_sub": 1.0, "escort_air": 1.0, "use_bomb": 1.0, "use_supply": 1.0, "use_repair": 1.0, "use_flak": 1.0,
 	"cancel": 0.0, "wave": 0.0, "queue_max": 99.0, "spread": 0.0}
 
 var params : Dictionary = DEFAULTS.duplicate()
@@ -22,6 +22,8 @@ var style : String = "counter"
 var switches : int = 0
 var cancels : int = 0
 var _wave_open : bool = false
+var _clock : float = 0.0
+var _last_supply : float = -1000000.0
 var style_seconds : Dictionary = {}
 var skills_used : Dictionary = {"bomb": 0, "repair": 0, "flak": 0, "supply": 0}
 
@@ -71,6 +73,7 @@ func _units_of(style_name : String) -> Array[BalanceUnit]:
 func step(delta : float, game : GameRound, view : Dictionary) -> void:
 	style_seconds[style] = float(style_seconds.get(style, 0.0)) + delta
 	_decide_clock += delta
+	_clock += delta
 	_review_clock += delta
 	if (mode == "adaptive" and _review_clock >= float(params["review"])):
 		_review_clock = 0.0
@@ -243,6 +246,8 @@ func _use_skills(game : GameRound, _ui : GameUI, view : Dictionary) -> void:
 		var where : Vector2 = Vector2.ZERO
 		match skill.skill_id:
 			SkillCatalog.SUPPLY:
+				if (_clock - _last_supply < float(params["supply_cooldown"])):
+					continue
 				if (_has_other_skill() and skills.command < float(params["supply_reserve"])):
 					continue
 			SkillCatalog.BOMB:
@@ -258,6 +263,8 @@ func _use_skills(game : GameRound, _ui : GameUI, view : Dictionary) -> void:
 				if (where == Vector2.INF):
 					continue
 		if (skills.fire(skill.skill_id, where)):
+			if (skill.skill_id == SkillCatalog.SUPPLY):
+				_last_supply = _clock
 			skills_used[String(skill.skill_id)] = int(skills_used[String(skill.skill_id)]) + 1
 			return
 

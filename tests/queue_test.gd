@@ -60,6 +60,24 @@ func _ready() -> void:
 	check(upgrade != null, "research for naval queue exists")
 	Global.player_stats.upgrade_levels[upgrade.id] = 2
 	check(base.queue_capacity(dock) == 5, "research adds queue slots")
+	Global.player_stats.upgrade_levels[upgrade.id] = 3
+	check(base.queue_capacity(dock) == 5 and Global.player_stats.get_upgrade_level(upgrade) == 2, "queue never passes 5 slots")
+	var plane : AirEntity = (load("res://scenes/entities/troops/air_entity.tscn") as PackedScene).instantiate() as AirEntity
+	plane.entity_stats = Global.CATALOG.find_unit("interceptor")
+	plane.team_stats = base.team_stats
+	Global.player_stats.upgrade_levels = {}
+	check(plane.flare_capacity() == 0, "aircraft start without flares")
+	Global.player_stats.upgrade_levels = {&"r_flares": 4}
+	check(plane.flare_capacity() == 4, "research gives up to 4 flares")
+	plane.entity_stats = Global.CATALOG.find_unit("plane")
+	check(plane.flare_capacity() == 0, "common plane never has flares")
+	for bomber_name : String in ["bomber", "twin_bomber"]:
+		plane.entity_stats = Global.CATALOG.find_unit(bomber_name)
+		check(plane.flare_capacity() == 0, "%s never has flares" % bomber_name)
+	plane.free()
+	var elite : Dictionary = {"col": 3, "type": RunData.NodeType.ELITE}
+	var boss : Dictionary = {"col": 4, "type": RunData.NodeType.BOSS}
+	check(RunData.enemy_flares(elite) == 4 and RunData.enemy_flares(boss) == 3, "enemy flares grow with the column")
 	Global.player_stats.upgrade_levels = {}
 	var items : ItemManager = ui.get_parent().get_parent().find_child("ItemManager", true, false) as ItemManager
 	if (items == null):

@@ -124,6 +124,10 @@ const FLARE_TRIGGER_DISTANCE : float = 90.0
 const FLARE_REACH : float = 170.0
 const FLARE_HIT_CHANCE : float = 0.1
 const FLARE_COOLDOWN : float = 3.0
+const FLARE_MAX : int = 4
+const FLARE_ENEMY_BY_FLOOR : Array[int] = [0, 1, 2, 3]
+const FLARE_ENEMY_ELITE_BONUS : int = 1
+const FLARE_ENEMY_OUTSIDE_RUN : int = 3
 const HELI_EVADE_SECONDS : float = 0.8
 const HELI_EVADE_SPEED_MULT : float = 2.0
 const HELI_EVADE_ACCEL : float = 450.0
@@ -345,3 +349,9 @@ static func event_by_id(event_id : StringName) -> Dictionary:
 		if (event["id"] == event_id):
 			return event
 	return EVENTS[0]
+
+static func enemy_flares(node : Dictionary) -> int:
+	var count : int = FLARE_ENEMY_BY_FLOOR[clampi(int(node["col"]), 0, FLARE_ENEMY_BY_FLOOR.size() - 1)]
+	if (int(node["type"]) == NodeType.ELITE):
+		count += FLARE_ENEMY_ELITE_BONUS
+	return mini(count, FLARE_MAX)

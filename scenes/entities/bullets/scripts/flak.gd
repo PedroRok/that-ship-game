@@ -45,6 +45,6 @@ func _burst() -> void:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
-	BattleAudio.play_at(self, &"flak_burst", global_position, self)
+	BattleAudio.play_at(self, &"flak_burst", global_position)
 	GrainParticles.flak(get_parent(), global_position, burst_radius)
 	queue_free()

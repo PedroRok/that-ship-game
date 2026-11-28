@@ -68,7 +68,7 @@ func _area_blast() -> void:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
-	BattleAudio.play_at(self, &"depth_charge_explosion", global_position, self)
+	BattleAudio.play_at(self, &"depth_charge_explosion", global_position)
 	GrainParticles.bubbles(get_parent(), global_position, radius * BLAST_SHARE, BUBBLE_GRAINS)
 	queue_free()
 
@@ -101,6 +101,6 @@ func _depth_of(entity : Entity) -> float:
 	return entity.get_center_pos().y if entity.is_submerged() else entity.global_position.y
 
 func _blast() -> void:
-	BattleAudio.play_at(self, &"depth_charge_explosion", global_position, self)
+	BattleAudio.play_at(self, &"depth_charge_explosion", global_position)
 	GrainParticles.explosion(get_parent(), global_position, radius * BLAST_SHARE, HIT_GRAINS, HIT_SECONDS)
 	queue_free()

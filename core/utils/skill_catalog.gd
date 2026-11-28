@@ -9,7 +9,7 @@ const PREFIX : String = "skill_"
 const BOMB_COST : int = 80
 const REPAIR_COST : int = 40
 const FLAK_COST : int = 60
-const SUPPLY_COST : int = 35
+const SUPPLY_COST : int = 60
 
 static var _all : Array[SkillStats] = []
 

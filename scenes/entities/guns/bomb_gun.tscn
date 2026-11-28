@@ -8,8 +8,9 @@
 script = ExtResource("1")
 gun_type = 10
 time_to_shoot = 45
-damage_scale = 2.8
-base_damage_mult = 1.25
+damage_scale = 1.8
+base_damage_mult = 0.6
+depth_damage_mult = 1.5556
 bullet = ExtResource("2")
 depth_bullet = ExtResource("9")
 hits_submerged = true

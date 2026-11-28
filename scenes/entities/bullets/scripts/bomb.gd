@@ -59,13 +59,11 @@ func _explode() -> void:
 		if (base and base.team_stats.team_id != team and abs(base.get_center_pos().x - global_position.x) <= radius * 1.5):
 			base.health_component.handle_hit(damage_to_base())
 			struck = true
-	if (struck):
-		BattleAudio.play_at(self, &"bomb_explosion_hit", global_position, self)
-	elif (global_position.y >= WATER_Y):
-		BattleAudio.play_at(self, &"bomb_explosion_water", global_position, self)
 	if (struck or global_position.y < WATER_Y):
+		BattleAudio.play_at(self, &"bomb_explosion_hit", global_position)
 		GrainParticles.explosion(get_parent(), global_position, radius, BLAST_GRAINS, BLAST_SECONDS)
 	else:
+		BattleAudio.play_at(self, &"bomb_explosion_water", global_position)
 		GrainParticles.splash(get_parent(), global_position, radius * 0.7, SPLASH_GRAINS)
 	queue_free()
 

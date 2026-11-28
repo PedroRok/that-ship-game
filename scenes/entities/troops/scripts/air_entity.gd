@@ -12,6 +12,7 @@ var gun : PackedScene = preload("res://scenes/entities/guns/simple_gun.tscn")
 var is_dead : bool = false
 
 var flare_cooldown : float = 0.0
+var flares_left : int = -1
 var evade_left : float = 0.0
 var evade_dir : float = 0.0
 
@@ -22,11 +23,23 @@ var retreating : bool = false
 var loiter_min_x : float = NAN
 var loiter_max_x : float = NAN
 
+func flare_capacity() -> int:
+	var role : BoatStats = entity_stats as BoatStats
+	if (!role or role.is_boss or !role.uses_flares):
+		return 0
+	if (team_stats.team_id == 1):
+		return mini(int(Global.modify(Enums.UpgradeTarget.BASE, &"flare_charges", 0.0)), RunData.FLARE_MAX)
+	var run : RunState = Global.run
+	if (run and run.stage == RunData.Stage.BATTLE and run.pending_node >= 0):
+		return RunData.enemy_flares(run.map.get_node(run.pending_node))
+	return RunData.FLARE_ENEMY_OUTSIDE_RUN
+
 func _update_flares(delta : float) -> void:
 	flare_cooldown = maxf(flare_cooldown - delta, 0.0)
 	evade_left = maxf(evade_left - delta, 0.0)
-	var role : BoatStats = entity_stats as BoatStats
-	if (flare_cooldown > 0.0 or !role or role.is_boss or !role.uses_flares):
+	if (flares_left < 0):
+		flares_left = flare_capacity()
+	if (flare_cooldown > 0.0 or flares_left == 0):
 		return
 	var forward : Vector2 = Vector2.from_angle(rotation)
 	var chasing : Array[BulletMissile] = []
@@ -44,6 +57,7 @@ func _update_flares(delta : float) -> void:
 			evade_dir = -signf(offset.x) if offset.x != 0.0 else -signf(forward.x)
 	if (!close):
 		return
+	flares_left -= 1
 	flare_cooldown = RunData.FLARE_COOLDOWN
 	evade_left = RunData.HELI_EVADE_SECONDS
 	AirPuff.flares(self, get_center_pos(), forward)

@@ -9,6 +9,9 @@ var fixed_angle : bool = true
 @export
 var depth_bullet : PackedScene
 
+@export
+var depth_damage_mult : float = 1.0
+
 func target_distance(target : Node2D) -> float:
 	if (target is Base):
 		return super.target_distance(target)
@@ -59,6 +62,6 @@ func drop(target : Node2D) -> void:
 	bomb.target = target
 	bomb.base_damage_mult = base_damage_mult
 	bomb.damage = bomb.damage.duplicate()
-	bomb.damage.damage *= damage_scale
+	bomb.damage.damage *= damage_scale * (depth_damage_mult if sinking else 1.0)
 	fired_bullet.emit(bomb, end_barrel.global_position, Vector2(vx * 0.8, 30.0), 0.0)
 	play_effects()

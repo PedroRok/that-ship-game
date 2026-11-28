@@ -24,8 +24,9 @@ size = Vector2(8, 8)
 [resource]
 script = ExtResource("s_main")
 name = "twin_bomber"
+uses_flares = false
 health = 18.0
-speed = 100.0
+speed = 75.0
 radar_distance = 500
 price = 20
 produce_cd = 6

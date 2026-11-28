@@ -19,6 +19,7 @@ var ship_constructor : ShipConstructor
 var enabled : bool = true
 
 const QUEUE_BASE_SIZE : int = 3
+const QUEUE_MAX_SIZE : int = 5
 const QUEUE_STATS : Dictionary = {
 	BaseDock.Type.NAVAL: &"queue_naval",
 	BaseDock.Type.SUB: &"queue_sub",
@@ -107,7 +108,7 @@ func _process(_delta : float) -> void:
 			waiting.pop_front()
 
 func queue_capacity(dock_type : BaseDock.Type) -> int:
-	return QUEUE_BASE_SIZE + int(Global.modify(Enums.UpgradeTarget.BASE, QUEUE_STATS[dock_type], 0.0))
+	return mini(QUEUE_BASE_SIZE + int(Global.modify(Enums.UpgradeTarget.BASE, QUEUE_STATS[dock_type], 0.0)), QUEUE_MAX_SIZE)
 
 func queue_used(dock_type : BaseDock.Type) -> int:
 	var busy_slot : int = 1 if (constructors[dock_type] as ShipConstructor).is_building() else 0

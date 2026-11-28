@@ -7,7 +7,6 @@ const RUN_ALTITUDE : float = 160.0
 const BASE_RUN_ALTITUDE : float = 120.0
 const MAX_PITCH : float = 0.45
 const PITCH_DISTANCE : float = 80.0
-const BOMBS : int = 5
 const BOSS_BOMBS : int = 8
 const DROP_INTERVAL : int = 10
 const RETREAT_MARGIN : float = 15.0
@@ -31,7 +30,8 @@ func step(state : AirState, plane : AirEntity, target : Node2D) -> void:
 	var heading : float = state.to_heading(plane.rotation)
 	var pitch : float = clampf((altitude - plane.global_position.y) / PITCH_DISTANCE, -MAX_PITCH, MAX_PITCH)
 	var wanted : float = pitch
-	var count : int = BOSS_BOMBS if plane.entity_stats.is_boss else BOMBS
+	var role : AirPlaneState = plane.entity_stats as AirPlaneState
+	var count : int = BOSS_BOMBS if plane.entity_stats.is_boss else role.bombs_per_run
 	match phase:
 		Phase.APPROACH:
 			if (cos(heading) > 0.9):

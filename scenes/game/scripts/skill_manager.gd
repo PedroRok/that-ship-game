@@ -236,7 +236,7 @@ class SkillShell extends Node2D:
 			delay -= delta
 			return
 		if (!visible):
-			BattleAudio.play_at(self, &"skill_bomb_whistle", global_position, self)
+			BattleAudio.play_at(self, &"skill_bomb_whistle", global_position)
 		visible = true
 		t = minf(t + delta / SkillManager.BOMB_FLIGHT, 1.0)
 		var before : Vector2 = global_position

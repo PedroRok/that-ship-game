@@ -1,6 +1,10 @@
 class_name AirPlaneState
 extends BoatStats
 
+@export_group("Bombing")
+@export
+var bombs_per_run : int = 5
+
 @export_group("Visuals")
 @export
 var body_frames : Array[Texture2D]

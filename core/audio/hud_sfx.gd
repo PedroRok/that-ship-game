@@ -31,26 +31,29 @@ var _last_takes : Dictionary = {}
 
 func _ready() -> void:
 	for cue : StringName in CUES:
-		var player : AudioStreamPlayer = AudioStreamPlayer.new()
-		player.stream = CUES[cue].get("stream") as AudioStream
-		player.volume_db = float(CUES[cue]["db"])
-		player.bus = BUS
-		add_child(player)
-		_players[cue] = player
+		var players : Array[AudioStreamPlayer] = []
+		for stream : AudioStream in CUES[cue].get("streams", [CUES[cue].get("stream")]):
+			var player : AudioStreamPlayer = AudioStreamPlayer.new()
+			player.stream = stream
+			player.volume_db = float(CUES[cue]["db"])
+			player.bus = BUS
+			add_child(player)
+			players.append(player)
+		_players[cue] = players
 
 func play(cue : StringName) -> void:
-	var player : AudioStreamPlayer = _players.get(cue) as AudioStreamPlayer
-	if (player):
-		var streams : Array = CUES[cue].get("streams", [])
-		if (!streams.is_empty()):
-			var last : int = int(_last_takes.get(cue, -1))
-			var take : int = randi() % streams.size()
-			if (take == last and streams.size() > 1):
-				take = (take + 1 + randi() % (streams.size() - 1)) % streams.size()
-			_last_takes[cue] = take
-			player.stream = streams[take] as AudioStream
-		player.play()
-		cue_played.emit(cue)
+	if (!_players.has(cue)):
+		return
+	var players : Array[AudioStreamPlayer] = _players[cue]
+	var take : int = 0
+	if (players.size() > 1):
+		var last : int = int(_last_takes.get(cue, -1))
+		take = randi() % players.size()
+		if (take == last):
+			take = (take + 1 + randi() % (players.size() - 1)) % players.size()
+		_last_takes[cue] = take
+	players[take].play()
+	cue_played.emit(cue)
 
 static func configure_pickup(player : AudioStreamPlayer, cue : StringName) -> void:
 	var definition : Dictionary = CUES[cue]
