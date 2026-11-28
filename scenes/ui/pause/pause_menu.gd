@@ -20,7 +20,6 @@ var abandon_page: Control
 var resume_button: Button
 var options_button: Button
 var cancel_button: Button
-var test_label: Label
 var _options: OptionsMenu
 
 func _ready() -> void:
@@ -70,18 +69,6 @@ func _build() -> void:
 	for p: Control in [pause_page, abandon_page]:
 		p.set_anchors_preset(Control.PRESET_FULL_RECT)
 		pages.add_child(p)
-
-	if OS.is_debug_build():
-		test_label = Label.new()
-		test_label.add_theme_font_override("font", PIXEL_FONT)
-		test_label.add_theme_font_size_override("font_size", 8)
-		test_label.modulate = Color(1, 1, 1, 0.45)
-		test_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-		test_label.offset_left = 8.0
-		test_label.offset_top = -HUD_BOTTOM - 14.0
-		test_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		root.add_child(test_label)
-		_refresh_test_label()
 
 func _build_pause_page() -> VBoxContainer:
 	var box := VBoxContainer.new()
@@ -235,15 +222,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			resume()
 		return
-	var key := event as InputEventKey
-	if OS.is_debug_build() and key and key.pressed and not key.echo and key.keycode == KEY_F9:
-		get_viewport().set_input_as_handled()
-		Global.test_enemy_all_units = not Global.test_enemy_all_units
-		_refresh_test_label()
-
-func _refresh_test_label() -> void:
-	if test_label:
-		test_label.text = Loc.t("pause.f9_test_mode_enemy_spawns") % ("ON" if Global.test_enemy_all_units else "pause.off")
 
 func resume() -> void:
 	get_tree().paused = false

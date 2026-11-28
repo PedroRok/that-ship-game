@@ -12,7 +12,6 @@ func get_wave(index : int) -> WaveData:
 	var extra : int = index - waves.size() + 1
 	var wave : WaveData = _last_regular_wave().duplicate()
 	wave.stat_mult *= pow(1.1, extra)
-	wave.spawn_interval = max(1.5, wave.spawn_interval * pow(0.97, extra))
 	wave.base_tier = null
 	if (endless_boss_every > 0 and extra % endless_boss_every == 0):
 		var boss_wave : WaveData = _last_boss_wave()

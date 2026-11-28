@@ -171,7 +171,7 @@ func _play(scenario : Dictionary) -> void:
 	var stats : PlayerStats = template.duplicate()
 	stats.unlocked_entities = []
 	stats.loadout = []
-	stats.start_screw = BalanceSim.START_SCREWS
+	stats.start_screw = BalanceFleet.START_SCREWS
 	stats.upgrade_levels = progress.levels.duplicate()
 	stats.campaigns_started = 2
 	var fleet : Array[BalanceUnit] = []
@@ -179,7 +179,7 @@ func _play(scenario : Dictionary) -> void:
 		var boat : BoatStats = Global.CATALOG.find_unit(unit_name)
 		stats.unlocked_entities.append(boat)
 		stats.loadout.append(unit_name)
-		fleet.append(BalanceSim.profile_of(boat))
+		fleet.append(BalanceFleet.profile_of(boat))
 	Global.player_stats = stats
 	var run : RunState = null
 	if (objective != ENDLESS):
@@ -385,7 +385,7 @@ func _observe(game : GameRound, tracker : Dictionary, ally_max : float, enemy_ma
 		if (ally):
 			view["ally_value"] = float(view["ally_value"]) + price
 			view["front"] = maxf(float(view["front"]), progress)
-			var profile : BalanceUnit = BalanceSim.profile_of(boat) if boat else null
+			var profile : BalanceUnit = BalanceFleet.profile_of(boat) if boat else null
 			if (profile):
 				for kind : String in ["air", "sub"]:
 					if (profile.hits(kind)):

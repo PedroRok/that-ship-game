@@ -6,7 +6,6 @@ const SINGLE_SLOT : int = 99
 const MAX_GAME_SECONDS : float = 700.0
 const SAMPLE_FRAMES : int = 30
 const SAVE_MARGIN : float = 14.0
-const SIM_RUNS : int = 20
 const FINISHED_SHOWN : int = 8
 const OBJECTIVES : Array[int] = [
 	RunData.Objective.DESTROY_BASE, RunData.Objective.DEFEND, RunData.Objective.ESCORT,
@@ -85,11 +84,11 @@ func _build_scenarios() -> void:
 
 func _play(objective : int, floor_index : int, budget : int, seed_index : int) -> void:
 	var progress : BalanceProgress = BalanceProgress.build(Global.CATALOG, budget, budget / 250)
-	var loadout : Array[BalanceUnit] = BalanceSim.pick_loadout(progress)
+	var loadout : Array[BalanceUnit] = BalanceFleet.pick_loadout(progress)
 	var stats : PlayerStats = Global.player_stats.duplicate()
 	stats.unlocked_entities = []
 	stats.loadout = []
-	stats.start_screw = BalanceSim.START_SCREWS
+	stats.start_screw = BalanceFleet.START_SCREWS
 	stats.upgrade_levels = progress.levels.duplicate()
 	for unit_name : String in progress.unlocked:
 		stats.unlocked_entities.append(Global.CATALOG.find_unit(unit_name))
@@ -317,33 +316,16 @@ func _merge() -> void:
 	all_rows.sort_custom(func(a : Dictionary, b : Dictionary) -> bool:
 		return [int(a["objective"]), int(a["floor"]), int(a["budget"]), int(a["seed"])] < [int(b["objective"]), int(b["floor"]), int(b["budget"]), int(b["seed"])])
 	var lines : PackedStringArray = []
-	lines.append("# Real probe vs simulator")
+	lines.append("# Real probe")
 	lines.append("")
-	lines.append("Real = one real game battle per row (separate Godot processes). Sim = %d seeds, same scenario." % SIM_RUNS)
+	lines.append("One real game battle per row (separate Godot processes).")
 	lines.append("")
-	lines.append("| objective | floor | gears | real won | real time | real peak | real avg | sim win | sim time | sim peak | sim avg |")
-	lines.append("|---|---|---|---|---|---|---|---|---|---|---|")
+	lines.append("| objective | floor | gears | won | time | peak | avg enemies |")
+	lines.append("|---|---|---|---|---|---|---|")
 	for row : Dictionary in all_rows:
-		var wins : int = 0
-		var time_sum : float = 0.0
-		var peak_sum : float = 0.0
-		var avg_sum : float = 0.0
-		for index : int in range(SIM_RUNS):
-			var scn : BalanceScenario = BalanceScenario.new()
-			scn.objective = int(row["objective"])
-			scn.floor_index = int(row["floor"])
-			scn.seed_value = 1000 + index
-			scn.progress = BalanceProgress.build(Global.CATALOG, int(row["budget"]), int(row["budget"]) / 250)
-			var result : Dictionary = BalanceSim.new().run(scn)
-			if (bool(result["won"])):
-				wins += 1
-			time_sum += float(result["time"])
-			peak_sum += float(result["peak_enemies"])
-			avg_sum += float(result["avg_enemies"])
-		lines.append("| %d %s | %d | %d | %s | %.0f | %d | %.1f | %d%% | %.0f | %.1f | %.1f |" % [
+		lines.append("| %d %s | %d | %d | %s | %.0f | %d | %.1f |" % [
 			int(row["objective"]), RunData.OBJECTIVES[int(row["objective"])]["icon"], int(row["floor"]), int(row["budget"]),
-			"yes" if bool(row["won"]) else "no", float(row["time"]), int(row["peak"]), float(row["avg"]),
-			int(float(wins) / SIM_RUNS * 100.0), time_sum / SIM_RUNS, peak_sum / SIM_RUNS, avg_sum / SIM_RUNS])
+			"yes" if bool(row["won"]) else "no", float(row["time"]), int(row["peak"]), float(row["avg"])])
 	lines.append("")
 	lines.append("## Measured speed (max |vx| / stats.speed) per unit")
 	lines.append("")

@@ -135,7 +135,6 @@ enemy_base = NodePath("EnemyBase")
 [node name="EnemyBase" parent="." instance=ExtResource("10_tihlc")]
 position = Vector2(1283, 0)
 ships = Array[ExtResource("5_2ef6v")]([ExtResource("6_ssnco"), ExtResource("6_ok02i"), ExtResource("7_1j01i"), ExtResource("8_d4i8v")])
-time_to_spawn = 6
 
 [node name="Environment" type="Node" parent="."]
 

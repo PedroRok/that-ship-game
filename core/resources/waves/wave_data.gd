@@ -4,8 +4,6 @@ extends Resource
 @export
 var ships : Array[BoatStats]
 @export
-var spawn_interval : float = 6.0
-@export
 var duration : float = 30.0
 @export
 var stat_mult : float = 1.0

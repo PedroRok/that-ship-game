@@ -1,7 +1,6 @@
 class_name CampaignBattle
 extends Node
 
-const BANNER_SECONDS : float = 1.8
 const FORCED_BOSS_SPACING : float = 130.0
 const WARNING_SECONDS : float = 3.0
 const WARNING_COOLDOWN : float = 25.0
@@ -23,7 +22,7 @@ var weather_layer : WeatherLayer
 var defense_point : DefensePoint
 var escort : Entity
 var commander : EnemyCommander = EnemyCommander.new()
-var _director_clock : float = 0.0
+var _commander_clock : float = 0.0
 
 var done : bool = false
 var boss_defeated : bool = false
@@ -40,7 +39,6 @@ var ally_hold : float = 0.0
 var enemy_hold : float = 0.0
 var contested : bool = false
 var enemy_hp_max : float = 1.0
-var _restore_test_flag : bool = false
 var _built : Dictionary = {}
 var _enemy_spawned : Dictionary = {}
 var _ally_lost : Dictionary = {}
@@ -68,11 +66,9 @@ func setup(round_node : GameRound, new_run : RunState) -> void:
 	ships_manager = game_round.get_node("ShipsManager") as ShipManager
 	name = "CampaignBattle"
 	game_round.add_child(self)
-	_restore_test_flag = Global.test_enemy_all_units
 	_start_hp = run.base_hp
 	for stats : EntityStats in Global.player_stats.loadout_entities():
 		_fleet.append(stats.name)
-	Global.test_enemy_all_units = false
 	ally_base.health_component.health = float(run.base_hp)
 	ally_base.health_component.label.text = str(run.base_hp)
 	ally_base._max_health = maxf(float(run.base_max_hp), 1.0)
@@ -105,16 +101,11 @@ func setup(round_node : GameRound, new_run : RunState) -> void:
 	if (BattleIntro.should_show()):
 		BattleIntro.show_for.call_deferred(game_round, wave_manager.table.get_wave(0).ships, RunBattleConfig.boss_for(entry), objective)
 
-func _exit_tree() -> void:
-	if (_restore_test_flag):
-		Global.test_enemy_all_units = true
-
 func _build_waves() -> void:
 	wave_manager = WaveManager.new()
 	wave_manager.table = RunBattleConfig.build_table(run, entry)
 	wave_manager.enemy_base = enemy_base
 	var is_boss_node : bool = int(entry["type"]) == RunData.NodeType.BOSS
-	enemy_base.budget_mode = true
 	commander.setup(enemy_base, objective, EnemyCommander.rate_for(int(entry["col"]), is_boss_node), run.seed_value + run.pending_node)
 	var first_steps : bool = Global.player_stats.campaigns_started <= 1 and int(entry["col"]) == 0
 	commander.roll_opening(!is_boss_node and !first_steps and RunBattleConfig.boss_for(entry) == null)
@@ -191,7 +182,7 @@ func _process(delta : float) -> void:
 	if (_timeline_clock >= RunData.LOG_SAMPLE_SECONDS):
 		_timeline_clock -= RunData.LOG_SAMPLE_SECONDS
 		_sample_timeline()
-	_process_director(delta)
+	_process_commander(delta)
 	match objective:
 		RunData.Objective.DEFEND:
 			_process_defend(delta)
@@ -220,12 +211,12 @@ func _process(delta : float) -> void:
 	if (time_limit > 0.0 and elapsed >= time_limit):
 		_finish(false)
 
-func _process_director(delta : float) -> void:
-	_director_clock += delta
-	if (_director_clock < RunData.DIRECTOR_SAMPLE_SECONDS):
+func _process_commander(delta : float) -> void:
+	_commander_clock += delta
+	if (_commander_clock < RunData.COMMANDER_SAMPLE_SECONDS):
 		return
-	var step : float = _director_clock
-	_director_clock = 0.0
+	var step : float = _commander_clock
+	_commander_clock = 0.0
 	var allies : int = 0
 	var enemies : int = 0
 	var enemy_air : int = 0
@@ -467,22 +458,6 @@ func _finish(success : bool, base_destroyed : bool = false) -> void:
 	run.resolve_battle(success, hp, base_destroyed, bosses_killed, _enemy_base_destroyed)
 	RunFlow.persist()
 	RUN_END_OVERLAY.show_for(run, game_round)
-
-func _show_result_banner(success : bool, base_destroyed : bool) -> void:
-	var label : Label = Label.new()
-	label.text = "battle.base_destroyed" if base_destroyed else ("battle.objective_complete" if success else "battle.objective_failed")
-	label.add_theme_font_override("font", load("res://assets/fonts/dogicabold.ttf") as Font)
-	label.add_theme_font_size_override("font_size", 32)
-	label.add_theme_color_override("font_color", Color("#78dddd") if success else Color("#dfa0a2"))
-	label.add_theme_color_override("font_outline_color", Color("#090f15"))
-	label.add_theme_constant_override("outline_size", 8)
-	label.set_anchors_preset(Control.PRESET_CENTER)
-	label.position = Vector2(640.0 - 300.0, 300.0)
-	label.size = Vector2(600, 48)
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	game_round.canvas_layer.add_child(label)
-	var timer : SceneTreeTimer = get_tree().create_timer(BANNER_SECONDS)
-	timer.timeout.connect(RunFlow.advance)
 
 func _marker_targets() -> Array[Dictionary]:
 	var targets : Array[Dictionary] = []

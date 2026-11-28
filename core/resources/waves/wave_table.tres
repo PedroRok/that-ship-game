@@ -25,13 +25,11 @@
 [sub_resource type="Resource" id="tier_1"]
 script = ExtResource("s_tier")
 base_health = 40
-production_interval_mult = 1.0
 turret_count = 0
 
 [sub_resource type="Resource" id="tier_4"]
 script = ExtResource("s_tier")
 base_health = 70
-production_interval_mult = 0.85
 turret_count = 0
 sprite = ExtResource("t_base2")
 turret_offsets = Array[Vector2]([Vector2(0, -50)])
@@ -39,7 +37,6 @@ turret_offsets = Array[Vector2]([Vector2(0, -50)])
 [sub_resource type="Resource" id="tier_8"]
 script = ExtResource("s_tier")
 base_health = 110
-production_interval_mult = 0.7
 turret_count = 0
 sprite = ExtResource("t_base3")
 turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50)])
@@ -47,7 +44,6 @@ turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50)])
 [sub_resource type="Resource" id="tier_12"]
 script = ExtResource("s_tier")
 base_health = 160
-production_interval_mult = 0.55
 turret_count = 0
 sprite = ExtResource("t_base4")
 turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50), Vector2(-12, -19)])
@@ -55,7 +51,6 @@ turret_offsets = Array[Vector2]([Vector2(0, -50), Vector2(25, -50), Vector2(-12,
 [sub_resource type="Resource" id="wave_1"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small")])
-spawn_interval = 5.0
 duration = 30.0
 stat_mult = 1.0
 base_tier = SubResource("tier_1")
@@ -63,21 +58,18 @@ base_tier = SubResource("tier_1")
 [sub_resource type="Resource" id="wave_2"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small")])
-spawn_interval = 4.8
 duration = 30.0
 stat_mult = 1.08
 
 [sub_resource type="Resource" id="wave_3"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_small"), ExtResource("b_medium")])
-spawn_interval = 4.6
 duration = 30.0
 stat_mult = 1.16
 
 [sub_resource type="Resource" id="wave_4"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_plane")])
-spawn_interval = 4.4
 duration = 30.0
 stat_mult = 1.24
 base_tier = SubResource("tier_4")
@@ -85,7 +77,6 @@ base_tier = SubResource("tier_4")
 [sub_resource type="Resource" id="wave_5"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_mini"), ExtResource("b_small"), ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_plane"), ExtResource("b_torpedo")])
-spawn_interval = 4.2
 duration = 30.0
 stat_mult = 1.32
 boss = ExtResource("b_boss1")
@@ -95,21 +86,18 @@ boss_coin_reward = 1
 [sub_resource type="Resource" id="wave_6"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 4.0
 duration = 30.0
 stat_mult = 1.4
 
 [sub_resource type="Resource" id="wave_7"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 3.8
 duration = 30.0
 stat_mult = 1.48
 
 [sub_resource type="Resource" id="wave_8"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 3.6
 duration = 30.0
 stat_mult = 1.56
 base_tier = SubResource("tier_8")
@@ -117,14 +105,12 @@ base_tier = SubResource("tier_8")
 [sub_resource type="Resource" id="wave_9"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_small"), ExtResource("b_medium"), ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_torpedo"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 3.4
 duration = 30.0
 stat_mult = 1.64
 
 [sub_resource type="Resource" id="wave_10"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_tank"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 3.2
 duration = 30.0
 stat_mult = 1.72
 boss = ExtResource("b_boss2")
@@ -134,14 +120,12 @@ boss_coin_reward = 1
 [sub_resource type="Resource" id="wave_11"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_tank"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 3.0
 duration = 30.0
 stat_mult = 1.8
 
 [sub_resource type="Resource" id="wave_12"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_medium"), ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_tank"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 2.8
 duration = 30.0
 stat_mult = 1.88
 base_tier = SubResource("tier_12")
@@ -149,21 +133,18 @@ base_tier = SubResource("tier_12")
 [sub_resource type="Resource" id="wave_13"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_cruiser"), ExtResource("b_tank"), ExtResource("b_bomber"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 2.6
 duration = 30.0
 stat_mult = 1.96
 
 [sub_resource type="Resource" id="wave_14"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_cruiser"), ExtResource("b_tank"), ExtResource("b_bomber"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 2.4
 duration = 30.0
 stat_mult = 2.04
 
 [sub_resource type="Resource" id="wave_15"]
 script = ExtResource("s_wave")
 ships = Array[ExtResource("s_boat")]([ExtResource("b_destroyer"), ExtResource("b_frigate"), ExtResource("b_cruiser"), ExtResource("b_tank"), ExtResource("b_bomber"), ExtResource("b_plane"), ExtResource("b_sub")])
-spawn_interval = 2.2
 duration = 30.0
 stat_mult = 2.12
 boss = ExtResource("b_boss3")

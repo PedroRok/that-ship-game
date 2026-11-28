@@ -106,7 +106,7 @@ func _cancel_useless(ui : GameUI, view : Dictionary) -> void:
 		var waiting : Array = ui.base.queues[dock_type]
 		for index : int in range(waiting.size() - 1, -1, -1):
 			var queued : BoatStats = waiting[index] as BoatStats
-			if (BalanceSim.profile_of(queued).hits(need)):
+			if (BalanceFleet.profile_of(queued).hits(need)):
 				continue
 			var slot : int = index + (1 if (ui.base.constructors[dock_type] as ShipConstructor).is_building() else 0)
 			var removed : BoatStats = ui.base.cancel_slot(dock_type as BaseDock.Type, slot)

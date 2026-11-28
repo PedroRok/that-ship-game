@@ -23,7 +23,6 @@ func _ready() -> void:
 	test_serialization()
 	test_failure_and_defeat()
 	test_assets()
-	test_director()
 	print("---- ", "ALL PASSED" if failures == 0 else "%d FAILED" % failures)
 	get_tree().quit(1 if failures > 0 else 0)
 
@@ -272,32 +271,3 @@ func test_assets() -> void:
 		if (RunData.ui_icon(key) == null or RunData.ui_icon(key, true) == null):
 			missing.append("icon " + key)
 	check(missing.is_empty(), "every referenced icon loads (%s)" % ", ".join(missing))
-
-func test_director() -> void:
-	var even : ThreatDirector = ThreatDirector.new()
-	for i : int in 60:
-		even.update(0.5, 5, 5, 1.0, 1.0)
-	check(absf(even.threat - 50.0) < 2.0 and is_equal_approx(even.interval_mult, 1.0), "even match with full HP stays neutral (threat %.1f)" % even.threat)
-	var start : ThreatDirector = ThreatDirector.new()
-	start.update(0.5, 0, 0, 1.0, 1.0)
-	check(start.skip_chance == 0.0 and start.interval_mult <= 1.0 + 0.001, "empty battle start is not read as 'struggling'")
-	var winning : ThreatDirector = ThreatDirector.new()
-	for i : int in 200:
-		winning.update(0.5, 12, 2, 1.0, 0.3)
-	check(winning.interval_mult < 0.85 and winning.skip_chance == 0.0, "dominating player: enemies spawn faster (x%.2f)" % winning.interval_mult)
-	var losing : ThreatDirector = ThreatDirector.new()
-	for i : int in 200:
-		losing.update(0.5, 1, 12, 0.3, 1.0)
-	check(losing.interval_mult > 1.1 and losing.skip_chance > 0.05, "struggling player: slower spawns (x%.2f) and skipped spawns (%.0f%%)" % [losing.interval_mult, losing.skip_chance * 100.0])
-	var low : float = 1.0 - RunData.DIRECTOR_RANGE
-	var high : float = 1.0 + RunData.DIRECTOR_RANGE
-	check(winning.interval_mult >= low - 0.0001 and losing.interval_mult <= high + 0.0001 and losing.skip_chance <= RunData.DIRECTOR_MAX_SKIP + 0.0001,
-			"output always stays inside the +-30% limits")
-	var hp_full : float = ThreatDirector.interval_for(ThreatDirector.raw_score(5, 5, 1.0, 1.0))
-	var hp_empty : float = ThreatDirector.interval_for(ThreatDirector.raw_score(5, 5, 0.0, 1.0))
-	var unit_swing : float = ThreatDirector.interval_for(ThreatDirector.raw_score(10, 0, 1.0, 1.0))
-	check(absf(hp_empty - hp_full) < 0.08 and absf(unit_swing - hp_full) > absf(hp_empty - hp_full) * 2.0,
-			"base HP is a light multiplier (HP swing %.3f vs unit swing %.3f)" % [absf(hp_empty - hp_full), absf(unit_swing - hp_full)])
-	var slow : ThreatDirector = ThreatDirector.new()
-	slow.update(0.5, 12, 0, 1.0, 0.0)
-	check(slow.interval_mult > 0.9, "the pace changes gradually, not in one step (x%.2f after 0.5s)" % slow.interval_mult)

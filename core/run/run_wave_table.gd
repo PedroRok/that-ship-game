@@ -7,7 +7,6 @@ var boss : BoatStats
 var extra_boss : BoatStats
 var base_health_mult : float = 1.0
 var boss_risk_mult : float = 1.0
-var base_interval : float = 6.0
 var wave_duration : float = 40.0
 
 func _boss_health(stats : BoatStats) -> float:
@@ -18,7 +17,6 @@ func get_wave(index : int) -> WaveData:
 	wave.ships = pool
 	wave.duration = wave_duration
 	wave.stat_mult = base_health_mult * pow(RunData.WAVE_RAMP_HEALTH, index)
-	wave.spawn_interval = maxf(2.5, base_interval * pow(RunData.WAVE_RAMP_INTERVAL, index))
 	if (index == 0):
 		wave.base_tier = tier
 		if (boss):

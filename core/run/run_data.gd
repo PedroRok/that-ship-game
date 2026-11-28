@@ -60,19 +60,10 @@ const WAR_BONDS_NODE_MULT : float = 2.0
 const GEARS_VICTORY_BONUS : int = 90
 const BOSS_COINS_ON_VICTORY : int = 2
 
-const ENEMY_SPAWN_INTERVAL : Array[float] = [7.5, 7.0, 6.5, 5.8, 5.0]
 const ENEMY_HEALTH_MULT : Array[float] = [0.72, 0.78, 0.9, 1.15, 1.35]
 const ELITE_HEALTH_MULT : float = 1.35
-const DIRECTOR_W_UNITS : float = 0.50
-const DIRECTOR_W_PROGRESS : float = 0.35
-const DIRECTOR_W_BASE_HP : float = 0.15
-const DIRECTOR_RANGE : float = 0.30
-const DIRECTOR_MAX_SKIP : float = 0.25
-const DIRECTOR_SMOOTH_SECONDS : float = 10.0
-const DIRECTOR_SAMPLE_SECONDS : float = 0.5
-const DIRECTOR_MIN_UNITS : int = 4
+const COMMANDER_SAMPLE_SECONDS : float = 0.5
 const WAVE_RAMP_HEALTH : float = 1.06
-const WAVE_RAMP_INTERVAL : float = 0.96
 const WAVE_DURATION : float = 40.0
 const DEFEND_HOLD_SECONDS : float = 75.0
 const DEFEND_LIMIT_SECONDS : float = 240.0
@@ -164,7 +155,6 @@ const HUNT_SUB_LEVELS : Array[Array] = [
 	[["submarine", "sub_hunter", "sub_sam"], ["sub_hunter", "sub_sam"]],
 	[["submarine", "sub_hunter", "sub_sam"], ["sub_hunter", "sub_sam"]],
 ]
-const BOSS_SPAWN_SKIP : float = 0.4
 const TIME_LIMITS : Dictionary = {
 	Objective.DESTROY_BASE: 360.0, Objective.HUNT_SUBMARINE: 240.0, Objective.ESCORT: 300.0,
 	Objective.SHOOT_DOWN_BOMBER: 300.0, Objective.DEFEAT_BOSS: 420.0,

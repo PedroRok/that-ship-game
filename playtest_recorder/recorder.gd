@@ -1,7 +1,7 @@
 extends Node
 
 const FORMAT : int = 1
-const BUILD : String = "2026-11-27q"
+const BUILD : String = "2026-11-27r"
 const SNAPSHOT_SECONDS : float = 3.0
 const FOLDER : String = "playtest/"
 const DATA_FILE : String = "battles.jsonl"

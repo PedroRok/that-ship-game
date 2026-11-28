@@ -153,14 +153,13 @@ static func extra_boss(objective : int = -1) -> BoatStats:
 
 static func build_table(run : RunState, entry : Dictionary) -> RunWaveTable:
 	var table : RunWaveTable = RunWaveTable.new()
-	var floor_index : int = clampi(int(entry["col"]), 0, RunData.ENEMY_SPAWN_INTERVAL.size() - 1)
+	var floor_index : int = clampi(int(entry["col"]), 0, RunData.ENEMY_HEALTH_MULT.size() - 1)
 	var health : float = RunData.ENEMY_HEALTH_MULT[floor_index]
 	if (int(entry["type"]) == RunData.NodeType.ELITE):
 		health *= RunData.ELITE_HEALTH_MULT
 	health = run.modify(RunData.T_RUN, &"enemy_health", health)
 	table.base_health_mult = health
 	table.boss_risk_mult = run.modify(RunData.T_RUN, &"enemy_health", 1.0)
-	table.base_interval = RunData.ENEMY_SPAWN_INTERVAL[floor_index]
 	table.pool = roster_for(entry, player_ship_count(), run.seed_value + int(entry.get("id", run.pending_node)))
 	table.tier = tier_for(entry)
 	table.boss = boss_for(entry)

@@ -19,7 +19,6 @@ func setup(round_node : GameRound, seed_value : int) -> void:
 	game_round = round_node
 	enemy_base = round_node.enemy_base as AutoBase
 	ships_manager = round_node.get_node("ShipsManager") as ShipManager
-	enemy_base.budget_mode = true
 	commander.setup(enemy_base, RunData.Objective.DESTROY_BASE, supply_for(1), seed_value)
 	ships_manager.child_entered_tree.connect(_on_unit_added)
 	_unlock_tiers()
@@ -49,7 +48,7 @@ func _process(delta : float) -> void:
 	elapsed += delta
 	commander.tick(delta)
 	_sample_clock += delta
-	if (_sample_clock < RunData.DIRECTOR_SAMPLE_SECONDS):
+	if (_sample_clock < RunData.COMMANDER_SAMPLE_SECONDS):
 		return
 	var step : float = _sample_clock
 	_sample_clock = 0.0

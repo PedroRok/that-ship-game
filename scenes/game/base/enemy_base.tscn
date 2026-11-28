@@ -111,6 +111,3 @@ position = Vector2(-101, 361)
 flip_h = true
 script = ExtResource("11_r5i86")
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 5.0
-autostart = true

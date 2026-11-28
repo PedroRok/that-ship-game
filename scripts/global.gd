@@ -2,7 +2,6 @@ extends Node
 
 var center_camera_pos : Vector2
 
-var test_enemy_all_units : bool = true
 var creative_mode : bool:
 	get:
 		return player_stats != null and player_stats.creative
@@ -110,7 +109,6 @@ func save_game() -> void:
 
 enum Menu {
 	SHOP,
-	SELECT,
 	GAME,
 	RESEARCH,
 	RUN_MAP,
@@ -126,7 +124,6 @@ enum Menu {
 
 const menus : Dictionary = {
 	Menu.SHOP : preload("res://scenes/ui/shop/shop_menu.tscn"),
-	Menu.SELECT : preload("res://scenes/ui/rounds/rounds_menu.tscn"),
 	Menu.GAME : preload("res://scenes/ui/naval_hud/naval_round.tscn"),
 	Menu.RESEARCH : preload("res://scenes/ui/research/research_menu.tscn"),
 	Menu.RUN_MAP : preload("res://scenes/ui/run/run_map_screen.tscn"),
