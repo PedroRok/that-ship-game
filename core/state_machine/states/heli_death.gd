@@ -35,7 +35,8 @@ func process_physics(delta : float) -> void:
 		decay_rate = 0.95
 	initial_velocity.x *= decay_rate
 	initial_velocity.y = minf(initial_velocity.y + GLIDE_GRAVITY * delta, 180.0)
-	_sink_in_water()
+	if (_crash_into_water()):
+		return
 	parent.linear_velocity = initial_velocity
 	var dir : float = signf(initial_velocity.x) if initial_velocity.x != 0.0 else 1.0
 	parent.rotation = lerp_angle(parent.rotation, dir * FALL_TILT, 2.0 * delta)

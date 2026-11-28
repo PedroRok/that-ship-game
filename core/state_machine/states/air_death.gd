@@ -35,11 +35,6 @@ func enter() -> void:
 	
 	pass
 	
-const SINK_SPEED : float = 12.0
-const SINK_TICKS : int = 90
-
-var _sink_ticks : int = 0
-var _splash_played : bool = false
 
 const WRECK_GROUP : StringName = &"air_wreck"
 const WRECK_SLACK : float = 4.0
@@ -83,6 +78,9 @@ func _collide_with_wrecks() -> bool:
 
 func explode() -> void:
 	BattleAudio.play_at(self, &"small_ship_break", parent.global_position, parent)
+	explode_in_place()
+
+func explode_in_place() -> void:
 	initial_velocity = Vector2.ZERO
 	initial_angular_velocity = 0.0
 	parent.linear_velocity = Vector2.ZERO
@@ -93,33 +91,26 @@ func explode() -> void:
 func _finish() -> void:
 	parent.remove_from_group(WRECK_GROUP)
 	parent.is_dead = true
-	if (hitbox_component.is_on_water):
-		_play_wreck_splash()
+	GrainParticles.wreck(parent.get_parent(), parent.global_position, _wreck_size(), true)
+	if (_at_water()):
+		BattleAudio.play_at(self, &"wreck_splash", Vector2(parent.global_position.x, ShipEntity.WATER_LEVEL), parent)
 		GrainParticles.splash(parent.get_parent(), parent.global_position, _wreck_size().x, SPLASH_GRAINS)
 		var depth : float = maxf(parent.global_position.y, ShipEntity.WATER_LEVEL + SUNK_MIN_DEPTH)
 		GrainParticles.sunk_wreck(parent.get_parent(), Vector2(parent.global_position.x, depth), _wreck_size())
-	else:
-		GrainParticles.wreck(parent.get_parent(), parent.global_position, _wreck_size(), true)
 	particle_component.fire.intensity = 0.0
 	parent.animated_sprite.free()
 	for child : Node in parent.get_children():
 		if (child is AnimatedSprite2D or child is Gun):
 			(child as CanvasItem).visible = false
 
-func _sink_in_water() -> void:
-	if (!hitbox_component.is_on_water):
-		return
-	_play_wreck_splash()
-	_sink_ticks += 1
-	initial_velocity.y = SINK_SPEED
-	if (_sink_ticks >= SINK_TICKS and death_deespawn_delay > 1):
-		death_deespawn_delay = 1
+func _at_water() -> bool:
+	return hitbox_component.is_on_water or parent.global_position.y >= ShipEntity.WATER_LEVEL - AirPuff.WATER_MARGIN
 
-func _play_wreck_splash() -> void:
-	if (_splash_played):
-		return
-	_splash_played = true
-	BattleAudio.play_at(self, &"wreck_splash", Vector2(parent.global_position.x, ShipEntity.WATER_LEVEL), parent)
+func _crash_into_water() -> bool:
+	if (parent.is_dead or !_at_water()):
+		return false
+	explode_in_place()
+	return true
 
 func process_input(_event: InputEvent) -> void:
 	return
@@ -145,7 +136,8 @@ func process_physics(delta: float) -> void:
 	
 	initial_velocity.y += gravity * delta
 	
-	_sink_in_water()
+	if (_crash_into_water()):
+		return
 	parent.linear_velocity = initial_velocity
 	
 	var spin_increase : float = abs(initial_velocity.y) * spin_increase_factor

@@ -1,11 +1,11 @@
 class_name GrainParticles
 extends GPUParticles2D
 
-enum Kind { SMOKE, SPRAY, BUBBLES, DEBRIS, SUNK, FLAME, PLUME, BLAST, TRAIL, FOAM }
+enum Kind { SMOKE, SPRAY, BUBBLES, DEBRIS, SUNK, FLAME, PLUME, BLAST, TRAIL, FOAM, RAIN, DROPLET }
 
 const SHADER : Shader = preload("res://shaders/grain.gdshader")
-const AMOUNTS : Array[int] = [131072, 16384, 16384, 16384, 8192, 32768, 32768, 8192, 16384, 8192]
-const LAYERS : Array[int] = [1900, 150, 149, 1960, 151, 1100, 1090, 1900, 1850, 150]
+const AMOUNTS : Array[int] = [131072, 16384, 16384, 16384, 8192, 32768, 32768, 8192, 16384, 8192, 8192, 8192]
+const LAYERS : Array[int] = [1900, 150, 149, 1960, 151, 1100, 1090, 1900, 1850, 150, 1990, 1990]
 const SECONDS : float = 4.0
 const NO_LIMIT : float = 100000.0
 const TEXTURE_SIZE : int = 4
@@ -52,6 +52,9 @@ const TRAIL_FLAMES : int = 1
 const TRAIL_PUFFS : float = 0.7
 const TRAIL_TONES : Array[Color] = [Color(0.62, 0.63, 0.66), Color(0.76, 0.77, 0.8), Color(0.9, 0.91, 0.93)]
 const WAKE_GRAINS : int = 3
+const RAIN_FALL : Vector2 = Vector2(-80.0, 430.0)
+const RAIN_FADE : float = 0.004
+const RAIN_SPLASH_GRAINS : int = 3
 const FOAM_FALL : float = 0.25
 const FOAM_LINGER : float = 1.7
 
@@ -78,10 +81,10 @@ const HIT_SPARKS : int = 22
 const HIT_SMOKE : int = 9
 const BLAST_SMOKE_SHARE : float = 0.45
 const LUMPS : int = 7
-const OPEN_RATES : Array[float] = [14.0, 3.5, 2.5, 3.0, 2.0, 3.0, 1.2, 14.0, 6.0, 2.0]
-const SWELL_SHARES : Array[float] = [0.45, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.45, 0.0, 0.0]
-const CHURNS : Array[float] = [3.0, 0.0, 5.0, 0.0, 3.0, 10.0, 6.0, 3.0, 4.0, 2.0]
-const GRAVITIES : Array[float] = [0.0, 55.0, -26.0, 55.0, 6.0, -45.0, -7.0, 0.0, -3.0, 3.0]
+const OPEN_RATES : Array[float] = [14.0, 3.5, 2.5, 3.0, 2.0, 3.0, 1.2, 14.0, 6.0, 2.0, 0.0, 2.0]
+const SWELL_SHARES : Array[float] = [0.45, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.45, 0.0, 0.0, 0.0, 0.0]
+const CHURNS : Array[float] = [3.0, 0.0, 5.0, 0.0, 3.0, 10.0, 6.0, 3.0, 4.0, 2.0, 0.0, 0.0]
+const GRAVITIES : Array[float] = [0.0, 55.0, -26.0, 55.0, 6.0, -45.0, -7.0, 0.0, -3.0, 3.0, 0.0, 40.0]
 
 static var _dot : Texture2D
 
@@ -258,6 +261,29 @@ static func ship_foam(parent : Node, where : Vector2, direction : float, grains 
 		var travel : Vector2 = Vector2(-direction * randf_range(4.0, 18.0), -randf_range(0.0, 3.0))
 		system._emit(at + offset, travel, WATER_TONES[1 + randi() % 2], _water_pixels(), randf_range(0.3, 0.8), randf_range(0.9, 1.5))
 
+static func raindrop(parent : Node, where : Vector2, size : Vector2, tone : Color, alpha : float, seconds : float) -> void:
+	var system : GrainParticles = of(parent, Kind.RAIN)
+	if (system == null):
+		return
+	system.emit_particle(Transform2D(-atan2(RAIN_FALL.x, RAIN_FALL.y), size / float(TEXTURE_SIZE), 0.0, system.to_local(where)), Vector2.ZERO,
+			tone, Color(0.0, seconds, alpha, seconds + RAIN_FADE),
+			EMIT_FLAG_POSITION | EMIT_FLAG_VELOCITY | EMIT_FLAG_COLOR | EMIT_FLAG_CUSTOM | EMIT_FLAG_ROTATION_SCALE)
+	system.emitted += 1
+	system.idle = 0.0
+
+static func rain_splash(parent : Node, where : Vector2, tone : Color, alpha : float) -> void:
+	var system : GrainParticles = of(parent, Kind.DROPLET)
+	if (system == null):
+		return
+	var at : Vector2 = system.to_local(where)
+	for _index : int in RAIN_SPLASH_GRAINS:
+		var travel : Vector2 = Vector2(randf_range(-3.0, 3.0), -randf_range(1.0, 4.0))
+		system.emit_particle(Transform2D(0.0, Vector2.ONE / float(TEXTURE_SIZE), 0.0, at), travel, tone,
+				Color(0.0, 0.1, alpha, randf_range(0.18, 0.3)),
+				EMIT_FLAG_POSITION | EMIT_FLAG_VELOCITY | EMIT_FLAG_COLOR | EMIT_FLAG_CUSTOM | EMIT_FLAG_ROTATION_SCALE)
+		system.emitted += 1
+	system.idle = 0.0
+
 static func _jitter(reach : float) -> Vector2:
 	return Vector2(randf_range(-reach, reach), randf_range(-reach, reach))
 
@@ -301,17 +327,18 @@ func _ready() -> void:
 	var bottom : float = NO_LIMIT
 	if (kind == Kind.SPRAY):
 		bottom = surface + AirPuff.WATER_MARGIN
-	elif (!underwater and kind != Kind.FOAM):
+	elif (!underwater and kind != Kind.FOAM and kind != Kind.DROPLET and kind != Kind.RAIN):
 		bottom = surface - AirPuff.WATER_MARGIN
 	var motion : ShaderMaterial = ShaderMaterial.new()
 	motion.shader = SHADER
-	motion.set_shader_parameter("wind", AirPuff.WIND if windy else Vector2.ZERO)
+	motion.set_shader_parameter("wind", RAIN_FALL if kind == Kind.RAIN else (AirPuff.WIND if windy else Vector2.ZERO))
 	motion.set_shader_parameter("gravity", GRAVITIES[kind])
 	motion.set_shader_parameter("open_rate", OPEN_RATES[kind])
 	motion.set_shader_parameter("swell_share", SWELL_SHARES[kind])
 	motion.set_shader_parameter("swell_seconds", SECONDS)
 	motion.set_shader_parameter("churn", CHURNS[kind])
 	motion.set_shader_parameter("foam_gravity", FOAM_FALL if kind == Kind.SPRAY else 1.0)
+	motion.set_shader_parameter("seeded_alpha", kind == Kind.RAIN or kind == Kind.DROPLET)
 	motion.set_shader_parameter("top", top)
 	motion.set_shader_parameter("bottom", bottom)
 	process_material = motion

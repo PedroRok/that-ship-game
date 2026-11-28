@@ -8,6 +8,7 @@ uniform float swell_seconds = 4.0;
 uniform float churn = 0.0;
 uniform float gravity = 0.0;
 uniform float foam_gravity = 1.0;
+uniform bool seeded_alpha = false;
 uniform float top = -100000.0;
 uniform float bottom = 100000.0;
 
@@ -26,6 +27,9 @@ void process() {
 			+ vec2(0.0, 0.5 * pull * (now * now - before * before));
 	TRANSFORM[3].xy += step_move;
 	COLOR.a = 1.0 - clamp((now - CUSTOM.y) / max(CUSTOM.w - CUSTOM.y, 0.001), 0.0, 1.0);
+	if (seeded_alpha) {
+		COLOR.a *= CUSTOM.z;
+	}
 	if (TRANSFORM[3].y < top || TRANSFORM[3].y > bottom) {
 		COLOR.a = 0.0;
 	}

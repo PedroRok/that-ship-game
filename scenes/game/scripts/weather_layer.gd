@@ -3,15 +3,11 @@ extends CanvasLayer
 
 const DIR : String = "res://assets/ui/weather/"
 const FONT : Font = preload("res://assets/fonts/dogicabold.ttf")
-const FRAME_TIME : float = 0.125
 
 var weather : int = RunData.Weather.CLEAR
-var rain : TextureRect
+var rain : RainEmitter
 var fog : TextureRect
 var flash : TextureRect
-var rain_frames : Array[Texture2D] = []
-var _frame : int = 0
-var _frame_clock : float = 0.0
 var _flash_clock : float = 4.0
 
 func setup(new_weather : int, behind : CanvasLayer) -> void:
@@ -20,14 +16,20 @@ func setup(new_weather : int, behind : CanvasLayer) -> void:
 	follow_viewport_enabled = false
 	name = "WeatherLayer"
 	if (weather == RunData.Weather.STORM):
-		for i : int in range(1, 5):
-			rain_frames.append(load("%srain_frame_%02d_v01.png" % [DIR, i]) as Texture2D)
-		rain = _overlay(rain_frames[0])
+		rain = RainEmitter.new()
 		flash = _overlay(load(DIR + "lightning_flash_v01.png") as Texture2D)
 		flash.modulate.a = 0.0
 	if (weather == RunData.Weather.FOG or weather == RunData.Weather.STORM):
 		fog = _overlay(load(DIR + "fog_edges_v01.png") as Texture2D)
-	set_process(rain != null or flash != null)
+	set_process(flash != null)
+
+func _ready() -> void:
+	if (rain):
+		get_parent().add_child.call_deferred(rain)
+
+func _notification(what : int) -> void:
+	if (what == NOTIFICATION_PREDELETE and is_instance_valid(rain) and !rain.is_inside_tree()):
+		rain.free()
 
 func _overlay(texture : Texture2D) -> TextureRect:
 	var rect : TextureRect = TextureRect.new()
@@ -41,12 +43,6 @@ func _overlay(texture : Texture2D) -> TextureRect:
 	return rect
 
 func _process(delta : float) -> void:
-	if (rain):
-		_frame_clock += delta
-		if (_frame_clock >= FRAME_TIME):
-			_frame_clock = 0.0
-			_frame = (_frame + 1) % rain_frames.size()
-			rain.texture = rain_frames[_frame]
 	if (flash):
 		_flash_clock -= delta
 		if (_flash_clock <= 0.0):

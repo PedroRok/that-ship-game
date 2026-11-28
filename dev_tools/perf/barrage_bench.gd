@@ -35,6 +35,14 @@ func _ready() -> void:
 		await _moving_scenario(game, view, "trails", _launch_trails.bind(game), 0.5, [])
 	elif (args.has("scenario=water")):
 		await _moving_scenario(game, view, "water", _launch_torpedoes.bind(game), 0.4, ["medium", "cruiser", "destroyer", "frigate", "small", "medium"])
+	elif (args.has("scenario=rain")):
+		var weather : WeatherLayer = WeatherLayer.new()
+		WeatherSky.apply(game, RunData.Weather.STORM)
+		weather.setup(RunData.Weather.STORM, game.canvas_layer)
+		game.add_child(weather)
+		await _moving_scenario(game, view, "rain", _nothing, 1.0, ["medium", "cruiser"])
+	elif (args.has("scenario=crash")):
+		await _moving_scenario(game, view, "crash", _crash_planes.bind(game), 1.5, [])
 	elif (args.has("scenario=impacts")):
 		await _impacts_scenario(game, view)
 	elif (args.has("scenario=unitfire")):
@@ -84,6 +92,16 @@ func _moving_scenario(game : GameRound, view : RID, label : String, action : Cal
 	for index : int in 3:
 		await _wait(0.37)
 		await _capture("%s_%d" % [label, index])
+
+func _nothing() -> void:
+	pass
+
+func _crash_planes(game : GameRound) -> void:
+	var left : float = game.enemy_base.global_position.x - 620.0
+	var names : Array[String] = ["plane", "bomber", "heli_scout"]
+	for index : int in names.size():
+		var unit : Entity = _place_unit(game, names[index], Vector2(left + 130.0 + 120.0 * index, 330.0))
+		_kill.call_deferred(unit)
 
 func _launch_trails(game : GameRound) -> void:
 	var left : float = game.enemy_base.global_position.x - 620.0

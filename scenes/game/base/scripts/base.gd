@@ -215,6 +215,16 @@ func _update_fire_area() -> void:
 	_fire.set_area(points)
 	_fire_area_dirty = false
 
+func solid_sprites() -> Array[Sprite2D]:
+	var sprites : Array[Sprite2D] = _base_sprites.duplicate()
+	var naval : Sprite2D = get_node_or_null("BaseSprite/dock") as Sprite2D
+	if (naval):
+		sprites.append(naval)
+	for dock : BaseDock in docks.values():
+		if (dock.active):
+			sprites.append_array(dock.damage_sprites())
+	return sprites
+
 func _collect_fire_points(sprite : Sprite2D, water : Array[Rect2], lowest : float, points : PackedVector2Array) -> void:
 	if (!sprite.texture):
 		return
