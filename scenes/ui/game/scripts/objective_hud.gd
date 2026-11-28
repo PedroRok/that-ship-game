@@ -81,6 +81,7 @@ func setup(objective : int) -> void:
 			_squash(segment)
 			rival_bar.add_child(segment)
 	detail_label = _label("", PIXEL_FONT, 10, Color("#a3bec8"))
+	PixelText.describe(detail_label)
 	box.add_child(detail_label)
 	if (OS.is_debug_build()):
 		debug_label = _label("", PIXEL_FONT, 8, Color("#7795a1"))

@@ -2,7 +2,6 @@ class_name CampaignBattle
 extends Node
 
 const FORCED_BOSS_SPACING : float = 130.0
-const WARNING_SECONDS : float = 3.0
 const WARNING_COOLDOWN : float = 25.0
 const WARNING_AIR_COUNT : int = 2
 const WARNING_SUB_COUNT : int = 1
@@ -47,8 +46,6 @@ var _fleet : Array[String] = []
 var _start_hp : int = 0
 var _warned_at : Dictionary = {}
 var _threat_present : Dictionary = {}
-var _warning_label : Label
-var _warning_tween : Tween
 var _enemy_base_destroyed : bool = false
 var _timeline : Array[Dictionary] = []
 var _timeline_clock : float = 0.0
@@ -265,26 +262,22 @@ func _show_warning(text_id : String) -> void:
 			BattleAudio.play_ui(self, &"alert_air_threat")
 		"battle.warn_sub":
 			BattleAudio.play_ui(self, &"alert_sub_threat")
-	if (_warning_label == null):
-		_warning_label = Label.new()
-		_warning_label.name = "ThreatWarning"
-		_warning_label.add_theme_font_override("font", load("res://assets/fonts/dogicabold.ttf") as Font)
-		_warning_label.add_theme_font_size_override("font_size", 16)
-		_warning_label.add_theme_color_override("font_color", Color("#ffb4a8"))
-		_warning_label.add_theme_color_override("font_outline_color", Color("#090f15"))
-		_warning_label.add_theme_constant_override("outline_size", 8)
-		_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_warning_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_warning_label.position = Vector2(240, 150)
-		_warning_label.size = Vector2(800, 24)
-		game_round.canvas_layer.add_child(_warning_label)
-	_warning_label.text = text_id
-	_warning_label.modulate.a = 1.0
-	if (_warning_tween):
-		_warning_tween.kill()
-	_warning_tween = create_tween()
-	_warning_tween.tween_interval(WARNING_SECONDS)
-	_warning_tween.tween_property(_warning_label, "modulate:a", 0.0, 0.5)
+	var body : String = ""
+	var file : String = ""
+	match text_id:
+		"battle.warn_air":
+			body = Loc.t("battle.warn_air_desc")
+			file = "plane"
+		"battle.warn_sub":
+			body = Loc.t("battle.warn_sub_desc")
+			file = "submarine"
+		"battle.bomber_incoming":
+			body = Loc.t("battle.bomber_incoming_desc")
+			file = RunData.BOMBER_BOSS_NAME
+	var stats : EntityStats = null
+	if (file != ""):
+		stats = load("res://core/resources/boats/%s.tres" % file) as EntityStats
+	BattleAlert.show_on(game_round.canvas_layer, Loc.t(text_id), body, stats)
 
 func _sample_timeline() -> void:
 	_timeline.append({"t": int(elapsed), "alert": commander.alert, "front": snappedf(commander.front, 0.01),
@@ -469,9 +462,10 @@ func _marker_targets() -> Array[Dictionary]:
 	if (done):
 		return targets
 	if (objective == RunData.Objective.ESCORT and escort and is_instance_valid(escort)):
-		targets.append({"pos": escort.global_position, "kind": "ally", "label": "battle.escort_caps"})
+		targets.append({"pos": escort.global_position, "kind": "ally", "label": "battle.escort_caps",
+				"id": "escort", "unit": escort.entity_stats})
 	if (objective == RunData.Objective.DEFEND and defense_point):
-		targets.append({"pos": defense_point.global_position, "kind": "target", "label": "battle.defense_point"})
+		targets.append({"pos": defense_point.global_position, "kind": "target", "label": "battle.defense_point", "id": "defense"})
 	var context : BattleContext = BattleContext.of(self)
 	if (context == null):
 		return targets
@@ -480,10 +474,11 @@ func _marker_targets() -> Array[Dictionary]:
 			continue
 		var stats : EntityStats = unit.entity_stats
 		if (stats.is_boss and (objective == RunData.Objective.SHOOT_DOWN_BOMBER or objective == RunData.Objective.DEFEAT_BOSS)):
-			targets.append({"pos": unit.global_position, "kind": "target",
+			targets.append({"pos": unit.global_position, "kind": "enemy", "id": unit.get_instance_id(), "unit": stats,
 				"label": "battle.bomber" if objective == RunData.Objective.SHOOT_DOWN_BOMBER else "battle.boss_caps"})
 		elif (objective == RunData.Objective.HUNT_SUBMARINE):
 			var boat : BoatStats = stats as BoatStats
 			if (boat and boat.can_submerge):
-				targets.append({"pos": unit.global_position, "kind": "enemy", "label": "battle.submarine"})
+				targets.append({"pos": unit.global_position, "kind": "enemy", "label": "battle.submarine",
+						"id": unit.get_instance_id(), "unit": stats})
 	return targets

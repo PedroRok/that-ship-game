@@ -7,7 +7,7 @@ var confirm_button : Button
 var abandon_button : Button
 var relic_row : HBoxContainer
 const INFO_WIDTH : int = 334
-const INFO_HEIGHT : int = 236
+const INFO_HEIGHT : int = 208
 
 var abandon_armed : bool = false
 
@@ -201,8 +201,12 @@ func _refresh_info() -> void:
 		child.queue_free()
 	var id : int = run.focus_node
 	if (id < 0):
-		info_box.add_child(_wrapped("run.click_a_node_on_the", 14, TEXT_DIM))
-		info_box.add_child(_wrapped("run.hovering_only_highlights_reachable_n", 11, TEXT_DIM))
+		var pick_hint : Label = _wrapped("run.click_a_node_on_the", 14, TEXT_DIM)
+		PixelText.describe(pick_hint)
+		info_box.add_child(pick_hint)
+		var hover_hint : Label = _wrapped("run.hovering_only_highlights_reachable_n", 11, TEXT_DIM)
+		PixelText.describe(hover_hint)
+		info_box.add_child(hover_hint)
 		confirm_button.disabled = true
 		confirm_button.text = "run.select_a_node"
 		return
@@ -223,10 +227,14 @@ func _refresh_info() -> void:
 	info_box.add_child(_divider())
 	var warning : String = RunBattleConfig.capability_warning(objective) if is_fight else ""
 	if (warning != ""):
-		info_box.add_child(_wrapped(warning, 12, DANGER))
+		var caution : Label = _wrapped(warning, 12, DANGER)
+		PixelText.describe(caution)
+		info_box.add_child(caution)
 	else:
 		info_box.add_child(_label("run.objective" if is_fight else "run.details", 12, TEXT_SOFT, true))
-		info_box.add_child(_wrapped(_describe(entry, is_fight), 12))
+		var details : Label = _wrapped(_describe(entry, is_fight), 12)
+		PixelText.describe(details)
+		info_box.add_child(details)
 	info_box.add_child(_divider())
 	var weather : int = run.node_weather(id)
 	var weather_row : HBoxContainer = HBoxContainer.new()

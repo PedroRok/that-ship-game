@@ -96,6 +96,7 @@ func _build_abandon_page() -> VBoxContainer:
 	var message := Label.new()
 	message.text = "pause.progress_in_this_run_will"
 	message.add_theme_font_override("font", PIXEL_FONT)
+	PixelText.describe(message)
 	message.add_theme_font_size_override("font_size", 8)
 	message.add_theme_color_override("font_color", TEXT_COLOR)
 	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

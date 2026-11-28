@@ -74,7 +74,9 @@ static func create_panel(kind : int, text_width : float) -> PanelContainer:
 	row.add_child(box)
 	var title : Label = _panel_label(Loc.t("battle.weather") % Loc.t(str(data["name"])), Color("#eaf3f5"), text_width)
 	box.add_child(title)
-	box.add_child(_panel_label(Loc.t(str(data["text"])), Color("#a3bec8"), text_width))
+	var effect : Label = _panel_label(Loc.t(str(data["text"])), Color("#a3bec8"), text_width)
+	PixelText.describe(effect)
+	box.add_child(effect)
 	return panel
 
 static func _panel_label(text : String, color : Color, width : float) -> Label:

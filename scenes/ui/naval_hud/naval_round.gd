@@ -4,7 +4,6 @@ const HUD := preload("res://scenes/ui/naval_hud/naval_hud.gd")
 var hud: HUD
 var ally_max_hp: float
 var enemy_max_hp: float
-var boss_notice_until: int
 
 func _ready() -> void:
 	ally_max_hp = ally_base.health_component.health
@@ -37,7 +36,7 @@ func _on_wave_started(number: int, wave: WaveData) -> void:
 	if wave.base_tier:
 		enemy_max_hp = maxf(wave.base_tier.base_health, AutoBase.MIN_BASE_HEALTH)
 	if wave.boss:
-		boss_notice_until = Time.get_ticks_msec() + 4500
+		BattleAlert.show_on(canvas_layer, Loc.t("battle.boss_incoming"), Loc.t("battle.boss_incoming_desc"), wave.boss)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("game_pause"):

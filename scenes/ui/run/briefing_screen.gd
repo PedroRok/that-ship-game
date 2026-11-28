@@ -59,10 +59,14 @@ func _build_mission_panel() -> Control:
 	head.add_child(well)
 	head.add_child(_label(Loc.t(RunData.OBJECTIVES[objective]["name"]), 24, TEXT, true))
 	box.add_child(head)
-	box.add_child(_wrapped(Loc.t(RunData.OBJECTIVES[objective]["text"]), 12, TEXT))
+	var goal : Label = _wrapped(Loc.t(RunData.OBJECTIVES[objective]["text"]), 12, TEXT)
+	PixelText.describe(goal)
+	box.add_child(goal)
 	var warning : String = RunBattleConfig.capability_warning(objective)
 	if (warning != ""):
-		box.add_child(_wrapped(warning, 12, DANGER))
+		var caution : Label = _wrapped(warning, 12, DANGER)
+		PixelText.describe(caution)
+		box.add_child(caution)
 	box.add_child(_divider())
 	weather_info = VBoxContainer.new()
 	box.add_child(weather_info)
@@ -164,7 +168,9 @@ func _refresh_weather() -> void:
 			load("res://assets/ui/modifiers/reward_empty_v01.png") as Texture2D))
 	row.add_child(_label("%d/5" % difficulty, 14, TEXT_DIM))
 	weather_info.add_child(row)
-	weather_info.add_child(_label(Loc.t(RunData.WEATHER[weather]["text"]), 10, TEXT_DIM))
+	var effect : Label = _label(Loc.t(RunData.WEATHER[weather]["text"]), 10, TEXT_DIM)
+	PixelText.describe(effect)
+	weather_info.add_child(effect)
 
 func _refresh_slots() -> void:
 	count_label.text = "%d / %d" % [run.risks.size(), RunData.MAX_RISKS]
@@ -253,7 +259,9 @@ func _risk_button(risk_id : StringName) -> Button:
 	texts.add_theme_constant_override("separation", 5)
 	texts.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	texts.add_child(_label(Loc.t(str(data["name"])), 12, TEXT if available else TEXT_DIM, true))
-	texts.add_child(_label(Loc.t(str(data["text"])), 10, TEXT_SOFT if available else TEXT_DIM))
+	var summary : Label = _label(Loc.t(str(data["text"])), 10, TEXT_SOFT if available else TEXT_DIM)
+	PixelText.describe(summary)
+	texts.add_child(summary)
 	inner.add_child(texts)
 	var mark : Texture2D = RunData.ui_icon("check_ok") if equipped else null
 	if (mark):

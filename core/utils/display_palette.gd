@@ -38,6 +38,20 @@ static func of_skill() -> DisplayPalette:
 		_cache[&"skill"] = palette
 	return _cache[&"skill"]
 
+static func of_threat() -> DisplayPalette:
+	if (!_cache.has(&"threat")):
+		var palette : DisplayPalette = DisplayPalette.new()
+		palette.rest = Color("#eb6862")
+		palette.shadow = Color("#2d0a0a")
+		palette.unloaded = Color("#4c1b1b")
+		palette.light = Color("#ffc4c0")
+		palette.text = Color("#e5a9a6")
+		palette.base = Color(0.085, 0.018, 0.015, 1.0)
+		palette.line = Color(0.92, 0.41, 0.38, 1.0)
+		palette.overlay_dark = Color("#140404")
+		_cache[&"threat"] = palette
+	return _cache[&"threat"]
+
 static func _make(kind : BaseDock.Type) -> DisplayPalette:
 	var palette : DisplayPalette = DisplayPalette.new()
 	match kind:

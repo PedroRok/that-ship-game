@@ -178,6 +178,7 @@ func _mission_panel() -> PanelContainer:
 	head.add_child(_label(str(data["name"]), 16, Color("#eaf3f5")))
 	var detail : Label = _label("", 8, Color("#a3bec8"))
 	detail.text = PixelText.fit(str(data["text"]), 8)
+	PixelText.describe(detail)
 	detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	detail.custom_minimum_size = Vector2(360, 0)
 	box.add_child(detail)

@@ -16,7 +16,9 @@ func screen_subtitle() -> String:
 	return "run.node_reward"
 
 func _build() -> void:
-	content.add_child(_label(Loc.t("run.choose_1_of_the_relics") % run.relic_offer.size(), 16, TEXT_SOFT))
+	var intro : Label = _label(Loc.t("run.choose_1_of_the_relics") % run.relic_offer.size(), 16, TEXT_SOFT)
+	PixelText.describe(intro)
+	content.add_child(intro)
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 28)
 	row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -119,6 +121,7 @@ func _build_card(relic_id : StringName) -> Button:
 	inner.add_child(title)
 	inner.add_child(_divider())
 	var description : Label = _wrapped(Loc.t(str(data["text"])), 14, TEXT)
+	PixelText.describe(description)
 	description.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	description.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	inner.add_child(description)

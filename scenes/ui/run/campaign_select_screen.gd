@@ -18,7 +18,9 @@ func screen_subtitle() -> String:
 func _build() -> void:
 	Global.run = null
 	saved = SaveManager.load_run() if SaveManager.has_run() else null
-	content.add_child(_label("menu.pick_how_you_want_to", 16, TEXT_SOFT))
+	var intro : Label = _label("menu.pick_how_you_want_to", 16, TEXT_SOFT)
+	PixelText.describe(intro)
+	content.add_child(intro)
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 20)
 	row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -73,6 +75,7 @@ func _card(title : String, accent : Color, icon : Texture2D, text : String, note
 	art.add_child(well)
 	box.add_child(art)
 	var body : Label = _wrapped(text, 12, TEXT)
+	PixelText.describe(body)
 	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	box.add_child(body)

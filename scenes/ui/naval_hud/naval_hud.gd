@@ -212,10 +212,10 @@ func _make_header() -> void:
 	minimap.round_scene = round_scene
 	add_child(minimap)
 	minimap.set_anchors_preset(PRESET_CENTER_TOP)
-	minimap.offset_left = -250.0
-	minimap.offset_right = 250.0
-	minimap.offset_top = 84.0
-	minimap.offset_bottom = 100.0
+	minimap.offset_left = -BattleMinimap.SIZE.x * 0.5
+	minimap.offset_right = BattleMinimap.SIZE.x * 0.5
+	minimap.offset_top = BattleMinimap.TOP
+	minimap.offset_bottom = BattleMinimap.TOP + BattleMinimap.SIZE.y
 
 func _hp_bar(row: HBoxContainer, color: Color) -> ProgressBar:
 	var column := _column(row, 4)
@@ -604,6 +604,7 @@ func _make_inspector(col: VBoxContainer) -> void:
 	demo.add_child(overlay)
 	overlay.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	demo_unavailable = _label("hud.preview_unavailable", true)
+	PixelText.describe(demo_unavailable)
 	demo_unavailable.add_theme_color_override("font_color", DisplayPalette.of_skill().text)
 	demo_unavailable.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	demo_unavailable.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -791,12 +792,15 @@ func _refresh_catalog() -> void:
 		elif reason == "hud.empty":
 			color = pal.unloaded
 		card_status[index].add_theme_color_override("font_color", color)
+		var explains: bool = reason == "hud.low_screws" or reason == "hud.low_command" or reason == "hud.queue_full"
+		card_status[index].modulate = Color.WHITE if lit or explains else OFF_MODULATE
+		cards[index].disabled = not lit
 		_skin_card(cards[index], lit, selected == index or reason == "hud.aiming")
 		card_wells[index].add_theme_stylebox_override("panel", _style(Color("#4d6069") if lit else Color("#2f3c43"), Color("#172127")))
 		card_art_materials[index].set_shader_parameter("tint", pal.rest if lit else pal.unloaded)
 		card_screen_materials[index].set_shader_parameter("band_strength", 1.0 if lit else 0.0)
 		card_wells[index].modulate = Color.WHITE if lit else Color(0.72, 0.74, 0.78)
-		card_titles[index].modulate = Color.WHITE if lit else Color(0.65, 0.68, 0.7)
+		(card_titles[index].get_parent() as Control).modulate = Color.WHITE if lit else OFF_MODULATE
 		card_headers[index].modulate = Color.WHITE if lit else OFF_MODULATE
 		for child: Node in card_headers[index].get_children():
 			if child is TextureRect and child.has_meta(&"base_tint"):
@@ -817,8 +821,6 @@ func _process(_delta: float) -> void:
 			wave_caption.text += "  " + Loc.t("hud.threat") % round_scene.endless.level
 	elif round_scene.campaign:
 		_update_clock(round_scene.campaign.hud)
-	if int(round_scene.get("boss_notice_until")) > Time.get_ticks_msec():
-		wave_caption.text += "  BOSS"
 	for kind: int in queue_rows:
 		_update_queue(kind)
 	var key: StringName = hover_stat if hover_stat != &"" else focused_stat

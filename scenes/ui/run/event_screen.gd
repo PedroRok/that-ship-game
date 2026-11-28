@@ -32,7 +32,9 @@ func _build() -> void:
 	var right : VBoxContainer = VBoxContainer.new()
 	right.add_theme_constant_override("separation", 12)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.add_child(_wrapped(Loc.t(str(event["text"])), 14, TEXT))
+	var story : Label = _wrapped(Loc.t(str(event["text"])), 14, TEXT)
+	PixelText.describe(story)
+	right.add_child(story)
 	right.add_child(_divider())
 	var first : Button = null
 	var choices : Array = event["choices"]
@@ -75,7 +77,9 @@ func _choice_button(choice : Dictionary, index : int) -> Button:
 	var detail : String = Loc.t(str(choice["text"]))
 	if (button.disabled):
 		detail += "  (not enough screws)"
-	texts.add_child(_label(detail, 10, TEXT_SOFT if !button.disabled else TEXT_DIM))
+	var outcome : Label = _label(detail, 10, TEXT_SOFT if !button.disabled else TEXT_DIM)
+	PixelText.describe(outcome)
+	texts.add_child(outcome)
 	inner.add_child(texts)
 	button.pressed.connect(_on_choice.bind(index))
 	return button

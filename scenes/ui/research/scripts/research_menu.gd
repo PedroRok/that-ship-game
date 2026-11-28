@@ -376,6 +376,7 @@ func _build_tooltip(upgrade : UpgradeStats) -> Control:
 	rule.custom_minimum_size.y = 2
 
 	var desc : Label = _tip_label(upgrade.description_key, Color("#c4cdd0"))
+	PixelText.describe(desc)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	col.add_child(desc)
 

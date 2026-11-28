@@ -25,7 +25,6 @@ var wave_manager : WaveManager
 var skill_manager : SkillManager
 var wave_label : Label
 var endless : EndlessDirector
-var _warning_label : Label
 var campaign : CampaignBattle
 
 var base_distance : float = RunData.CLASSIC_DISTANCE
@@ -125,24 +124,7 @@ func _on_wave_started(number : int, wave : WaveData) -> void:
 	wave_label.text = text
 
 func _on_unit_unlocked(unit : BoatStats) -> void:
-	if (_warning_label == null):
-		_warning_label = Label.new()
-		_warning_label.name = "ThreatWarning"
-		_warning_label.add_theme_font_override("font", load("res://assets/fonts/dogicabold.ttf") as Font)
-		_warning_label.add_theme_font_size_override("font_size", 16)
-		_warning_label.add_theme_color_override("font_color", Color("#ffb4a8"))
-		_warning_label.add_theme_color_override("font_outline_color", Color("#090f15"))
-		_warning_label.add_theme_constant_override("outline_size", 8)
-		_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		_warning_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		_warning_label.position = Vector2(240, 150)
-		_warning_label.size = Vector2(800, 24)
-		canvas_layer.add_child(_warning_label)
-	_warning_label.text = (Loc.t("battle.enemy_new_unit") % Loc.named("unit", unit.name)).to_upper()
-	_warning_label.modulate.a = 1.0
-	var tween : Tween = _warning_label.create_tween()
-	tween.tween_interval(3.0)
-	tween.tween_property(_warning_label, "modulate:a", 0.0, 0.5)
+	BattleAlert.show_on(canvas_layer, Loc.t("battle.enemy_new_unit") % Loc.named("unit", unit.name), "", unit)
 
 func base_death_event(team_stats: TeamStats) -> void:
 	if (game_ended):

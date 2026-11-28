@@ -266,7 +266,6 @@ func _build_header() -> PanelContainer:
 	row.add_theme_constant_override("separation", 14)
 	_margin(panel, 10).add_child(row)
 	var title : Label = _label("shop.fleet", TEXT, 32)
-	title.add_theme_font_override("font", PIXEL_FONT)
 	row.add_child(title)
 	row.add_child(VSeparator.new())
 	var gear_box : VBoxContainer = VBoxContainer.new()
@@ -365,6 +364,7 @@ func _build_detail() -> PanelContainer:
 	for side : String in ["left", "right", "top", "bottom"]:
 		skill_info.add_theme_constant_override("margin_" + side, 16)
 	skill_info_label = _label("", DisplayPalette.of_skill().text)
+	PixelText.describe(skill_info_label)
 	skill_info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	skill_info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	skill_info_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
@@ -792,6 +792,7 @@ func _add_weapon_selector(unit : EntityStats) -> void:
 				row.add_child(name_label)
 		box.add_child(row)
 		var desc : Label = _label(Enums.gun_description(current), DIM)
+		PixelText.describe(desc)
 		desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		box.add_child(desc)
 	if (box.get_child_count() == 0):

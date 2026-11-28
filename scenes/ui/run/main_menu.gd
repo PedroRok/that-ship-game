@@ -22,7 +22,9 @@ func header_kicker() -> String:
 func _build() -> void:
 	Global.run = null
 	Global.start_mode = Global.StartMode.NONE
-	content.add_child(_label("menu.each_save_keeps_its_own", 16, TEXT_SOFT))
+	var intro : Label = _label("menu.each_save_keeps_its_own", 16, TEXT_SOFT)
+	PixelText.describe(intro)
+	content.add_child(intro)
 	var row : HBoxContainer = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 20)
 	row.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
@@ -69,7 +71,9 @@ func _slot_card(index : int) -> Control:
 			stats.add_child(_centered("menu.creative_mode", AMBER))
 	else:
 		stats.add_child(_centered("menu.empty_save", TEXT_DIM))
-		stats.add_child(_centered("menu.starts_with_the_basic_troops", TEXT_DIM))
+		var basics : Label = _centered("menu.starts_with_the_basic_troops", TEXT_DIM)
+		PixelText.describe(basics)
+		stats.add_child(basics)
 	box.add_child(_divider())
 	if (!exists):
 		box.add_child(_creative_check(index))

@@ -158,6 +158,7 @@ func _build() -> void:
 	box.add_child(_row("options.scaling", scale_box))
 
 	scale_note = _wrapped("", 8, TEXT_DIM)
+	PixelText.describe(scale_note)
 	box.add_child(_indent(scale_note))
 	_refresh_scale_note()
 
@@ -183,6 +184,7 @@ func _build() -> void:
 	info_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(info_label)
 	var hint : Label = _wrapped("options.you_can_also_drag_the", 8, TEXT_DIM)
+	PixelText.describe(hint)
 	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	box.add_child(hint)
 
