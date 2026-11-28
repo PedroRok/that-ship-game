@@ -10,7 +10,7 @@
 script = ExtResource("1")
 gun_type = 12
 time_to_shoot = 12
-sfx_event = &"light_cannon"
+sfx_event = &"rotary_gun_burst"
 damage_scale = 0.6
 base_damage_mult = 0.25
 range_override = 190.0

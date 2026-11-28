@@ -72,7 +72,20 @@ func _process(delta : float) -> void:
 		add_command(COMMAND_PER_SECOND * delta)
 
 func add_command(amount : float) -> void:
+	var before : float = command
 	command = clampf(command + amount, 0.0, COMMAND_MAX)
+	if (!enabled or floori(command) <= floori(before)):
+		return
+	if (command >= COMMAND_MAX):
+		BattleAudio.play_ui(self, &"hud_command_ready")
+		return
+	for entry : String in Global.player_stats.loadout:
+		var skill : SkillStats = SkillCatalog.find(entry)
+		if (skill and Global.player_stats.is_skill_unlocked(skill)):
+			var cost : int = cost_of(skill.skill_id)
+			if (before < cost and command >= cost):
+				BattleAudio.play_ui(self, &"hud_command_ready")
+				return
 
 func _on_unit_destroyed(stats : EntityStats, team : TeamStats) -> void:
 	var boat : BoatStats = stats as BoatStats
@@ -117,6 +130,7 @@ func fire(id : StringName, where : Vector2 = Vector2.ZERO) -> bool:
 	match id:
 		SkillCatalog.BOMB:
 			_launch_bombs(where)
+			BattleAudio.play_ui(self, &"skill_bomb_warning")
 		SkillCatalog.REPAIR:
 			if (!_repair(where)):
 				return false
@@ -221,6 +235,8 @@ class SkillShell extends Node2D:
 		if (delay > 0.0):
 			delay -= delta
 			return
+		if (!visible):
+			BattleAudio.play_at(self, &"skill_bomb_whistle", global_position, self)
 		visible = true
 		t = minf(t + delta / SkillManager.BOMB_FLIGHT, 1.0)
 		var before : Vector2 = global_position
@@ -244,7 +260,7 @@ class SkillShell extends Node2D:
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
 				struck = true
-		BattleAudio.play_at(self, &"water_impact", goal)
+		BattleAudio.play_at(self, &"skill_bomb_explosion", goal, self)
 		if (struck):
 			GrainParticles.explosion(get_parent(), goal, SkillManager.BOMB_RADIUS, SkillManager.BOMB_GRAINS, SkillManager.BOMB_SMOKE_SECONDS)
 		else:
@@ -281,7 +297,7 @@ class FlakBarrage extends Node2D:
 		for index : int in SkillManager.FLAK_PER_COLUMN:
 			var where : Vector2 = Vector2(x + randf_range(-SkillManager.FLAK_SCATTER, SkillManager.FLAK_SCATTER), SkillManager.FLAK_TOP + band * (float(index) + randf()))
 			_burst(where)
-		BattleAudio.play_at(self, &"heavy_cannon", Vector2(x, (SkillManager.FLAK_TOP + SkillManager.FLAK_BOTTOM) * 0.5))
+		BattleAudio.play_at(self, &"skill_flak_burst", Vector2(x, (SkillManager.FLAK_TOP + SkillManager.FLAK_BOTTOM) * 0.5), self)
 
 	func _burst(where : Vector2) -> void:
 		var hit : Damage = Damage.new()

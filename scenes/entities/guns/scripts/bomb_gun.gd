@@ -16,6 +16,7 @@ func target_distance(target : Node2D) -> float:
 	return absf(point.x - global_position.x)
 
 func _init() -> void:
+	sfx_event = &"bomb_release"
 	hits_air = false
 	hits_surface = true
 	hits_submerged = false

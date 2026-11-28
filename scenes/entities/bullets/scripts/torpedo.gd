@@ -4,6 +4,7 @@ extends Bullet
 const WATER_Y : float = 366.0
 const MIN_DEPTH_Y : float = 367.0
 const MAX_DEPTH_Y : float = 480.0
+const SURFACE_AUDIO_DEPTH : float = 8.0
 
 var dir_x : float = 1.0
 

@@ -17,6 +17,8 @@ var screw_label : BarValue
 var gear_label : BarValue
 
 func _ready() -> void:
+	HudSfx.configure_pickup(screw_label.audio, &"pickup_screw")
+	HudSfx.configure_pickup(gear_label.audio, &"pickup_gear")
 	ships_slots.connect("spawn_entity", Callable(self, "spawn_entity"))
 	screw_label.connect("value_change", Callable(ships_slots, "on_value_change"))
 	screw_label.change_value(int(Global.modify(Enums.UpgradeTarget.BASE, &"start_screw", Global.player_stats.start_screw)))

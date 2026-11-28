@@ -151,6 +151,8 @@ func base_death_event(team_stats: TeamStats) -> void:
 	wave_manager.stop()
 	skill_manager.stop()
 	var victory : bool = team_stats.team_id != 1
+	if (!victory):
+		BattleAudio.play_ui(self, &"result_defeat")
 	var waves_reached : int = max(wave_manager.current_wave_number() - 1, 0)
 	var win_screen : Node = WIN_SCREEN.instantiate()
 	win_screen.title = "battle.victory" if victory else "battle.defeat"

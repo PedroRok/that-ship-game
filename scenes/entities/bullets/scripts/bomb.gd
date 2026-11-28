@@ -60,9 +60,9 @@ func _explode() -> void:
 			base.health_component.handle_hit(damage_to_base())
 			struck = true
 	if (struck):
-		play_impact_sfx()
+		BattleAudio.play_at(self, &"bomb_explosion_hit", global_position, self)
 	elif (global_position.y >= WATER_Y):
-		BattleAudio.play_at(self, &"water_impact", global_position)
+		BattleAudio.play_at(self, &"bomb_explosion_water", global_position, self)
 	if (struck or global_position.y < WATER_Y):
 		GrainParticles.explosion(get_parent(), global_position, radius, BLAST_GRAINS, BLAST_SECONDS)
 	else:

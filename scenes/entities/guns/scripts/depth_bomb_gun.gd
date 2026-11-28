@@ -2,6 +2,7 @@ class_name DepthBombGun
 extends BombGun
 
 func _init() -> void:
+	sfx_event = &"bomb_release"
 	hits_submerged = true
 
 func can_target(target : Node2D) -> bool:

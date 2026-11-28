@@ -531,6 +531,7 @@ func _build_nodes(canvas : Control) -> void:
 
 func _buy(upgrade : UpgradeStats) -> void:
 	if (Global.player_stats.buy_upgrade(upgrade)):
+		UiSfx.play(&"upgrade_installed")
 		Global.save_game()
 		_refresh()
 

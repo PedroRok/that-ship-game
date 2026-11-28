@@ -21,6 +21,12 @@ func _ready() -> void:
 	layer = 100
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	_build()
+	if (run.stage == RunData.Stage.ENDED):
+		if (run.result == RunData.Result.LOST):
+			BattleAudio.play_ui(self, &"result_defeat")
+	else:
+		var success : bool = bool(run.node_result.get("success", false))
+		BattleAudio.play_ui(self, &"objective_complete" if success else &"objective_failed")
 	GearEntity.collect_visible(get_tree())
 	var tween : Tween = create_tween()
 	tween.set_ignore_time_scale(true)

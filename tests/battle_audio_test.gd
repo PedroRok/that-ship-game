@@ -43,6 +43,7 @@ func _ready() -> void:
 	var preview : BattleContext = sandbox.get("context") as BattleContext
 	_check(preview != null and !preview.audio_enabled and preview.audio == null and BattleAudio.of(sandbox.get("viewport") as Node) == null, "HUD preview viewport stays silent")
 	await _hud_cues(game, hud)
+	await _projectile_cues(game, audio)
 	await _dock_sequence(game)
 	await _dense_battle(game, audio)
 	var seen : Dictionary = {}
@@ -74,7 +75,8 @@ func _finish(master : int, master_db : float) -> void:
 	get_tree().quit(0 if failures == 0 else 1)
 
 func _check_assets() -> void:
-	var oggs : int = 0
+	var legacy_oggs : int = 0
+	var approved_oggs : int = 0
 	var wavs : int = 0
 	var deferred : int = 0
 	var stack : Array[String] = [SOUND_ROOT]
@@ -86,18 +88,26 @@ func _check_assets() -> void:
 			if (file.ends_with(".wav")):
 				wavs += 1
 			if (dir_path.contains("/battle/") and file.ends_with(".ogg")):
-				oggs += 1
+				if (file.ends_with("_v14.ogg") or file.ends_with("_v16.ogg")):
+					legacy_oggs += 1
+				else:
+					approved_oggs += 1
 				for stem : String in DEFERRED:
 					if (file.contains(stem)):
 						deferred += 1
-	_check(oggs == 63, "63 approved battle sounds present (%d)" % oggs)
+	_check(legacy_oggs == 63, "63 legacy battle sounds present (%d)" % legacy_oggs)
 	_check(wavs == 0, "no WAV files under %s" % SOUND_ROOT)
 	_check(deferred == 0, "deferred cues 19-21 were not copied")
 	var missing : int = 0
 	var bad_loops : int = 0
+	var expected_approved : int = 0
 	for event : StringName in SfxCatalog.EVENTS:
 		var streams : Array[AudioStream] = SfxCatalog.streams(event)
-		missing += String(SfxCatalog.EVENTS[event]["takes"]).length() - streams.size()
+		var definition : Dictionary = SfxCatalog.EVENTS[event]
+		var approved : Array = definition.get("approved", [])
+		var expected : int = approved.size() if !approved.is_empty() else String(definition["takes"]).length()
+		expected_approved += approved.size()
+		missing += absi(expected - streams.size())
 		for stream : AudioStream in streams:
 			var ogg : AudioStreamOggVorbis = stream as AudioStreamOggVorbis
 			if (!ogg or ogg.loop != SfxCatalog.is_loop(event)):
@@ -108,9 +118,40 @@ func _check_assets() -> void:
 			paths.append(stream.resource_path.get_file())
 		_check(paths.size() == 3 and paths.all(func(p : String) -> bool: return p.ends_with("_v16.ogg")), "%s loads its three v16 takes %s" % [event, paths])
 	_check(missing == 0, "every catalog take loads as a stream")
-	_check(bad_loops == 0, "only engine groups 16-18 loop")
+	_check(approved_oggs == expected_approved, "all new battle OGGs are registered")
+	_check(bad_loops == 0, "only configured voices loop")
 	for cue : StringName in HudSfx.CUES:
-		_check(HudSfx.CUES[cue]["stream"] is AudioStreamOggVorbis, "HUD cue %s loads" % cue)
+		var definition : Dictionary = HudSfx.CUES[cue]
+		var streams : Array = definition.get("streams", [definition.get("stream")])
+		_check(!streams.is_empty() and streams.all(func(stream : AudioStream) -> bool: return stream is AudioStreamOggVorbis), "HUD cue %s loads" % cue)
+
+func _projectile_cues(game : GameRound, audio : BattleAudio) -> void:
+	var manager : BulletManager = (game.get_node("ShipsManager") as ShipManager).bullet_manager
+	var here : Vector2 = audio.listener_position()
+	var missile : BulletMissile = preload("res://scenes/entities/bullets/missile.tscn").instantiate() as BulletMissile
+	missile.process_mode = Node.PROCESS_MODE_DISABLED
+	manager.handle_bullet_spawned(missile, here + Vector2(1800.0, 0.0), Vector2.RIGHT, 0.0)
+	await _wait(0.15)
+	_check(_count(&"missile_flight") == 0, "missile loop waits until in range")
+	missile.global_position = here
+	await _wait(0.15)
+	_check(_count(&"missile_flight") == 1, "entering range starts one missile loop")
+	missile.remove_bullet()
+	await _wait(0.25)
+	_check(_count(&"missile_explosion") == 1, "missile detonation plays one explosion")
+	var torpedo : BulletTorpedo = preload("res://scenes/entities/bullets/torpedo.tscn").instantiate() as BulletTorpedo
+	torpedo.process_mode = Node.PROCESS_MODE_DISABLED
+	manager.handle_bullet_spawned(torpedo, Vector2(here.x, BulletTorpedo.MAX_DEPTH_Y), Vector2.RIGHT, 0.0)
+	await _wait(0.15)
+	_check(_count(&"torpedo_surface") == 0, "deep torpedo keeps surface loop silent")
+	torpedo.global_position.y = BulletTorpedo.MIN_DEPTH_Y
+	await _wait(0.15)
+	_check(_count(&"torpedo_surface") == 1, "near-surface torpedo starts one loop")
+	torpedo.queue_free()
+	await _wait(0.25)
+	var tails : bool = audio._voices.any(func(voice : SfxVoice) -> bool:
+		return voice.busy and voice.event in [&"missile_flight", &"torpedo_surface"])
+	_check(audio._projectiles.is_empty() and !tails, "projectile voices release after removal")
 
 func _wait(seconds : float, audio : BattleAudio = null) -> void:
 	var until : int = Time.get_ticks_msec() + int(seconds * 1000.0 / Engine.time_scale)

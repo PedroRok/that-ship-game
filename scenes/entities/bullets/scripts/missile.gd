@@ -52,6 +52,7 @@ func _physics_process(delta: float) -> void:
 func remove_bullet() -> void:
 	if (is_queued_for_deletion()):
 		return
+	BattleAudio.play_at(self, &"missile_explosion", global_position, self, global_position.y >= ShipEntity.WATER_LEVEL)
 	_explode_particles()
 	queue_free()
 
@@ -63,4 +64,7 @@ func _explode_particles() -> void:
 	GrainParticles.debris(get_parent(), global_position, BLAST_RADIUS, BLAST_DEBRIS)
 
 func _impact_particles(_underwater : bool) -> void:
+	pass
+
+func play_impact_sfx(_underwater : bool = false) -> void:
 	pass

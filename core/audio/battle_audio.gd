@@ -39,6 +39,12 @@ class BuildState extends RefCounted:
 	var handle : SfxHandle
 	var next_at : float = 0.0
 
+class ProjectileState extends RefCounted:
+	var bullet : Bullet
+	var event : StringName
+	var handle : SfxHandle
+	var take : int
+
 signal sound_started(event : StringName, at : Vector2)
 
 var camera : Camera2D
@@ -47,6 +53,7 @@ var listener : AudioListener2D
 
 var _voices : Array[SfxVoice] = []
 var _engines : Dictionary = {}
+var _projectiles : Dictionary = {}
 var _builds : Dictionary = {}
 var _recent : Array[Dictionary] = []
 var _last_take : Dictionary = {}
@@ -69,6 +76,17 @@ static func play_at(node : Node, event : StringName, at : Vector2, emitter : Obj
 	if (!audio):
 		return null
 	return audio.play(event, at, emitter, underwater)
+
+static func play_ui(node : Node, event : StringName) -> void:
+	if (of(node)):
+		UiSfx.play(event)
+
+func track_projectile(bullet : Bullet, event : StringName) -> void:
+	var state : ProjectileState = ProjectileState.new()
+	state.bullet = bullet
+	state.event = event
+	state.take = _pick_take(event, null, SfxCatalog.streams(event).size())
+	_projectiles[bullet.get_instance_id()] = state
 
 static func start_build(constructor : Node2D) -> void:
 	var audio : BattleAudio = of(constructor)
@@ -94,6 +112,7 @@ func _exit_tree() -> void:
 	for voice : SfxVoice in _voices:
 		voice.release()
 	_engines.clear()
+	_projectiles.clear()
 	_builds.clear()
 
 static func base_damaged(base : Node2D) -> void:
@@ -200,10 +219,43 @@ func _process(delta : float) -> void:
 	listener.global_position = here
 	_update_builds(here)
 	_update_base_damage(here)
+	_update_projectiles(here)
 	_update_engines(here)
 	for voice : SfxVoice in _voices:
 		if (voice.busy):
 			voice.update_mix(here, delta)
+
+func _update_projectiles(here : Vector2) -> void:
+	for key : int in _projectiles.keys():
+		var state : ProjectileState = _projectiles[key]
+		if (!is_instance_valid(state.bullet) or !state.bullet.is_inside_tree() or state.bullet.is_queued_for_deletion()):
+			if (state.handle):
+				state.handle.fade(0.12)
+			_projectiles.erase(key)
+			continue
+		var bullet : Bullet = state.bullet
+		var audible : bool = bullet.global_position.distance_to(here) < SfxCatalog.range_of(state.event).z
+		if (audible and bullet is BulletTorpedo):
+			audible = bullet.global_position.y <= BulletTorpedo.MIN_DEPTH_Y + BulletTorpedo.SURFACE_AUDIO_DEPTH
+		if (!audible):
+			if (state.handle):
+				state.handle.fade(0.12)
+				state.handle = null
+			continue
+		if (state.handle and state.handle.active()):
+			continue
+		var streams : Array[AudioStream] = SfxCatalog.streams(state.event)
+		if (streams.is_empty()):
+			continue
+		var voice : SfxVoice = _acquire(SfxVoice.Kind.LOOP, SfxCatalog.priority_of(state.event), LOOP_CAP)
+		if (!voice):
+			continue
+		var pitch : float = pow(2.0, randf_range(-PITCH_SEMITONES, PITCH_SEMITONES) / 12.0)
+		voice.start(streams[state.take], pitch, SfxCatalog.trim_of(state.event), state.event,
+			SfxVoice.Kind.LOOP, here, bullet.global_position, bullet, 0.0)
+		state.handle = SfxHandle.new(voice)
+		state.handle.set_gain(1.0)
+		sound_started.emit(state.event, bullet.global_position)
 
 func active_counts() -> Dictionary:
 	var counts : Dictionary = {SfxVoice.Kind.ONE_SHOT: 0, SfxVoice.Kind.LOOP: 0, SfxVoice.Kind.BUILD: 0}
@@ -310,7 +362,7 @@ func _track(entity : Entity) -> void:
 	state.born = _clock
 	var id : int = entity.get_instance_id()
 	var hashed : int = absi(hash(id))
-	state.take = hashed % 3
+	state.take = hashed
 	state.pitch = pow(2.0, (float((hashed >> 4) % 101) / 50.0 - 1.0) * ENGINE_PITCH_SEMITONES / 12.0)
 	entity.entity_destroy.connect(func(_pos : Vector2, _stats : EntityStats, _team : TeamStats) -> void: state.dead = true)
 	_engines[id] = state

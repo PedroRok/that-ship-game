@@ -995,6 +995,7 @@ func _skill_card_input(event : InputEvent, skill : SkillStats) -> void:
 func _buy_unit(unit : BoatStats) -> void:
 	if (!Global.player_stats.buy(unit.unlock_cost, unit)):
 		return
+	UiSfx.play(&"shop_purchase")
 	Global.save_game()
 	_refresh_all()
 

@@ -17,6 +17,27 @@ const DUPLICATE_RADIUS : float = 40.0
 const LARGE_SHIP_HEALTH : float = 28.0
 
 const EVENTS : Dictionary = {
+	&"bomb_explosion_hit": {"approved": ["d_r01"], "family": Family.HEAVY, "trim": -4.0, "priority": 4},
+	&"bomb_explosion_water": {"approved": ["b_r01", "c_r01", "e_r01"], "family": Family.LIGHT, "trim": -5.0, "priority": 3},
+	&"bomb_release": {"approved": ["d_r02"], "family": Family.LIGHT, "trim": -2.0, "priority": 2},
+	&"depth_charge_explosion": {"approved": ["a_r02", "b_r03", "d_r03", "e_r03"], "family": Family.HEAVY, "trim": -4.0, "priority": 4, "gap": 0.045},
+	&"depth_launcher_fire": {"approved": ["b_r02", "c_r02"], "family": Family.LIGHT, "trim": -4.0, "priority": 4},
+	&"flak_burst": {"approved": ["c_r02", "d_r01"], "family": Family.LIGHT, "trim": -3.0, "priority": 2, "gap": 0.028},
+	&"flare_release": {"approved": ["a_r02", "b_r02", "c_r02"], "family": Family.LIGHT, "trim": 0.0, "priority": 3},
+	&"helicopter_destroyed": {"approved": ["a_r02", "b_r02"], "family": Family.HEAVY, "trim": -5.0, "priority": 6},
+	&"helicopter_rotor": {"approved": ["b_r02", "d_r02"], "family": Family.AMBIENT, "trim": -12.0, "priority": 1, "loop": true},
+	&"lightning_charge": {"approved": ["c_r01"], "family": Family.HEAVY, "trim": -4.0, "priority": 6},
+	&"lightning_strike": {"approved": ["a_r03", "c_r01", "d_r03"], "family": Family.TERMINAL, "trim": -4.0, "priority": 8},
+	&"missile_explosion": {"approved": ["b_r01", "d_r02"], "family": Family.HEAVY, "trim": -5.0, "priority": 5},
+	&"missile_flight": {"approved": ["b_r03", "c_r03", "d_r03"], "family": Family.AMBIENT, "trim": -5.0, "priority": 2, "loop": true},
+	&"plane_destroyed": {"approved": ["a_r02", "e_r01"], "family": Family.HEAVY, "trim": -5.0, "priority": 6},
+	&"rotary_gun_burst": {"approved": ["a_r01", "b_r01", "c_r01"], "family": Family.LIGHT, "trim": -4.0, "priority": 4, "gap": 0.016},
+	&"skill_bomb_explosion": {"approved": ["b_r03"], "family": Family.HEAVY, "trim": -4.0, "priority": 6},
+	&"skill_bomb_whistle": {"approved": ["a_r03", "b_r03", "c_r03", "d_r01"], "family": Family.HEAVY, "trim": -3.0, "priority": 4},
+	&"skill_flak_burst": {"approved": ["b_r01", "d_r02"], "family": Family.HEAVY, "trim": -3.0, "priority": 5},
+	&"submarine_destroyed": {"approved": ["a_r02", "c_r01"], "family": Family.HEAVY, "trim": -4.0, "priority": 6},
+	&"torpedo_surface": {"approved": ["a_r03", "e_r03"], "family": Family.AMBIENT, "trim": -5.0, "priority": 2, "loop": true},
+	&"wreck_splash": {"approved": ["a_r03", "c_r01"], "family": Family.LIGHT, "trim": -5.0, "priority": 3},
 	&"dock_build": {"takes": "abcdef", "family": Family.AMBIENT, "trim": -11.0, "priority": 1},
 	&"dock_release": {"takes": "abc", "family": Family.LAUNCH, "trim": -9.0, "priority": 3},
 	&"naval_launch": {"takes": "abc", "family": Family.LAUNCH, "trim": -15.0, "priority": 3},
@@ -58,12 +79,21 @@ static func streams(event : StringName) -> Array[AudioStream]:
 	var def : Dictionary = EVENTS[event]
 	var stem : String = String(def.get("stem", event))
 	var revision : String = String(def.get("revision", "v14"))
-	for take : String in String(def["takes"]):
-		var stream : AudioStream = load(PATH % [stem, stem, take, revision]) as AudioStream
+	var filenames : Array[String] = []
+	if (def.has("approved")):
+		for take : String in def["approved"]:
+			filenames.append("res://assets/game/sounds/battle/%s/battle_%s_%s.ogg" % [stem, stem, take])
+	else:
+		for take : String in String(def["takes"]):
+			filenames.append(PATH % [stem, stem, take, revision])
+	for filename : String in filenames:
+		var stream : AudioStream = load(filename) as AudioStream
 		if (stream):
+			if (is_loop(event) and stream is AudioStreamOggVorbis):
+				(stream as AudioStreamOggVorbis).loop = true
 			list.append(stream)
 		else:
-			push_error("Missing sound take %s %s" % [stem, take])
+			push_error("Missing sound take %s" % filename)
 	_streams[event] = list
 	return list
 
@@ -88,16 +118,24 @@ static func launch_event(stats : EntityStats) -> StringName:
 	return LAUNCH_BY_DOCK[Base.dock_type_of(stats)]
 
 static func destruction_event(stats : EntityStats) -> StringName:
-	if (!stats or stats is AirPlaneState):
+	if (!stats):
 		return &""
+	if (stats is HelicopterStats):
+		return &"helicopter_destroyed"
+	if (stats is AirPlaneState):
+		return &"plane_destroyed"
 	var boat : BoatStats = stats as BoatStats
-	if (!boat or boat.can_submerge):
+	if (!boat):
 		return &""
+	if (boat.can_submerge):
+		return &"submarine_destroyed"
 	if (boat.is_boss or (boat.unit_class == Enums.UnitClass.HEAVY and boat.health >= LARGE_SHIP_HEALTH)):
 		return &"large_ship_sink"
 	return &"small_ship_break"
 
 static func engine_event(entity : Entity) -> StringName:
+	if (entity is HelicopterEntity):
+		return &"helicopter_rotor"
 	if (entity is AirEntity):
 		return &"air_engine"
 	if (entity.is_submerged()):

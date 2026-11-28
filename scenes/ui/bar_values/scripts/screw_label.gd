@@ -102,7 +102,7 @@ func _physics_process(delta: float) -> void:
 				waiting_to_increment -= 1
 				refresh_text()
 				audio.play()
-				audio.pitch_scale += 0.1
+				audio.pitch_scale = minf(audio.pitch_scale + 0.1, 3.0)
 				value_label.pivot_offset = value_label.size/2
 				value_label.rotation_degrees = clamp(value_label.rotation_degrees - 3, -30, 30)
 				value_label.scale = clamp(value_label.scale + Vector2(0.2, 0.2), Vector2(1., 1.), Vector2(2.,2.))

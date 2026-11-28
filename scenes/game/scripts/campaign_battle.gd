@@ -260,6 +260,11 @@ func _check_threat(text_id : String, arrived : bool, gone : bool) -> void:
 	_show_warning(text_id)
 
 func _show_warning(text_id : String) -> void:
+	match text_id:
+		"battle.warn_air":
+			BattleAudio.play_ui(self, &"alert_air_threat")
+		"battle.warn_sub":
+			BattleAudio.play_ui(self, &"alert_sub_threat")
 	if (_warning_label == null):
 		_warning_label = Label.new()
 		_warning_label.name = "ThreatWarning"

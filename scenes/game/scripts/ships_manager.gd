@@ -27,6 +27,8 @@ func handle_ship_spawn(pos : Vector2, ship_resource : Resource, team_res : TeamS
 		add_child(boat)
 		var base : Base = _base_of(team_res)
 		var boss : bool = entity_is_boss(boat.entity_stats)
+		if (boss and team_res.team_id != 1):
+			BattleAudio.play_ui(self, &"alert_boss")
 		var boat_stats : BoatStats = boat.entity_stats as BoatStats
 		if (base and !boss and !is_air and boat_stats and boat_stats.can_submerge):
 			var surface_y : float = base.get_spawn_point().y

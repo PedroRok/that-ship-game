@@ -89,6 +89,7 @@ func _flash(strength : float, fade : float) -> void:
 	tween.tween_property(flash, "modulate:a", 0.0, fade)
 
 func strike_back() -> void:
+	BattleAudio.play_ui(self, &"thunder_distant")
 	var depth : float = rng.randf()
 	var sprite : Sprite2D = _bolt(depth, false)
 	sprite.position = Vector2(rng.randf_range(left_x - 200.0, right_x + 200.0), WATER_Y - 6.0 - depth * 10.0)
@@ -102,6 +103,8 @@ func strike_back() -> void:
 	tween.tween_callback(sprite.queue_free)
 
 func strike_front(x : float) -> void:
+	var where : Vector2 = Vector2(x, FRONT_BOTTOM_Y)
+	BattleAudio.play_at(self, &"lightning_charge", where, self)
 	var mark : ColorRect = ColorRect.new()
 	mark.color = Color(0.8, 0.9, 1.0, 0.9)
 	mark.size = Vector2(HIT_RADIUS * 2.0, 2.0)
@@ -117,8 +120,9 @@ func strike_front(x : float) -> void:
 		return
 	mark.queue_free()
 	var sprite : Sprite2D = _bolt(0.0, true)
-	sprite.position = Vector2(x, FRONT_BOTTOM_Y)
+	sprite.position = where
 	add_child(sprite)
+	BattleAudio.play_at(self, &"lightning_strike", where, self)
 	_flash(0.55, 0.4)
 	apply_damage(x)
 	var tween : Tween = create_tween()

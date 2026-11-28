@@ -2,6 +2,7 @@ class_name DepthLauncherGun
 extends Gun
 
 func _init() -> void:
+	sfx_event = &"depth_launcher_fire"
 	hits_air = false
 	hits_surface = false
 	hits_submerged = true

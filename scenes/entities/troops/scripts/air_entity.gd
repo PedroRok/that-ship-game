@@ -47,6 +47,7 @@ func _update_flares(delta : float) -> void:
 	flare_cooldown = RunData.FLARE_COOLDOWN
 	evade_left = RunData.HELI_EVADE_SECONDS
 	AirPuff.flares(self, get_center_pos(), forward)
+	BattleAudio.play_at(self, &"flare_release", get_center_pos(), self)
 	for missile : BulletMissile in chasing:
 		if (randf() >= RunData.FLARE_HIT_CHANCE):
 			missile.decoy(RunData.FLARE_DEFLECTION if randf() < 0.5 else -RunData.FLARE_DEFLECTION)

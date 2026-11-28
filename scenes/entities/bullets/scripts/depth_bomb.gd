@@ -57,7 +57,6 @@ func _at_submarine_depth() -> bool:
 
 func _area_blast() -> void:
 	exploded = true
-	var struck : bool = false
 	var base_damage : Damage = damage.duplicate()
 	for node : Node in BattleContext.of(self).entities:
 		var entity : Entity = node as Entity
@@ -69,9 +68,7 @@ func _area_blast() -> void:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
-				struck = true
-	if (struck):
-		play_impact_sfx(true)
+	BattleAudio.play_at(self, &"depth_charge_explosion", global_position, self)
 	GrainParticles.bubbles(get_parent(), global_position, radius * BLAST_SHARE, BUBBLE_GRAINS)
 	queue_free()
 
@@ -93,18 +90,17 @@ func _hit_target(ship : Entity) -> void:
 	var hitbox : HitboxComponent = ship.get_node_or_null("HitboxComponent") as HitboxComponent
 	if (hitbox):
 		hitbox.handle_hit(hit, 0.0)
-	play_impact_sfx(true)
 	_blast()
 
 func _hit_base(base : Base) -> void:
 	exploded = true
 	base.health_component.handle_hit(damage_to_base())
-	play_impact_sfx()
 	_blast()
 
 func _depth_of(entity : Entity) -> float:
 	return entity.get_center_pos().y if entity.is_submerged() else entity.global_position.y
 
 func _blast() -> void:
+	BattleAudio.play_at(self, &"depth_charge_explosion", global_position, self)
 	GrainParticles.explosion(get_parent(), global_position, radius * BLAST_SHARE, HIT_GRAINS, HIT_SECONDS)
 	queue_free()
