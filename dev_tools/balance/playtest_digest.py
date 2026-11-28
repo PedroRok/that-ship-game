@@ -38,12 +38,12 @@ def main(paths):
             if buys:
                 first[names[buys[0][2][0]]] += 1
             saved += [e[3][0] for e in buys]
-            skills.update(e[1] for e in battle["ev"] if e[1] in "bkc")
+            skills.update(e[2][0] if e[1] == "x" else e[1] for e in battle["ev"] if e[1] in ("b", "k", "c", "x"))
         print("obj", objective, "n", len(group), "won", won, "left", left,
               "med_s", statistics.median(b["res"][1] for b in group),
               "screws_left_after_buy", statistics.median(saved) if saved else 0)
-        print("  first", first.most_common(4), "buys", bought.most_common(8), "bomb/boost/cancel",
-              skills["b"], skills["k"], skills["c"])
+        print("  first", first.most_common(4), "buys", bought.most_common(8), "skills/cancel",
+              dict(skills))
 
 
 if __name__ == "__main__":

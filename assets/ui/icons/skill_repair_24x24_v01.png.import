@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://fshhp4rb7m8d"
-path="res://.godot/imported/skill_boost_24x24_v01.png-1bcec4239ab602fdb2263f65a0329e23.ctex"
+uid="uid://0kbqby3tatpq"
+path="res://.godot/imported/skill_repair_24x24_v01.png-75075e516192681192d6e0c6bef21274.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/icons/skill_boost_24x24_v01.png"
-dest_files=["res://.godot/imported/skill_boost_24x24_v01.png-1bcec4239ab602fdb2263f65a0329e23.ctex"]
+source_file="res://assets/ui/icons/skill_repair_24x24_v01.png"
+dest_files=["res://.godot/imported/skill_repair_24x24_v01.png-75075e516192681192d6e0c6bef21274.ctex"]
 
 [params]
 

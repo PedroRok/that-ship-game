@@ -91,6 +91,8 @@ func _ready() -> void:
 	skill_manager.game_ui = $CanvasLayer/GameUI
 	skill_manager.ally_base = ally_base
 	skill_manager.enemy_base = enemy_base
+	skill_manager.ships_manager = $ShipsManager as ShipManager
+	skill_manager.camera = camera
 	add_child(skill_manager)
 
 	if (campaign_mode):

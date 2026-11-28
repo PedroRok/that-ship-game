@@ -34,7 +34,7 @@ func handle_random_spawn(pos : Vector2, explode : bool) -> void:
 		for i in amount:
 			handle_gear_spawn(pos, explode)
 
-func spawn_screw_drop(pos : Vector2, amount : int) -> void:
+func spawn_screw_drop(pos : Vector2, amount : int) -> GearEntity:
 	var screw : GearEntity = screw_entity.instantiate()
 	screw.amount = amount
 	add_child(screw)
@@ -42,6 +42,7 @@ func spawn_screw_drop(pos : Vector2, amount : int) -> void:
 	screw.connect("pickup_gear", Callable(game_ui, "collect_screw"))
 	screw.target_control = game_ui.screw_label.texture
 	screw.explode()
+	return screw
 
 func handle_gear_spawn(pos : Vector2, explode : bool) -> void:
 	var gear : GearEntity = gear_entity.instantiate()

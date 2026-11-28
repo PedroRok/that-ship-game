@@ -36,6 +36,9 @@ func _physics_process(delta: float) -> void:
 		direction = direction.normalized() * bullet_stats.speed
 	
 	global_position += direction * delta
+	var smoke : CPUParticles2D = get_node_or_null("CPUParticles2D") as CPUParticles2D
+	if (smoke):
+		smoke.emitting = global_position.y < ShipEntity.WATER_LEVEL
 	if (bullet_stats.killTime <= 0):
 		remove_bullet()
 	bullet_stats.killTime -= 1

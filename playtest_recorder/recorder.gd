@@ -1,7 +1,7 @@
 extends Node
 
 const FORMAT : int = 1
-const BUILD : String = "2026-11-27r"
+const BUILD : String = "2026-11-28d"
 const SNAPSHOT_SECONDS : float = 3.0
 const FOLDER : String = "playtest/"
 const DATA_FILE : String = "battles.jsonl"
@@ -15,7 +15,6 @@ var _names : Array[String] = []
 var _time : float = 0.0
 var _snapshot_clock : float = 0.0
 var _queues : Dictionary = {}
-var _boost_left : float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_PAUSABLE
@@ -58,7 +57,6 @@ func _start(game : GameRound) -> void:
 	_time = 0.0
 	_snapshot_clock = 0.0
 	_queues = {}
-	_boost_left = 0.0
 	var fleet : Array = []
 	for stats : EntityStats in Global.player_stats.loadout_entities():
 		var guns : Array[int] = []
@@ -82,7 +80,7 @@ func _start(game : GameRound) -> void:
 	else:
 		_record["obj"] = -1
 	if (game.skill_manager):
-		game.skill_manager.bomb_dropped.connect(_on_bomb)
+		game.skill_manager.skill_used.connect(_on_skill)
 	var screws : BarValue = _screw_bar()
 	if (screws):
 		screws.value_change.connect(_on_screws)
@@ -120,8 +118,8 @@ func _on_screws(_value : int) -> void:
 			_event("c", [])
 	_remember_queues()
 
-func _on_bomb(where : Vector2) -> void:
-	_event("b", [_across(where.x), int(where.y)])
+func _on_skill(skill_id : StringName, where : Vector2) -> void:
+	_event("x", [String(skill_id), _across(where.x), int(where.y)])
 
 func _across(x : float) -> int:
 	var from : float = _game.ally_base.global_position.x
@@ -177,11 +175,6 @@ func _physics_process(delta : float) -> void:
 		_finish()
 		return
 	_time += delta
-	if (_game.skill_manager):
-		var boost : float = _game.skill_manager.cooldown_left(&"boost")
-		if (boost > _boost_left + 1.0):
-			_event("k", [])
-		_boost_left = boost
 	_snapshot_clock -= delta
 	if (_snapshot_clock <= 0.0):
 		_snapshot_clock = SNAPSHOT_SECONDS

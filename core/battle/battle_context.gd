@@ -6,6 +6,7 @@ const META: StringName = &"battle_context"
 var entities: Array[Entity] = []
 var bases: Array[Base] = []
 var bullets: BulletManager
+var flak_smoke : Node
 var audio_enabled: bool = true
 var audio: BattleAudio
 var patrol_x: float = NAN

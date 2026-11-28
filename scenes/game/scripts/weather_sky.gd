@@ -33,6 +33,7 @@ static func apply(game_round : Node, weather : int) -> void:
 	far_layer.material = far
 	front_layer.material = front
 	var look : Dictionary = _look(weather)
+	AirPuff.tint = Color(str(look.get("tint", "#ffffff")))
 	if (look.has("top")):
 		_apply_sky(far, front, look)
 	_apply_ocean(game_round, look)

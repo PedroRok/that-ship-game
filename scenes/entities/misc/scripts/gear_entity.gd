@@ -31,6 +31,9 @@ func _ready() -> void:
 	if (Global.modify(Enums.UpgradeTarget.BASE, &"auto_collect", 0.0) > 0.0):
 		_auto_left = AUTO_COLLECT_DELAY
 
+func collect_after(seconds : float) -> void:
+	_auto_left = seconds
+
 func collect_instantly() -> void:
 	if (desapier):
 		return

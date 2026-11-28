@@ -17,11 +17,14 @@ const FLEETS : Dictionary = {
 
 const EscortProbe : GDScript = preload("res://dev_tools/balance/escort_probe.gd")
 
+const SKILL_SLOT_LIMIT : int = 10
+
 var ais : Array[String] = ["current"]
 var bots : Array[String] = ["adaptive"]
 var objectives : Array[int] = [0, 1, 2, 3, 4, 5, ENDLESS]
 var floors : Array[int] = [1]
 var fleets : Array[String] = ["early"]
+var skill_names : Array[String] = []
 var seeds : int = 1
 var seed_first : int = 0
 var params_path : String = ""
@@ -67,6 +70,8 @@ func _parse_args() -> void:
 				bots = _strings(value)
 			"fleet":
 				fleets = _strings(value)
+			"skills":
+				skill_names = _strings(value)
 			"obj":
 				objectives = _ints(value)
 			"floors":
@@ -180,6 +185,11 @@ func _play(scenario : Dictionary) -> void:
 		stats.unlocked_entities.append(boat)
 		stats.loadout.append(unit_name)
 		fleet.append(BalanceFleet.profile_of(boat))
+	for skill_name : String in skill_names:
+		if (stats.loadout.size() >= SKILL_SLOT_LIMIT):
+			stats.loadout.pop_back()
+			fleet.pop_back()
+		stats.loadout.insert(0, SkillCatalog.PREFIX + skill_name)
 	Global.player_stats = stats
 	var run : RunState = null
 	if (objective != ENDLESS):

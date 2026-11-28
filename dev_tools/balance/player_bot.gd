@@ -12,7 +12,7 @@ const STYLES : Array[String] = ["counter", "swarm", "heavy", "air", "naval", "su
 
 const DEFAULTS : Dictionary = {"decide": 0.5, "review": 18.0, "switch": 0.04, "buys": 2.0, "patience": 1.5,
 	"patience_front": 0.55, "urgent_share": 0.3, "noise": 0.6, "price_exp": 0.5, "health_exp": 0.5, "siege": 0.15,
-	"counter_bias": 0.05, "bomb_value": 15.0, "boost_screws": 16.0, "anti_air": 1.0, "anti_sub": 1.0, "escort_air": 1.0, "use_bomb": 1.0, "use_boost": 1.0,
+	"counter_bias": 0.05, "bomb_value": 15.0, "flak_planes": 2.0, "supply_reserve": 90.0, "repair_units": 2.0, "anti_air": 1.0, "anti_sub": 1.0, "escort_air": 1.0, "use_bomb": 1.0, "use_supply": 1.0, "use_repair": 1.0, "use_flak": 1.0,
 	"cancel": 0.0, "wave": 0.0, "queue_max": 99.0, "spread": 0.0}
 
 var params : Dictionary = DEFAULTS.duplicate()
@@ -23,7 +23,7 @@ var switches : int = 0
 var cancels : int = 0
 var _wave_open : bool = false
 var style_seconds : Dictionary = {}
-var skills_used : Dictionary = {"bomb": 0, "boost": 0}
+var skills_used : Dictionary = {"bomb": 0, "repair": 0, "flak": 0, "supply": 0}
 
 var _fleet : Array[BalanceUnit] = []
 var _memory : Dictionary = {}
@@ -231,15 +231,65 @@ func _score(unit : BalanceUnit, view : Dictionary) -> float:
 		score = maxf(score, 0.05)
 	return score
 
-func _use_skills(game : GameRound, ui : GameUI, view : Dictionary) -> void:
+func _use_skills(game : GameRound, _ui : GameUI, view : Dictionary) -> void:
 	var skills : SkillManager = game.skill_manager
 	if (skills == null or !skills.enabled):
 		return
-	var cluster : Dictionary = view["cluster"]
-	if (float(params["use_bomb"]) > 0.0 and float(cluster["value"]) >= float(params["bomb_value"]) and skills.cooldown_left(&"bomb") <= 0.0
-			and ui.screw_label.total_value >= SkillCatalog.BOMB_COST):
-		skills._drop_bombs(cluster["position"] as Vector2)
-		skills_used["bomb"] = int(skills_used["bomb"]) + 1
-	elif (float(params["use_boost"]) > 0.0 and ui.screw_label.total_value >= int(params["boost_screws"]) and skills.cooldown_left(&"boost") <= 0.0):
-		if (skills._fire_boost()):
-			skills_used["boost"] = int(skills_used["boost"]) + 1
+	for id : StringName in [SkillCatalog.BOMB, SkillCatalog.FLAK, SkillCatalog.REPAIR, SkillCatalog.SUPPLY]:
+		var entry : String = SkillCatalog.PREFIX + String(id)
+		var skill : SkillStats = SkillCatalog.find(entry)
+		if (!Global.player_stats.in_loadout(entry) or float(params["use_" + String(skill.skill_id)]) <= 0.0 or skills.skill_reason(skill) != "hud.ready"):
+			continue
+		var where : Vector2 = Vector2.ZERO
+		match skill.skill_id:
+			SkillCatalog.SUPPLY:
+				if (_has_other_skill() and skills.command < float(params["supply_reserve"])):
+					continue
+			SkillCatalog.BOMB:
+				var cluster : Dictionary = view["cluster"]
+				if (float(cluster["value"]) < float(params["bomb_value"])):
+					continue
+				where = cluster["position"] as Vector2
+			SkillCatalog.FLAK:
+				if (_enemy_planes(game) < int(params["flak_planes"])):
+					continue
+			SkillCatalog.REPAIR:
+				where = _repair_spot(game)
+				if (where == Vector2.INF):
+					continue
+		if (skills.fire(skill.skill_id, where)):
+			skills_used[String(skill.skill_id)] = int(skills_used[String(skill.skill_id)]) + 1
+			return
+
+func _has_other_skill() -> bool:
+	for id : StringName in [SkillCatalog.BOMB, SkillCatalog.FLAK, SkillCatalog.REPAIR]:
+		if (Global.player_stats.in_loadout(SkillCatalog.PREFIX + String(id))):
+			return true
+	return false
+
+func _enemy_planes(game : GameRound) -> int:
+	var count : int = 0
+	for unit : Entity in BattleContext.of(game.ally_base).entities:
+		if (unit.enabled and !unit.destroyed and unit.team_stats.team_id != 1 and unit.entity_stats is AirPlaneState):
+			count += 1
+	return count
+
+func _repair_spot(game : GameRound) -> Vector2:
+	var damaged : Array[Entity] = []
+	for unit : Entity in BattleContext.of(game.ally_base).entities:
+		if (!unit.enabled or unit.destroyed or unit.team_stats.team_id != 1):
+			continue
+		var health : HealthComponent = unit.get_node_or_null("HealthComponent") as HealthComponent
+		if (health and health.actual_health < health.default_health * 0.7):
+			damaged.append(unit)
+	var best : Vector2 = Vector2.INF
+	var most : int = int(params["repair_units"]) - 1
+	for center : Entity in damaged:
+		var near : int = 0
+		for other : Entity in damaged:
+			if (absf(other.global_position.x - center.global_position.x) <= SkillManager.REPAIR_RADIUS):
+				near += 1
+		if (near > most):
+			most = near
+			best = center.global_position
+	return best

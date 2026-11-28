@@ -156,13 +156,17 @@ func sanitize_loadout() -> void:
 	_trim_loadout()
 
 func has_boat(boat_name : String) -> bool:
-	if (SkillCatalog.find(boat_name)):
-		return true
+	var skill : SkillStats = SkillCatalog.find(boat_name)
+	if (skill):
+		return is_skill_unlocked(skill)
 	for stats : EntityStats in unlocked_entities:
 		if (boat_name == stats.name):
 			return true
 	return false
 	
+func is_skill_unlocked(skill : SkillStats) -> bool:
+	return skill.unlock_id == &"" or creative or int(upgrade_levels.get(skill.unlock_id, 0)) > 0
+
 func can_buy(gears_needed : int) -> bool:
 	if (gear >= gears_needed):
 		return true

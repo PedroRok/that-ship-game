@@ -1,8 +1,9 @@
 class_name AirPuff
 extends Node2D
 
-const SMOKE : Color = Color(0.86, 0.9, 0.93)
-const SHADE : Color = Color(0.5, 0.57, 0.65)
+const CLOUD_TONES : Array[Color] = [Color(1.0, 1.0, 1.0), Color(0.9, 0.95, 1.0), Color(0.74, 0.85, 0.96)]
+const WIND : Vector2 = Vector2(-8.0, 0.0)
+const WATER_MARGIN : float = 4.0
 const SPARK : Color = Color(1.0, 0.97, 0.75)
 const GLOW : Color = Color(1.0, 0.55, 0.1)
 const FLARE_SECONDS : float = 1.5
@@ -18,9 +19,11 @@ const BOOST_SMOKE_SECONDS : float = 20.0
 const BOOST_PARTICLES : int = 8
 const BOOST_JITTER : float = 4.5
 const CLOUD_HOLD : float = 0.4
-const CLOUD_DRIFT : float = 0.5
+const CLOUD_DRIFT : float = 0.15
 const MOTE_ALPHA : float = 0.85
 const MOTE_BIG_CHANCE : float = 0.35
+
+static var tint : Color = Color.WHITE
 
 var age : float = 0.0
 var sparks : Array[Vector2] = []
@@ -40,7 +43,10 @@ static func smoke(source : Node2D, where : Vector2) -> void:
 	var cloud : AirPuff = AirPuff.new()
 	cloud.life = BOOST_SMOKE_SECONDS
 	for _index : int in BOOST_PARTICLES:
-		cloud._add_mote(_scatter(BOOST_JITTER))
+		var at : Vector2 = _scatter(BOOST_JITTER)
+		if (_over_water(where.y + at.y)):
+			continue
+		cloud._add_mote(at)
 	_place(source.get_parent(), where, cloud)
 
 static func flares(source : Node2D, where : Vector2, forward : Vector2) -> void:
@@ -62,6 +68,9 @@ static func _place(parent : Node, where : Vector2, puff : AirPuff) -> void:
 static func _scatter(radius : float) -> Vector2:
 	return Vector2.from_angle(randf() * TAU) * sqrt(randf()) * radius
 
+static func _over_water(world_y : float) -> bool:
+	return world_y >= ShipEntity.WATER_LEVEL - WATER_MARGIN
+
 func _ready() -> void:
 	if (!sparks.is_empty()):
 		return
@@ -71,12 +80,13 @@ func _ready() -> void:
 	fade.tween_interval(lasting * CLOUD_HOLD)
 	fade.tween_property(self, "modulate:a", 0.0, lasting * (1.0 - CLOUD_HOLD))
 	fade.tween_callback(queue_free)
-	create_tween().tween_property(self, "position", _scatter(CLOUD_DRIFT * lasting), lasting).as_relative()
+	var drift : Vector2 = WIND * lasting + Vector2(randf_range(-1.0, 1.0), 0.0) * CLOUD_DRIFT * lasting
+	create_tween().tween_property(self, "position", drift, lasting).as_relative()
 
 func _add_mote(at : Vector2) -> void:
 	_motes.append(at.round())
 	_sizes.append(2.0 if randf() < MOTE_BIG_CHANCE else 1.0)
-	_shades.append(1 if randf() < 0.3 else 0)
+	_shades.append(randi() % CLOUD_TONES.size())
 
 func _process(delta : float) -> void:
 	age += delta
@@ -96,7 +106,9 @@ func _emit_trails() -> void:
 			_chunk.life = FLARE_SMOKE_SECONDS
 		for index : int in sparks.size():
 			if (_emitted >= delays[index]):
-				_chunk._add_mote(_spark_point(index, _emitted - delays[index]) + _scatter(FLARE_EMIT_JITTER))
+				var at : Vector2 = _spark_point(index, _emitted - delays[index]) + _scatter(FLARE_EMIT_JITTER)
+				if (!_over_water(global_position.y + at.y)):
+					_chunk._add_mote(at)
 		_emitted += FLARE_EMIT_INTERVAL
 
 func _release_chunk() -> void:
@@ -110,7 +122,7 @@ func _notification(what : int) -> void:
 
 func _draw() -> void:
 	for index : int in _motes.size():
-		var color : Color = SHADE if _shades[index] == 1 else SMOKE
+		var color : Color = CLOUD_TONES[_shades[index]] * tint
 		color.a = MOTE_ALPHA
 		_square(_motes[index], _sizes[index], color)
 	if (sparks.is_empty()):
@@ -121,6 +133,8 @@ func _draw() -> void:
 		if (age < delays[index]):
 			continue
 		var point : Vector2 = _spark_point(index, age - delays[index]).round()
+		if (_over_water(global_position.y + point.y)):
+			continue
 		_square(point, glow, Color(GLOW, minf(fade * 1.8, 1.0)))
 		_square(point, 2.0, Color(SPARK, minf(fade * 2.0, 1.0)))
 

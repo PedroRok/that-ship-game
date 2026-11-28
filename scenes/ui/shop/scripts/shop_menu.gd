@@ -527,9 +527,13 @@ func _make_skill_card(skill : SkillStats) -> Button:
 	col.add_theme_constant_override("separation", 3)
 	_margin(button, 5).add_child(col)
 	button.get_child(0).set_anchors_and_offsets_preset(PRESET_FULL_RECT)
+	var unlocked : bool = stats.is_skill_unlocked(skill)
 	col.add_child(_label(Loc.named("unit", skill.name).to_upper()))
-	var corner : String = Loc.t("menu.slot") % (slot + 1) if slot >= 0 else "shop.owned"
-	col.add_child(_make_skill_portrait(skill, 60, 2, corner, DIM if slot >= 0 else pal.rest))
+	var corner : String = Loc.t("menu.slot") % (slot + 1) if slot >= 0 else ("shop.owned" if unlocked else "shop.locked_skill")
+	var portrait : PanelContainer = _make_skill_portrait(skill, 60, 2, corner, AMBER if !unlocked else (DIM if slot >= 0 else pal.rest))
+	if (!unlocked):
+		portrait.modulate = Color(0.6, 0.62, 0.66)
+	col.add_child(portrait)
 	return button
 
 func _make_skill_portrait(skill : SkillStats, min_height : float, max_factor : int, corner : String = "", corner_color : Color = DIM) -> PanelContainer:
@@ -573,7 +577,7 @@ func _make_skill_portrait(skill : SkillStats, min_height : float, max_factor : i
 	gap.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	gap.custom_minimum_size.x = 2
 	header.add_child(gap)
-	header.add_child(_silhouette(SCREW_ICON, pal.text, 2))
+	header.add_child(_silhouette(SKILL_ICON_12, pal.text))
 	stage.add_child(header)
 	header.set_anchors_and_offsets_preset(PRESET_TOP_WIDE)
 	header.offset_left = 3
@@ -643,9 +647,10 @@ func _refresh_skill_detail() -> void:
 	var cost : HBoxContainer = HBoxContainer.new()
 	cost.add_theme_constant_override("separation", 10)
 	_margin(cost_panel, 4).add_child(cost)
-	cost.add_child(_label("shop.build_cost", DIM))
+	cost.add_child(_label("shop.command_cost", DIM))
 	cost.add_child(_spacer())
-	cost.add_child(_screw_value(skill.price, TEXT))
+	cost.add_child(_label(str(skill.price), TEXT))
+	cost.add_child(_silhouette(SKILL_ICON_12, DisplayPalette.of_skill().text))
 	detail_box.add_child(cost_panel)
 	var filler : Control = Control.new()
 	filler.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -653,8 +658,9 @@ func _refresh_skill_detail() -> void:
 	var equipped : bool = Global.player_stats.in_loadout(skill.name)
 	var action : Button = Button.new()
 	action.custom_minimum_size = Vector2(0, 30)
-	action.text = "shop.remove_from_loadout" if equipped else "shop.add_to_loadout"
-	action.disabled = !equipped and Global.player_stats.loadout_count() >= loadout_limit()
+	var unlocked : bool = Global.player_stats.is_skill_unlocked(skill)
+	action.text = "shop.remove_from_loadout" if equipped else ("shop.add_to_loadout" if unlocked else "shop.unlock_in_research")
+	action.disabled = !equipped and (!unlocked or Global.player_stats.loadout_count() >= loadout_limit())
 	_skin(action, CYAN, Color("#1f4448"))
 	action.pressed.connect(_toggle_loadout.bind(skill))
 	detail_box.add_child(action)

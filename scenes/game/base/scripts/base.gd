@@ -32,7 +32,6 @@ var queues : Dictionary = {}
 var _base_sprites : Array[Sprite2D] = []
 var _base_texture : Texture2D
 
-var build_boost_mult : float = 1.0
 var _destroyed : bool = false
 var _max_health : float = 1.0
 var _damage_material : ShaderMaterial
@@ -197,7 +196,7 @@ func _setup_fire() -> void:
 	process.spread = 25.0
 	process.initial_velocity_min = 8.0
 	process.initial_velocity_max = 28.0
-	process.gravity = Vector3(0, -18, 0)
+	process.gravity = Vector3(AirPuff.WIND.x, -18, 0)
 	process.scale_min = 1.8
 	process.scale_max = 3.8
 	process.color_ramp = ramp_texture
@@ -313,7 +312,7 @@ func start_build_ship(ship : BoatStats) -> bool:
 	var time_mult : float = 1.0
 	if (team_stats.team_id == 1):
 		time_mult = Global.modify(Enums.UpgradeTarget.BASE, &"build_time", 1.0)
-	var duration_mult : float = time_mult * build_boost_mult
+	var duration_mult : float = time_mult
 	constructor.build_ship(ship, duration_mult)
 	if (docks.has(dock_type)):
 		(docks[dock_type] as BaseDock).begin_build()
@@ -335,10 +334,6 @@ func _ship_build_finish(ship : BoatStats, constructor : ShipConstructor) -> void
 	if (dock):
 		var travel : float = (BaseDock.EXIT_DISTANCE / maxf(ship.speed, 1.0) * 1.8) if ship else BaseDock.EXIT_WAIT
 		dock.close_after_exit(clampf(travel, BaseDock.EXIT_WAIT, 8.0))
-
-func apply_build_boost(mult : float, duration : float) -> void:
-	build_boost_mult = mult
-	get_tree().create_timer(duration).timeout.connect(func() -> void: build_boost_mult = 1.0)
 
 func get_spawn_point() -> Vector2:
 	return ship_constructor.global_position

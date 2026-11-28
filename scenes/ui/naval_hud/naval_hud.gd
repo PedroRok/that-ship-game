@@ -35,7 +35,7 @@ const QUEUE_TITLES: Dictionary = {
 }
 const CATALOG_SLOTS: int = 10
 const BASE_WARNING_RATIO: float = 0.25
-const DENIED_REASONS: PackedStringArray = ["hud.low_screws", "hud.dock_offline", "hud.queue_full"]
+const DENIED_REASONS: PackedStringArray = ["hud.low_command", "hud.low_screws", "hud.dock_offline", "hud.queue_full"]
 
 var round_scene: GameRound
 var legacy: GameUI
@@ -52,6 +52,8 @@ var card_headers: Array[HBoxContainer] = []
 var selected: int = -1
 var ally_hp: ProgressBar
 var enemy_hp: ProgressBar
+var command_bar: ProgressBar
+var command_label: Label
 var ally_caption: Label
 var enemy_caption: Label
 var wave_caption: Label
@@ -320,6 +322,7 @@ func _make_resources(col: VBoxContainer) -> void:
 	content.set_anchors_and_offsets_preset(PRESET_FULL_RECT)
 	_counter(content, legacy.screw_label)
 	_counter(content, legacy.gear_label)
+	_make_command(content)
 	var centering := CenterContainer.new()
 	col.add_child(centering)
 	menu = Button.new()
@@ -328,6 +331,32 @@ func _make_resources(col: VBoxContainer) -> void:
 	_skin(menu)
 	menu.pressed.connect(func() -> void: open_menu.emit())
 	centering.add_child(menu)
+
+func _make_command(content: VBoxContainer) -> void:
+	var pal := DisplayPalette.of_skill()
+	var box := VBoxContainer.new()
+	box.mouse_filter = MOUSE_FILTER_IGNORE
+	box.add_theme_constant_override("separation", 2)
+	var centering := CenterContainer.new()
+	centering.mouse_filter = MOUSE_FILTER_IGNORE
+	centering.add_child(box)
+	content.add_child(centering)
+	command_label = _label("", true)
+	command_label.add_theme_color_override("font_color", pal.text)
+	box.add_child(command_label)
+	command_bar = ProgressBar.new()
+	command_bar.show_percentage = false
+	command_bar.mouse_filter = MOUSE_FILTER_IGNORE
+	command_bar.custom_minimum_size = Vector2(104, 8)
+	command_bar.max_value = SkillManager.COMMAND_MAX
+	command_bar.add_theme_stylebox_override("background", _style(Color("#172127"), Color("#4d6069")))
+	command_bar.add_theme_stylebox_override("fill", _style(pal.rest, pal.rest))
+	box.add_child(command_bar)
+
+func _update_command() -> void:
+	var value: float = round_scene.skill_manager.command
+	command_bar.value = value
+	command_label.text = (Loc.t("hud.command") % int(value)).to_upper()
 
 func _counter(content: VBoxContainer, value: BarValue) -> void:
 	var centering := CenterContainer.new()
@@ -532,7 +561,7 @@ func _make_catalog(col: VBoxContainer) -> void:
 			header_gap.mouse_filter = MOUSE_FILTER_IGNORE
 			header_gap.size_flags_horizontal = SIZE_EXPAND_FILL
 			header.add_child(header_gap)
-			var price := _label(str(Global.screw_cost(unit)))
+			var price := _label(str(round_scene.skill_manager.cost_of(unit.skill_id) if unit is SkillStats else Global.screw_cost(unit)))
 			price.add_theme_font_size_override("font_size", 12)
 			price.add_theme_color_override("font_color", pal.text)
 			price.size_flags_vertical = SIZE_SHRINK_CENTER
@@ -541,7 +570,7 @@ func _make_catalog(col: VBoxContainer) -> void:
 			price_gap.mouse_filter = MOUSE_FILTER_IGNORE
 			price_gap.custom_minimum_size.x = 2
 			header.add_child(price_gap)
-			header.add_child(_tinted_icon(SCREW_ICON, Vector2(18, 18), pal.text))
+			header.add_child(_tinted_icon(SKILL_ICON_12, Vector2.ZERO, pal.text) if unit is SkillStats else _tinted_icon(SCREW_ICON, Vector2(18, 18), pal.text))
 		last_reasons.append("#")
 
 func _tinted_icon(texture: Texture2D, size: Vector2, tint: Color) -> TextureRect:
@@ -711,7 +740,7 @@ func _use_skill(skill: SkillStats) -> void:
 	var manager: SkillManager = round_scene.skill_manager
 	var reason: String = _build_reason(skill)
 	if reason != "hud.ready" and reason != "hud.aiming":
-		if reason == "hud.low_screws" or reason.begins_with("cd:"):
+		if reason == "hud.low_command":
 			sfx.play(&"denied")
 		return
 	if manager.activate(skill):
@@ -750,12 +779,12 @@ func _refresh_catalog() -> void:
 			continue
 		last_reasons[index] = reason
 		var lit: bool = reason == "hud.ready" or reason == "hud.aiming"
-		card_status[index].text = (Loc.t("hud.cooldown_s") % int(reason.substr(3))).to_upper() if reason.begins_with("cd:") else reason
+		card_status[index].text = reason
 		var pal: DisplayPalette = DisplayPalette.of_unit(roster[index] if index < roster.size() else null)
 		var color: Color = pal.text if lit else DIM
 		if reason == "hud.aiming":
 			color = pal.light
-		elif reason == "hud.low_screws":
+		elif reason == "hud.low_screws" or reason == "hud.low_command":
 			color = PINK
 		elif reason == "hud.queue_full":
 			color = AMBER
@@ -776,6 +805,7 @@ func _refresh_catalog() -> void:
 
 func _process(_delta: float) -> void:
 	_refresh_catalog()
+	_update_command()
 	var ally_max: float = float(round_scene.get("ally_max_hp"))
 	var enemy_max: float = float(round_scene.get("enemy_max_hp"))
 	_update_hp(ally_hp, ally_caption, "hud.base_hp", round_scene.ally_base.health_component.health, ally_max)

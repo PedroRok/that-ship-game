@@ -49,35 +49,5 @@ func _burst() -> void:
 				struck = true
 	if (struck):
 		play_impact_sfx()
-	var puff : FlakPuff = FlakPuff.new()
-	puff.radius = burst_radius
-	puff.global_position = global_position
-	puff.z_index = 1900
-	get_parent().add_child(puff)
+	FlakBurstParticles.burst_at(get_parent(), global_position, burst_radius)
 	queue_free()
-
-class FlakPuff extends Node2D:
-	var radius : float = 22.0
-	var t : float = 0.0
-	var seeds : Array[Vector2] = []
-
-	func _ready() -> void:
-		for i : int in 7:
-			seeds.append(Vector2(randf_range(-1, 1), randf_range(-1, 1)).limit_length(1.0))
-
-	func _process(delta : float) -> void:
-		t += delta * 2.2
-		if (t >= 1.0):
-			queue_free()
-		queue_redraw()
-
-	func _draw() -> void:
-		var grow : float = 0.35 + 0.65 * minf(t * 2.0, 1.0)
-		var alpha : float = 1.0 - t
-		for s : Vector2 in seeds:
-			var p : Vector2 = (s * radius * 0.55 * grow).round()
-			var r : float = roundf(radius * 0.28 * grow) + 1.0
-			draw_circle(p, r, Color(0.09, 0.1, 0.12, 0.85 * alpha))
-		draw_circle(Vector2.ZERO, roundf(radius * 0.3 * grow), Color(0.15, 0.17, 0.2, 0.9 * alpha))
-		if (t < 0.4):
-			draw_circle(Vector2.ZERO, roundf(radius * 0.2), Color(1.0, 0.75, 0.25, 1.0 - t * 2.5))
