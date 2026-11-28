@@ -8,6 +8,12 @@ var launch_forward : bool = false
 
 const LIFETIME_MULT : float = 2.0
 const GROUP : StringName = &"missiles"
+const BLAST_RADIUS : float = 11.0
+const BLAST_GRAINS : int = 120
+const BLAST_SECONDS : float = 1.2
+const BLAST_DEBRIS : int = 8
+const BUBBLE_GRAINS : int = 30
+const TRAIL_THICK : float = 1.0
 
 func decoy(angle : float) -> void:
 	target = null
@@ -35,21 +41,26 @@ func _physics_process(delta: float) -> void:
 	else:
 		direction = direction.normalized() * bullet_stats.speed
 	
+	var before : Vector2 = global_position
 	global_position += direction * delta
-	var smoke : CPUParticles2D = get_node_or_null("CPUParticles2D") as CPUParticles2D
-	if (smoke):
-		smoke.emitting = global_position.y < ShipEntity.WATER_LEVEL
+	if (global_position.y < ShipEntity.WATER_LEVEL):
+		GrainParticles.missile_trail(get_parent(), before, global_position, TRAIL_THICK)
 	if (bullet_stats.killTime <= 0):
 		remove_bullet()
 	bullet_stats.killTime -= 1
 
 func remove_bullet() -> void:
-	var particle : CPUParticles2D = $CPUParticles2D
-	if particle:
-		particle.finished.connect(particle.queue_free)
-		particle.spread = 180
-		particle.scale_amount_min = 2
-		particle.scale_amount_max = 2
-		particle.one_shot = true
-		particle.reparent(get_parent())
+	if (is_queued_for_deletion()):
+		return
+	_explode_particles()
 	queue_free()
+
+func _explode_particles() -> void:
+	if (global_position.y >= ShipEntity.WATER_LEVEL):
+		GrainParticles.bubbles(get_parent(), global_position, BLAST_RADIUS, BUBBLE_GRAINS)
+		return
+	GrainParticles.blast(get_parent(), global_position, BLAST_RADIUS, BLAST_GRAINS, BLAST_SECONDS)
+	GrainParticles.debris(get_parent(), global_position, BLAST_RADIUS, BLAST_DEBRIS)
+
+func _impact_particles(_underwater : bool) -> void:
+	pass

@@ -49,5 +49,5 @@ func _burst() -> void:
 				struck = true
 	if (struck):
 		play_impact_sfx()
-	FlakBurstParticles.burst_at(get_parent(), global_position, burst_radius)
+	GrainParticles.flak(get_parent(), global_position, burst_radius)
 	queue_free()

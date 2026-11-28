@@ -34,19 +34,17 @@ func handle_hit(damage : Damage, direction : float) -> void:
 	
 func handle_hit_visual(health : HealthComponent) -> void:
 	var health_val : float = health.actual_health / health.default_health
-	var shader_val : float = lerp(0.7, 1.0, health_val)
 	var body_sprite : CanvasItem = null
 	if (entity is ShipEntity):
 		body_sprite = (entity as ShipEntity).sprite
 	elif (entity is AirEntity):
 		body_sprite = (entity as AirEntity).animated_sprite
 	if (body_sprite and body_sprite.material is ShaderMaterial):
-		(body_sprite.material as ShaderMaterial).set_shader_parameter("dissolve", shader_val)
+		(body_sprite.material as ShaderMaterial).set_shader_parameter("damage", DamageLook.amount(health_val))
 	
-	var amout_ratio_val : float = lerp(1,0, health_val)
-	particle_component.fire.amount_ratio = amout_ratio_val
-	if (!particle_component.hit.emitting):
-		particle_component.hit.restart()
+	if (particle_component.fire):
+		particle_component.fire.intensity = clampf(1.0 - health_val, 0.0, 1.0)
+	particle_component.hit_burst()
 
 func get_hitbox_parent() -> Node2D:
 	return entity

@@ -13,6 +13,10 @@ const BOMB_SPREAD : float = 130.0
 const BOMB_DAMAGE : float = 12.0
 const BOMB_INTERVAL : float = 0.28
 const BOMB_FLIGHT : float = 1.1
+const SHELL_TRAIL_THICK : float = 1.4
+const BOMB_GRAINS : int = 1100
+const BOMB_SPLASH_GRAINS : int = 400
+const BOMB_SMOKE_SECONDS : float = 3.5
 const BOMB_ENTRY : Vector2 = Vector2(330.0, 430.0)
 
 const REPAIR_RADIUS : float = 90.0
@@ -219,7 +223,9 @@ class SkillShell extends Node2D:
 			return
 		visible = true
 		t = minf(t + delta / SkillManager.BOMB_FLIGHT, 1.0)
+		var before : Vector2 = global_position
 		global_position = start.lerp(goal, pow(t, 1.5))
+		GrainParticles.missile_trail(get_parent(), before, global_position, SkillManager.SHELL_TRAIL_THICK)
 		if (t >= 1.0):
 			_impact()
 
@@ -227,6 +233,7 @@ class SkillShell extends Node2D:
 		var hit : Damage = Damage.new()
 		hit.damage = damage
 		hit.knockback = 2
+		var struck : bool = false
 		for entity : Entity in BattleContext.of(self).entities.duplicate():
 			if (!entity.enabled or entity.destroyed or entity.is_submerged()):
 				continue
@@ -236,16 +243,15 @@ class SkillShell extends Node2D:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
+				struck = true
 		BattleAudio.play_at(self, &"water_impact", goal)
-		var flash : BulletBomb.BombBlast = BulletBomb.BombBlast.new()
-		flash.radius = SkillManager.BOMB_RADIUS
-		flash.global_position = goal
-		flash.z_index = 2000
-		get_parent().add_child(flash)
+		if (struck):
+			GrainParticles.explosion(get_parent(), goal, SkillManager.BOMB_RADIUS, SkillManager.BOMB_GRAINS, SkillManager.BOMB_SMOKE_SECONDS)
+		else:
+			GrainParticles.splash(get_parent(), goal, SkillManager.BOMB_RADIUS * 0.6, SkillManager.BOMB_SPLASH_GRAINS)
 		queue_free()
 
 	func _draw() -> void:
-		draw_rect(Rect2(-11, 0, 7, 1), Color(1.0, 0.65, 0.2, 0.5))
 		draw_rect(Rect2(-4, -2, 7, 4), Color("14181d"))
 		draw_rect(Rect2(3, -1, 1, 2), Color("14181d"))
 		draw_rect(Rect2(-3, -1, 6, 1), Color("5c7480"))
@@ -289,7 +295,7 @@ class FlakBarrage extends Node2D:
 			var hitbox : HitboxComponent = entity.get_node_or_null("HitboxComponent") as HitboxComponent
 			if (hitbox):
 				hitbox.handle_hit(hit, 0.0)
-		FlakBurstParticles.burst_at(get_parent(), where, SkillManager.FLAK_RADIUS)
+		GrainParticles.flak(get_parent(), where, SkillManager.FLAK_RADIUS)
 
 class RepairEffect extends Node2D:
 	const TEXTURE : Texture2D = preload("res://assets/game/misc/repair_wrench_17x17_v01.png")

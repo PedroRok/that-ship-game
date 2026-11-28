@@ -1,6 +1,10 @@
 class_name GameSettings
 extends RefCounted
 
+enum EffectsQuality { LOW, MEDIUM, HIGH, EXAGGERATED }
+
+const EFFECTS_SCALES : Array[float] = [0.35, 0.6, 1.0, 1.5]
+
 const PATH : String = "user://settings.cfg"
 
 enum WindowMode { WINDOWED, BORDERLESS, FULLSCREEN }
@@ -15,6 +19,7 @@ static var window_mode : int = WindowMode.WINDOWED
 static var resolution_index : int = 0
 static var scale_mode : int = ScaleMode.FIT
 static var vsync : bool = true
+static var effects_quality : int = EffectsQuality.HIGH
 static var language : String = "en"
 static var volumes : Dictionary = {"Master": 100, "WorldSFX": 100, "UI": 100}
 
@@ -26,6 +31,7 @@ static func load_settings() -> void:
 	resolution_index = clampi(int(cfg.get_value("display", "resolution_index", 0)), 0, RESOLUTIONS.size() - 1)
 	scale_mode = int(cfg.get_value("display", "scale_mode", scale_mode))
 	vsync = bool(cfg.get_value("display", "vsync", true))
+	effects_quality = clampi(int(cfg.get_value("display", "effects_quality", EffectsQuality.HIGH)), 0, EFFECTS_SCALES.size() - 1)
 	language = str(cfg.get_value("general", "language", language))
 	for bus : String in volumes:
 		volumes[bus] = clampi(int(cfg.get_value("audio", bus, 100)), 0, 100)
@@ -36,6 +42,7 @@ static func save_settings() -> void:
 	cfg.set_value("display", "resolution_index", resolution_index)
 	cfg.set_value("display", "scale_mode", scale_mode)
 	cfg.set_value("display", "vsync", vsync)
+	cfg.set_value("display", "effects_quality", effects_quality)
 	cfg.set_value("general", "language", language)
 	for bus : String in volumes:
 		cfg.set_value("audio", bus, volumes[bus])
@@ -84,3 +91,6 @@ static func apply(window : Window, apply_size : bool = true) -> void:
 				window.size = size
 				var screen : Rect2i = DisplayServer.screen_get_usable_rect(window.current_screen)
 				window.position = screen.position + (screen.size - window.size) / 2
+
+static func effects_scale() -> float:
+	return EFFECTS_SCALES[effects_quality]

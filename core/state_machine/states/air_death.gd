@@ -30,6 +30,7 @@ func enter() -> void:
 	gravity = 60.0
 	_join_wrecks()
 	decay_rate = 0.995
+	_hit_blast()
 
 	
 	pass
@@ -41,7 +42,18 @@ var _sink_ticks : int = 0
 
 const WRECK_GROUP : StringName = &"air_wreck"
 const WRECK_SLACK : float = 4.0
+const SPLASH_GRAINS : int = 300
+const SUNK_MIN_DEPTH : float = 10.0
+const HIT_GRAINS : int = 160
+const HIT_SECONDS : float = 1.5
+const HIT_DEBRIS : int = 12
+const HIT_RADIUS : Vector2 = Vector2(9.0, 22.0)
 const WRECK_SIZE : Vector2 = Vector2(16, 10)
+
+func _hit_blast() -> void:
+	var radius : float = clampf(_wreck_size().x * 0.35, HIT_RADIUS.x, HIT_RADIUS.y)
+	GrainParticles.explosion(parent.get_parent(), parent.global_position, radius, HIT_GRAINS, HIT_SECONDS)
+	GrainParticles.debris(parent.get_parent(), parent.global_position, radius, HIT_DEBRIS)
 
 func _join_wrecks() -> void:
 	parent.add_to_group(WRECK_GROUP)
@@ -80,17 +92,13 @@ func explode() -> void:
 func _finish() -> void:
 	parent.remove_from_group(WRECK_GROUP)
 	parent.is_dead = true
-	var particle : ParticleProcessMaterial = particle_component.hit.process_material
-	particle.direction.y = 0
-	particle.gravity.y = 20
-	particle.spread = 180
-	particle.initial_velocity_max = 20
-	particle_component.hit.lifetime = 2.5
-	particle_component.hit.randomness = 1
-	particle_component.hit.amount = 80
-	particle_component.hit.amount_ratio = 1
-	particle_component.hit.restart()
-	particle_component.fire.amount_ratio = 0
+	if (hitbox_component.is_on_water):
+		GrainParticles.splash(parent.get_parent(), parent.global_position, _wreck_size().x, SPLASH_GRAINS)
+		var depth : float = maxf(parent.global_position.y, ShipEntity.WATER_LEVEL + SUNK_MIN_DEPTH)
+		GrainParticles.sunk_wreck(parent.get_parent(), Vector2(parent.global_position.x, depth), _wreck_size())
+	else:
+		GrainParticles.wreck(parent.get_parent(), parent.global_position, _wreck_size(), true)
+	particle_component.fire.intensity = 0.0
 	parent.animated_sprite.free()
 	for child : Node in parent.get_children():
 		if (child is AnimatedSprite2D or child is Gun):

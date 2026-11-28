@@ -126,6 +126,10 @@ func _dark_pixels(file : String) -> int:
 				count += 1
 	return count
 
+func _smoke(context : BattleContext) -> GrainParticles:
+	var stored : Variant = context.grains.get(GrainParticles.Kind.SMOKE)
+	return stored as GrainParticles if is_instance_valid(stored) else null
+
 func _barrage_pixels(game : GameRound) -> void:
 	if (DisplayServer.get_name() == "headless"):
 		return
@@ -136,7 +140,7 @@ func _barrage_pixels(game : GameRound) -> void:
 	game.skill_manager.fire(SkillCatalog.FLAK)
 	await _wait(2.8)
 	var shown : int = await _dark_pixels("barrage_particles.png")
-	(BattleContext.of(game.ally_base).flak_smoke as FlakBurstParticles).hide()
+	_smoke(BattleContext.of(game.ally_base)).hide()
 	var hidden : int = await _dark_pixels("barrage_without.png")
 	check(shown > hidden + 500, "flak particles are visible mid map (dark pixels: with %d, hidden %d)" % [shown, hidden])
 	game.camera.set_process(true)
@@ -146,11 +150,11 @@ func _gun_flak(game : GameRound) -> void:
 	var shell : BulletFlak = (load("res://scenes/entities/bullets/flak.tscn") as PackedScene).instantiate() as BulletFlak
 	context.bullets.add_child(shell)
 	shell.global_position = Vector2(game.ally_base.global_position.x + 400.0, 150.0)
-	var before : int = (context.flak_smoke as FlakBurstParticles).emitted if is_instance_valid(context.flak_smoke) else 0
+	var before : int = _smoke(context).emitted if _smoke(context) else 0
 	var radius : float = shell.burst_radius
 	shell._burst()
-	var system : FlakBurstParticles = context.flak_smoke as FlakBurstParticles
-	check(system != null and system.emitted - before == FlakBurstParticles.grains_for(radius) + FlakBurstParticles.FLASH_GRAINS,
+	var system : GrainParticles = _smoke(context)
+	check(system != null and system.emitted - before == GrainParticles.flak_grains(radius) + GrainParticles.scaled(GrainParticles.FLASH_GRAINS),
 			"anti-air guns use the same dense particles")
 
 func _battle() -> void:
@@ -194,8 +198,8 @@ func _battle() -> void:
 	manager.command = SkillManager.COMMAND_MAX
 	check(manager.fire(SkillCatalog.FLAK), "flak barrage fires")
 	await _wait(0.8)
-	var system : FlakBurstParticles = BattleContext.of(game.ally_base).flak_smoke as FlakBurstParticles
-	check(system != null and system.emitted > FlakBurstParticles.grains_for(SkillManager.FLAK_RADIUS), "the barrage uses the shared flak particles")
+	var system : GrainParticles = _smoke(BattleContext.of(game.ally_base))
+	check(system != null and system.emitted > GrainParticles.flak_grains(SkillManager.FLAK_RADIUS), "the barrage uses the shared flak particles")
 	await _shot("flak.png")
 	await _wait(5.0)
 

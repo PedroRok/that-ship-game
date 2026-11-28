@@ -161,6 +161,17 @@ func _build() -> void:
 	box.add_child(_indent(scale_note))
 	_refresh_scale_note()
 
+	var effects_option : OptionButton = OptionButton.new()
+	effects_option.add_item("options.effects_exaggerated", GameSettings.EffectsQuality.EXAGGERATED)
+	effects_option.add_item("options.effects_high", GameSettings.EffectsQuality.HIGH)
+	effects_option.add_item("options.effects_medium", GameSettings.EffectsQuality.MEDIUM)
+	effects_option.add_item("options.effects_low", GameSettings.EffectsQuality.LOW)
+	effects_option.select(effects_option.get_item_index(GameSettings.effects_quality))
+	effects_option.item_selected.connect(func(index : int) -> void:
+		GameSettings.effects_quality = effects_option.get_item_id(index)
+		GameSettings.save_settings())
+	box.add_child(_row("options.effects_quality", effects_option))
+
 	box.add_child(_divider())
 
 	for entry : Array in [["options.master_volume", "Master"], ["options.effects_volume", "WorldSFX"], ["options.interface_volume", "UI"]]:

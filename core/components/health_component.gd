@@ -8,6 +8,7 @@ var default_health : float = 10
 var entity : Entity
 
 var actual_health : float
+var fatal_damage : float = 0.0
 
 signal death_event
 
@@ -25,6 +26,8 @@ func _ready() -> void:
 func handle_hit(damage: Damage) -> bool:
 	actual_health -= damage.damage
 	if actual_health <= 0:
+		if (fatal_damage <= 0.0):
+			fatal_damage = damage.damage
 		death_event.emit()
 		clear()
 		return false

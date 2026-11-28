@@ -31,6 +31,7 @@ func _physics_process(_delta: float) -> void:
 		global_position += velocity
 		if (!_splashed and was_above and velocity.y > 0.0 and global_position.y >= ShipEntity.WATER_LEVEL):
 			_splashed = true
+			_water_particles()
 			BattleAudio.play_at(self, &"water_impact", Vector2(global_position.x, ShipEntity.WATER_LEVEL))
 
 	if (bullet_stats.killTime <= 0):
@@ -59,6 +60,7 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 				var scaled : Damage = damage.duplicate()
 				scaled.damage *= damage_mult_against(ship)
 				area.handle_hit(scaled, direction.x)
+				_impact_particles(ship.is_submerged())
 				play_impact_sfx(ship.is_submerged())
 				if (bullet_stats.piercing <= already_hit.size()):
 					remove_bullet()
@@ -67,9 +69,19 @@ func _on_area_shape_entered(_area_rid: RID, area: Area2D, _area_shape_index: int
 		if (base.team_stats.team_id != team and surface_damage_mult != 0.0):
 			already_hit.append(area)
 			area.handle_hit(damage_to_base(), direction.x)
+			_impact_particles(false)
 			if (bullet_stats.piercing <= already_hit.size()):
 				remove_bullet()
 	pass
+
+func _water_particles() -> void:
+	GrainParticles.drops(get_parent(), global_position)
+
+func _impact_particles(underwater : bool) -> void:
+	if (underwater):
+		GrainParticles.bubbles(get_parent(), global_position, GrainParticles.DROP_RADIUS, GrainParticles.DROP_GRAINS)
+	else:
+		GrainParticles.chips(get_parent(), global_position, direction)
 
 func damage_mult_against(victim : Entity) -> float:
 	if (surface_damage_mult >= 0.0 and !(victim.entity_stats is AirPlaneState)):

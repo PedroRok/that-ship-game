@@ -4,6 +4,10 @@ extends BulletBomb
 const SINK_SPEED : float = 35.0
 const MAX_DEPTH : float = 110.0
 const WATER_DRAG : float = 240.0
+const BUBBLE_GRAINS : int = 150
+const HIT_GRAINS : int = 150
+const HIT_SECONDS : float = 1.8
+const BLAST_SHARE : float = 0.6
 
 var _entered_water : bool = false
 
@@ -68,7 +72,8 @@ func _area_blast() -> void:
 				struck = true
 	if (struck):
 		play_impact_sfx(true)
-	_blast()
+	GrainParticles.bubbles(get_parent(), global_position, radius * BLAST_SHARE, BUBBLE_GRAINS)
+	queue_free()
 
 func _on_area_shape_entered(_area_rid : RID, area : Area2D, _area_shape_index : int, _local_shape_index : int) -> void:
 	if (exploded):
@@ -101,9 +106,5 @@ func _depth_of(entity : Entity) -> float:
 	return entity.get_center_pos().y if entity.is_submerged() else entity.global_position.y
 
 func _blast() -> void:
-	var flash : BulletBomb.BombBlast = BulletBomb.BombBlast.new()
-	flash.radius = radius * 0.6
-	flash.global_position = global_position
-	flash.z_index = 2000
-	get_parent().add_child(flash)
+	GrainParticles.explosion(get_parent(), global_position, radius * BLAST_SHARE, HIT_GRAINS, HIT_SECONDS)
 	queue_free()

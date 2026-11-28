@@ -3,6 +3,9 @@ extends Bullet
 
 const GRAVITY : float = 520.0
 const WATER_Y : float = 364.0
+const BLAST_GRAINS : int = 350
+const BLAST_SECONDS : float = 2.5
+const SPLASH_GRAINS : int = 150
 
 @export
 var radius : float = 28.0
@@ -60,11 +63,10 @@ func _explode() -> void:
 		play_impact_sfx()
 	elif (global_position.y >= WATER_Y):
 		BattleAudio.play_at(self, &"water_impact", global_position)
-	var flash : BombBlast = BombBlast.new()
-	flash.radius = radius
-	flash.global_position = global_position
-	flash.z_index = 2000
-	get_parent().add_child(flash)
+	if (struck or global_position.y < WATER_Y):
+		GrainParticles.explosion(get_parent(), global_position, radius, BLAST_GRAINS, BLAST_SECONDS)
+	else:
+		GrainParticles.splash(get_parent(), global_position, radius * 0.7, SPLASH_GRAINS)
 	queue_free()
 
 func _draw() -> void:
@@ -74,18 +76,3 @@ func _draw() -> void:
 
 func _ready() -> void:
 	queue_redraw()
-
-class BombBlast extends Node2D:
-	var radius : float = 28.0
-	var t : float = 0.0
-
-	func _process(delta : float) -> void:
-		t += delta * 3.0
-		if (t >= 1.0):
-			queue_free()
-		queue_redraw()
-
-	func _draw() -> void:
-		var r : float = radius * (0.3 + 0.7 * t)
-		draw_circle(Vector2.ZERO, r, Color(1.0, 0.7, 0.2, 0.55 * (1.0 - t)))
-		draw_circle(Vector2.ZERO, r * 0.5, Color(1.0, 0.95, 0.7, 0.8 * (1.0 - t)))

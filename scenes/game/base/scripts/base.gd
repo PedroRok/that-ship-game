@@ -37,15 +37,17 @@ var _max_health : float = 1.0
 var _damage_material : ShaderMaterial
 var _dock_materials : Array[ShaderMaterial] = []
 
-const DAMAGE_SHADER : Shader = preload("res://shaders/damage.tres")
-const DAMAGE_MIN_DISSOLVE : float = 0.93
-const DAMAGE_NOISE_SIZE : int = 128
-const DAMAGE_NOISE_FREQUENCY : float = 0.22
-const FIRE_MAX_AMOUNT : int = 270
+const DAMAGE_SHADER : Shader = preload("res://shaders/damage.gdshader")
+const DAMAGE_NOISE_SIZE : int = 256
+const DAMAGE_NOISE_FREQUENCY : float = 0.045
+const COLLAPSE_BURSTS : int = 7
+const COLLAPSE_RADIUS : float = 40.0
+const COLLAPSE_GRAINS : int = 800
 const FIRE_MIN_RATIO : float = 0.02
 const FIRE_CURVE : float = 3.5
 
-var _fire : GPUParticles2D
+var _fire : FireEmitter
+var _collapsed : bool = false
 var _fire_area_dirty : bool = true
 
 const FIRE_POINT_STEP : int = 3
@@ -152,67 +154,37 @@ func _setup_damage_visual() -> void:
 	var noise : FastNoiseLite = FastNoiseLite.new()
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
 	noise.frequency = DAMAGE_NOISE_FREQUENCY
-	noise.fractal_type = FastNoiseLite.FRACTAL_NONE
+	noise.fractal_type = FastNoiseLite.FRACTAL_FBM
+	noise.fractal_octaves = 3
 	var texture : NoiseTexture2D = NoiseTexture2D.new()
 	texture.width = DAMAGE_NOISE_SIZE
 	texture.height = DAMAGE_NOISE_SIZE
-	texture.as_normal_map = true
-	texture.bump_strength = 32.0
 	texture.noise = noise
 	_damage_material = ShaderMaterial.new()
 	_damage_material.shader = DAMAGE_SHADER
-	_damage_material.set_shader_parameter("Noise", texture)
-	_damage_material.set_shader_parameter("dissolve", 1.0)
+	_damage_material.set_shader_parameter("noise", texture)
+	_damage_material.set_shader_parameter("damage", 0.0)
+	_damage_material.set_shader_parameter("per_texel", false)
 	for sprite : Sprite2D in _base_sprites:
 		sprite.material = _damage_material
 	_setup_fire()
 
 func _make_dock_material(sprite : Sprite2D) -> ShaderMaterial:
 	var material : ShaderMaterial = _damage_material.duplicate() as ShaderMaterial
-	var base_noise : NoiseTexture2D = _damage_material.get_shader_parameter("Noise") as NoiseTexture2D
+	var base_noise : NoiseTexture2D = _damage_material.get_shader_parameter("noise") as NoiseTexture2D
 	var noise : NoiseTexture2D = base_noise.duplicate() as NoiseTexture2D
 	var texel : float = _base_sprites[1].get_rect().size.x * absf(_base_sprites[1].scale.x) / float(DAMAGE_NOISE_SIZE)
 	var size : Vector2 = sprite.get_rect().size * sprite.scale.abs()
 	noise.width = maxi(roundi(size.x / texel), 1)
 	noise.height = maxi(roundi(size.y / texel), 1)
-	material.set_shader_parameter("Noise", noise)
+	material.set_shader_parameter("noise", noise)
 	return material
 
 func _setup_fire() -> void:
-	var shape_node : CollisionShape2D = get_node_or_null("BaseHitboxComponent/CollisionShape2D") as CollisionShape2D
-	var rect : RectangleShape2D = shape_node.shape as RectangleShape2D if shape_node else null
-	if (rect == null):
-		return
-	var ramp : Gradient = Gradient.new()
-	ramp.offsets = PackedFloat32Array([0.0, 0.45, 1.0])
-	ramp.colors = PackedColorArray([Color(1.0, 0.82, 0.25, 1.0), Color(0.95, 0.35, 0.08, 0.9), Color(0.15, 0.1, 0.1, 0.0)])
-	var ramp_texture : GradientTexture1D = GradientTexture1D.new()
-	ramp_texture.gradient = ramp
-	var process : ParticleProcessMaterial = ParticleProcessMaterial.new()
-	process.particle_flag_disable_z = true
-	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_BOX
-	process.emission_box_extents = Vector3(rect.size.x * 0.5, rect.size.y * 0.5, 1.0)
-	process.direction = Vector3(0, -1, 0)
-	process.spread = 25.0
-	process.initial_velocity_min = 8.0
-	process.initial_velocity_max = 28.0
-	process.gravity = Vector3(AirPuff.WIND.x, -18, 0)
-	process.scale_min = 1.8
-	process.scale_max = 3.8
-	process.color_ramp = ramp_texture
-	_fire = GPUParticles2D.new()
-	_fire.process_material = process
-	_fire.amount = FIRE_MAX_AMOUNT
-	_fire.amount_ratio = 0.0
-	_fire.lifetime = 1.1
-	_fire.z_index = 1100
-	_fire.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	_fire.position = shape_node.position
-	_fire.visibility_rect = Rect2(-200, -200, 400, 400)
+	_fire = FireEmitter.new()
 	add_child(_fire)
 
 func _update_fire_area() -> void:
-	var process : ParticleProcessMaterial = _fire.process_material as ParticleProcessMaterial
 	var water : Array[Rect2] = []
 	var naval : Sprite2D = get_node_or_null("BaseSprite/dock") as Sprite2D
 	if (naval):
@@ -240,14 +212,7 @@ func _update_fire_area() -> void:
 		_collect_fire_points(sprite, water, lowest, points)
 	if (points.is_empty()):
 		return
-	var data : Image = Image.create_empty(points.size(), 1, false, Image.FORMAT_RGBF)
-	for i : int in points.size():
-		data.set_pixel(i, 0, Color(points[i].x, points[i].y, 0.0))
-	process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINTS
-	process.emission_point_texture = ImageTexture.create_from_image(data)
-	process.emission_point_count = points.size()
-	_fire.position = Vector2.ZERO
-	_fire.visibility_rect = Rect2(-700, -700, 1400, 1400)
+	_fire.set_area(points)
 	_fire_area_dirty = false
 
 func _collect_fire_points(sprite : Sprite2D, water : Array[Rect2], lowest : float, points : PackedVector2Array) -> void:
@@ -275,17 +240,26 @@ func update_damage_visual() -> void:
 	if (_damage_material == null):
 		return
 	var ratio : float = clampf(health_component.health / _max_health, 0.0, 1.0)
-	var dissolve : float = lerpf(1.0, DAMAGE_MIN_DISSOLVE, 1.0 - ratio)
-	_damage_material.set_shader_parameter("dissolve", dissolve)
+	var damaged : bool = ratio < 1.0
+	var look : float = DamageLook.amount(ratio)
+	_damage_material.set_shader_parameter("damage", look)
 	for material : ShaderMaterial in _dock_materials:
-		material.set_shader_parameter("dissolve", dissolve)
+		material.set_shader_parameter("damage", look)
 	if (_fire):
-		if (_fire_area_dirty and ratio < 1.0):
+		if (_fire_area_dirty and damaged):
 			_update_fire_area()
-		var damaged : bool = ratio < 1.0
-		_fire.emitting = damaged
 		var growth : float = (exp(FIRE_CURVE * (1.0 - ratio)) - 1.0) / (exp(FIRE_CURVE) - 1.0)
-		_fire.amount_ratio = lerpf(FIRE_MIN_RATIO, 1.0, growth) if damaged else 0.0
+		_fire.intensity = lerpf(FIRE_MIN_RATIO, 1.0, growth) if damaged else 0.0
+	if (ratio <= 0.0 and !_collapsed):
+		_collapse()
+
+func _collapse() -> void:
+	_collapsed = true
+	var spots : PackedVector2Array = _fire.spots if _fire else PackedVector2Array()
+	for index : int in mini(COLLAPSE_BURSTS, spots.size()):
+		var at : Vector2 = _fire.to_global(spots[index])
+		GrainParticles.explosion(get_parent(), at, COLLAPSE_RADIUS, COLLAPSE_GRAINS, GrainParticles.SECONDS)
+		GrainParticles.debris(get_parent(), at, COLLAPSE_RADIUS, GrainParticles.WRECK_DEBRIS)
 
 func _death_event() -> void:
 	if (!_destroyed):

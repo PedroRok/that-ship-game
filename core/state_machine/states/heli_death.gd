@@ -17,6 +17,7 @@ func enter() -> void:
 	death_deespawn_delay = 500
 	decay_rate = 0.998
 	_join_wrecks()
+	_hit_blast()
 
 func process_physics(delta : float) -> void:
 	death_deespawn_delay -= 1

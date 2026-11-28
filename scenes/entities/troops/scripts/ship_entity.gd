@@ -75,9 +75,9 @@ func _keep_afloat(delta : float) -> void:
 		linear_velocity.y = move_toward(linear_velocity.y, -RISE_SPEED, RISE_ACCEL * delta)
 
 func _physics_process(delta: float) -> void:
-	var smoke : GPUParticles2D = get_node_or_null("ParticlesComponent/FireParticle") as GPUParticles2D
-	if (smoke):
-		smoke.visible = !is_submerged()
+	var particles : ParticlesComponent = get_node_or_null("ParticlesComponent") as ParticlesComponent
+	if (particles and particles.fire):
+		particles.fire.visible = !is_submerged()
 	super._physics_process(delta)
 	if (Engine.is_editor_hint()):
 		return

@@ -19,14 +19,6 @@ knockback = 0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mqo2c"]
 size = Vector2(3, 2)
 
-[sub_resource type="Curve" id="Curve_vpm11"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
-point_count = 2
-
-[sub_resource type="Gradient" id="Gradient_cnq7h"]
-offsets = PackedFloat32Array(0, 0.222222, 1)
-colors = PackedColorArray(0.95, 0.362267, 0.342, 1, 1, 0.8, 0, 1, 1, 1, 1, 1)
-
 [sub_resource type="Curve" id="Curve_64v8q"]
 _data = [Vector2(0, 0), 0.0, 0.0, 0, 0]
 point_count = 1
@@ -44,17 +36,6 @@ damage = SubResource("Resource_n25ww")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(1.5, 0)
 shape = SubResource("RectangleShape2D_mqo2c")
-
-[node name="CPUParticles2D" type="CPUParticles2D" parent="."]
-amount = 80
-direction = Vector2(-1, 0)
-spread = 10.0
-gravity = Vector2(-8, 0)
-initial_velocity_min = 10.0
-initial_velocity_max = 10.0
-linear_accel_max = 22.09
-scale_amount_curve = SubResource("Curve_vpm11")
-color_ramp = SubResource("Gradient_cnq7h")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 self_modulate = Color(1, 0.616667, 0, 1)

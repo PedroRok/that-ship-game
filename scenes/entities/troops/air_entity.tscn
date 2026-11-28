@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://dbw1ejv2a2c2l" path="res://core/resources/airplane_stats.gd" id="3_myxh7"]
 [ext_resource type="Texture2D" uid="uid://7fc3ln1vacwd" path="res://assets/game/troops/plane/plane_2.png" id="3_qibsq"]
 [ext_resource type="Texture2D" uid="uid://dmjmaet2fmdum" path="res://assets/game/troops/plane/plane_3.png" id="4_8vjt5"]
-[ext_resource type="Shader" uid="uid://hog7djv15huq" path="res://shaders/damage.tres" id="5_8xk3w"]
+[ext_resource type="Shader" path="res://shaders/damage.gdshader" id="5_8xk3w"]
 [ext_resource type="Texture2D" uid="uid://l1e7gina5ihc" path="res://assets/game/troops/plane/plane_4.png" id="5_u6h35"]
 [ext_resource type="Texture2D" uid="uid://cen7gq5bh3sl8" path="res://assets/game/troops/plane/plane_5.png" id="6_tftk7"]
 [ext_resource type="Texture2D" uid="uid://b6bxjibky67po" path="res://assets/game/troops/plane/blades/blade1.png" id="7_xyv82"]
@@ -58,33 +58,22 @@ particles_pos = Vector2(0, 0)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_gx1ce"]
 resource_local_to_scene = true
-noise_type = 5
-frequency = 1.0
-fractal_type = 0
-fractal_octaves = 10
-fractal_lacunarity = 0.0
-fractal_gain = 0.0
-fractal_weighted_strength = 1.0
-domain_warp_type = 1
-domain_warp_amplitude = 48.855
-domain_warp_frequency = 5.0
-domain_warp_fractal_type = 0
-metadata/_preview_in_3d_space_ = true
+noise_type = 1
+frequency = 0.14
+fractal_octaves = 3
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fifm0"]
 resource_local_to_scene = true
-width = 16
-height = 16
-seamless_blend_skirt = 0.0
-as_normal_map = true
-bump_strength = 32.0
+width = 64
+height = 64
 noise = SubResource("FastNoiseLite_gx1ce")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_lv2tk"]
 resource_local_to_scene = true
 shader = ExtResource("5_8xk3w")
-shader_parameter/Noise = SubResource("NoiseTexture2D_fifm0")
-shader_parameter/dissolve = 1.0
+shader_parameter/noise = SubResource("NoiseTexture2D_fifm0")
+shader_parameter/damage = 0.0
+shader_parameter/per_texel = true
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_a6ygn"]
 animations = [{
